@@ -114,6 +114,83 @@ details summary{font-weight:600;cursor:pointer;padding:6px 0;min-height:44px;dis
 .jud .je{font-size:16px;color:#33403a;margin:4px 0}
 .jud a{font-size:15px;color:var(--acc)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--mut);margin:4px 0 0}
+/* 改版第一批 2026-10-28：以下只用在新元件（複習、詳解格式、高頻標籤、二試模擬作答），不動既有 class */
+.src-note{font-size:14px;color:var(--mut);margin-top:10px}
+.hf{display:inline-block;font-size:14px;line-height:1.6;border-radius:999px;padding:1px 10px;background:#fff1e6;color:#9a4a00;margin:4px 6px 0 0;font-weight:600}
+.hf small{font-size:12px;font-weight:400;color:#8a6a50;margin-left:4px}
+.exf .k{font-size:15px;font-weight:600;color:var(--acc);margin:12px 0 2px}
+.exf .k:first-child{margin-top:4px}
+.exf .na{font-size:15px;color:var(--mut)}
+.exf ul{margin:2px 0;padding-left:20px}
+.rvs{font-size:15px;color:var(--mut);margin:2px 0 0}
+.mdl-bg{position:fixed;inset:0;z-index:50;background:rgba(31,32,29,.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.mdl{background:#fff;border-radius:18px;padding:22px 20px 18px;max-width:420px;width:100%;text-align:center}
+.mdl-ic{width:52px;height:52px;margin:0 auto 10px;border-radius:50%;border:3px solid #f0a35e;color:#f0a35e;font-size:30px;line-height:46px;font-weight:600}
+.mdl-t{font-size:18px;text-align:left}
+.mdl .btns{margin-top:6px}
+/* 二試電腦作答模擬：版面依考選部〈司法官、律師考試第二試模擬作答網站操作手冊〉(115.9.30) */
+body.cbt-on header,body.cbt-on nav{display:none}
+body.cbt-on main{max-width:none;padding:0 0 calc(24px + env(safe-area-inset-bottom))}
+.cbt{--L:1.9em;display:flex;align-items:flex-start;gap:14px;background:#eef3ea;min-height:100vh}
+.cbt-paper{flex:1;min-width:0;background:#fffef8;border-right:1px solid #d6dccf;padding:16px;align-self:stretch}
+.cbt-paper .ph{font-size:14px;color:#6d6a5c;margin:0 0 8px}
+.cbt-screen{flex:none;width:100%;min-width:0;padding:0 0 12px}
+.cbt-info{background:#fff;border-bottom:1px solid #cfd8c6;padding:8px 12px;font-size:15px;line-height:1.55}
+.cbt-info .t{font-weight:600}
+.cbt-info .cnt{display:flex;flex-wrap:wrap;gap:2px 14px}
+.cbt-time{font-weight:600;color:#b3261e}
+.cbt-top{position:sticky;top:0;z-index:6;background:#eef3ea;padding-top:env(safe-area-inset-top)}
+.cbt-keys{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 10px}
+.cbt-keys button{border:1px solid #9aa596;background:#fff;color:#1f201d;border-radius:6px;padding:6px 12px;font-size:16px;min-height:44px}
+.cbt-keys button.g{background:#bfe3a8;border-color:#8cbf70}
+.cbt-keys button.end{background:#5f6a5a;color:#fff;border-color:#5f6a5a;margin-left:auto}
+.cbt-keys .tm{font-size:16px;margin-left:4px}
+.cbt-warn{margin:0 10px 6px;border:2px solid #b3261e;color:#b3261e;background:#fff;font-weight:600;padding:6px 10px;border-radius:6px;font-size:16px}
+.cbt-warn.blink{animation:cbtb 1s steps(2,start) infinite}
+@keyframes cbtb{to{visibility:hidden}}
+.cbt-q{background:#fff;margin:0 10px;padding:6px 10px;font-size:16px;border:1px solid #cfd8c6;border-radius:6px 6px 0 0}
+.cbt-q .ex{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#333}
+.cbt-q .row{justify-content:space-between}
+.cbt-q button{border:0;background:none;color:var(--acc);font-size:16px;min-height:44px;padding:0 6px}
+.cbt-tool{display:flex;flex-wrap:wrap;align-items:center;gap:2px;background:#cfe8bd;margin:0 10px;padding:4px 6px;border:1px solid #a9cf92}
+.cbt-tool button{border:0;background:none;font-size:18px;min-width:40px;min-height:44px;padding:0 6px;color:#1f201d;border-radius:6px;font-family:"BiauKai","Kaiti TC","STKaiti","DFKai-SB",serif}
+.cbt-tool button:active{background:#b4d99c}
+.cbt-tool .sep{width:1px;height:26px;background:#8fb874;margin:0 4px}
+.cbt-tool .fx{font-family:inherit;font-size:16px}
+.cbt-sheet{position:relative;display:flex;margin:0 10px;background:#fff;border:2px solid #2f78c4;border-top:0}
+.cbt-side{flex:none;width:30px;position:relative;color:#2f78c4;font-size:15px}
+.cbt-side span{position:absolute;left:2px;writing-mode:vertical-rl;letter-spacing:2px}
+.cbt-ta{flex:1;min-width:0;display:block;border:0;border-radius:0;resize:none;overflow:hidden;padding:0 4px;margin:0;
+  font-family:"BiauKai","Kaiti TC","STKaiti","DFKai-SB",serif;font-size:18px;line-height:var(--L);color:#111;letter-spacing:0;
+  word-break:break-all;overflow-wrap:anywhere;white-space:pre-wrap;min-height:calc(var(--L) * 26);
+  background-color:#fff;background-image:linear-gradient(to bottom,transparent calc(var(--L) - 1px),#bcd4ec calc(var(--L) - 1px));background-size:100% var(--L);background-attachment:local}
+.cbt-ta:focus{outline:0;box-shadow:none;border-color:transparent}
+.cbt-stat{margin:6px 10px 0;font-size:15px;color:#3d4a3a;display:flex;flex-wrap:wrap;gap:2px 14px}
+.cbt-stat .over{color:#b3261e;font-weight:600}
+.cbt-tabs{display:flex;margin:0 10px 8px;background:#dfe7d8;border-radius:999px;padding:3px}
+.cbt-tabs button{flex:1;border:0;background:none;border-radius:999px;font-size:17px;min-height:44px;color:#4c5649}
+.cbt-tabs button.on{background:#fff;color:#1f201d;font-weight:600}
+.cbt-pop{margin:0 10px 8px;background:#fff;border:1px solid #cfd8c6;border-radius:8px;padding:10px 12px;font-size:15px}
+.cbt-pop ul{margin:4px 0;padding-left:20px}
+.cbt-pv{position:fixed;inset:0;z-index:40;background:#eef3ea;overflow:auto;padding:calc(env(safe-area-inset-top) + 8px) 10px 20px}
+.cbt-pv .pg-btns{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.cbt-pv .pg-btns button{border:1px solid #9aa596;background:#fff;border-radius:6px;min-height:44px;padding:0 12px;font-size:16px}
+.cbt-pv .end{background:#5f6a5a;color:#fff;border:0;border-radius:6px;min-height:44px;padding:0 16px;font-size:16px}
+.cbt-pv .pages{display:grid;grid-template-columns:1fr;gap:12px}
+.cbt-pv .pg{background:#fff;border:1px solid #2f78c4;padding:8px 10px;cursor:pointer}
+.cbt-pv .pg .pt{font-size:14px;color:#2f78c4;margin-bottom:4px}
+.cbt-pv .pg .ln{font-family:"BiauKai","Kaiti TC","STKaiti","DFKai-SB",serif;font-size:15px;line-height:1.75;border-bottom:1px solid #dbe7f3;min-height:1.75em;white-space:pre;overflow:hidden}
+.cbt-mode{margin-top:6px}
+.cbt-mini{display:none}
+@media (max-width:767px){.cbt-top{position:static}.cbt-mini{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:7;background:#fff;border-bottom:1px solid #cfd8c6;padding:calc(env(safe-area-inset-top) + 4px) 10px 4px;font-size:15px}
+  .cbt-mini .sp{flex:1}.cbt-mini button{border:0;background:#5f6a5a;color:#fff;border-radius:6px;min-height:40px;padding:0 12px;font-size:16px}
+  .cbt-sheet .cbt-side:last-child{display:none}.cbt-paper{display:none}.cbt.show-paper .cbt-paper{display:block;border:0}.cbt.show-paper .cbt-screen .cbt-body{display:none}.cbt{display:block}}
+@media (min-width:768px){.cbt{--fs:16px}.cbt-tabs{display:none}.cbt-paper{flex:0 0 33%;max-width:560px}.cbt-screen{width:auto;flex:1}.cbt-body{max-width:calc(var(--fs) * 25 + 92px)}
+  .cbt-ta{font-size:var(--fs);flex:none;width:calc(25em + 8px)}
+  .cbt-ta{background-image:linear-gradient(to bottom,transparent calc(var(--L) - 1px),#bcd4ec calc(var(--L) - 1px)),linear-gradient(to bottom,transparent calc(var(--L) * 26 - 3px),#2f78c4 calc(var(--L) * 26 - 3px));background-size:100% var(--L),100% calc(var(--L) * 26)}
+  .cbt-pv .pages{grid-template-columns:repeat(auto-fill,minmax(calc(25 * 15px + 24px),1fr))}.cbt-paper{position:sticky;top:0;max-height:100vh;overflow:auto}}
+@media (min-width:1100px){.cbt{--fs:20px}.cbt-paper{flex-basis:38%}}
+@media (prefers-reduced-motion:reduce){.cbt-warn.blink{animation:none}}
 </style>
 </head>
 <body>
@@ -154,6 +231,22 @@ function grade(id,ok){            // 答錯隔天再出；答對 3／7／14 天
   else{x.wrong++;x.box=0;x.due=Date.now()+DAY;x.last_wrong=Date.now()}
   persist();
 }
+// ---------- 間隔複習（改版第一批）：做錯的選擇題、自評不會／半會的申論，隔 1、3、7、14 天回到「今日複習」 ----------
+var RV_GAPS=[1,3,7,14];
+function sod(t){var d=new Date(t);d.setHours(0,0,0,0);return d.getTime()}
+if(!S.rv)S.rv={};
+if(!S.rvInit){                     // 舊進度一次轉入：還沒熟的錯題明天開始排
+  var isM={},isE={};D.mcq.forEach(function(q){isM[q.id]=1});D.essays.forEach(function(e){isE[e.id]=1});
+  Object.keys(S.items).forEach(function(id){var x=S.items[id];
+    if((isE[id]&&(x.self==='不會'||x.self==='半會'))||(isM[id]&&x.wrong>0&&x.box===0))S.rv[id]={st:0,due:sod(x.last_wrong||x.at||Date.now())+DAY,n:1}});
+  S.rvInit=1;persist()}
+function rvMark(id,ok){            // ok=false：從頭排（隔 1 天）；ok=true 且到期：往下一格，14 天那格答對就畢業
+  var r=S.rv[id],now=Date.now();
+  if(!ok){S.rv[id]={st:0,due:sod(now)+RV_GAPS[0]*DAY,n:(r?r.n:0)+1};persist();return}
+  if(!r||r.done||r.due>now)return;
+  r.st++;if(r.st>=RV_GAPS.length){r.done=now;r.due=0}else r.due=sod(now)+RV_GAPS[r.st]*DAY;persist()}
+function rvDue(list){var now=Date.now();return list.filter(function(x){var r=S.rv[x.id];return r&&!r.done&&r.due<=now}).sort(function(a,b){return S.rv[a.id].due-S.rv[b.id].due})}
+function rvNext(id){var r=S.rv[id];if(!r||r.done)return '';var d=Math.round((r.due-sod(Date.now()))/DAY);return d<=0?'今天複習':d+' 天後複習（第 '+(r.st+1)+'/4 輪）'}
 var t0=Date.now();
 setInterval(function(){var r=dayRec();r.ms+=Math.min(Date.now()-t0,60000);t0=Date.now();persist()},30000);
 
@@ -172,7 +265,8 @@ function txt(s,cls){            // 純文字＋把〔…未查證〕標灰；不
   var box=el('div',{cls:'pre'+(cls?' '+cls:'')}),parts=String(s||'').split(/(〔[^〕]*未查證〕)/);
   parts.forEach(function(p){if(/^〔.*未查證〕$/.test(p))box.appendChild(el('span',{cls:'unv',text:p}));else if(p)box.appendChild(document.createTextNode(p))});
   return box}
-function clear(){V.innerHTML='';window.scrollTo(0,0)}
+var CBT_STOP=null;                 // 二試模擬作答的計時器／存檔器，離開畫面就停
+function clear(){if(CBT_STOP){CBT_STOP();CBT_STOP=null}document.body.classList.remove('cbt-on');V.innerHTML='';window.scrollTo(0,0)}
 function pickDue(list,n){
   var now=Date.now(),due=[],fresh=[];
   list.forEach(function(x){var s=S.items[x.id];if(!s||!s.seen)fresh.push(x);else if(s.due<=now)due.push(x)});
@@ -182,6 +276,35 @@ function pickDue(list,n){
   return due.concat(fresh).slice(0,n)}
 function h(s){var x=0;for(var i=0;i<s.length;i++)x=(x*31+s.charCodeAt(i))|0;return x}
 function subjTag(x){return el('span',{cls:'tag'+(x.subj==='刑法'?' a':''),text:x.subj})}
+var SRC_NOTE='題目與答案取自考選部，以更正答案檔為準。';
+function srcNote(){return el('div',{cls:'src-note',text:SRC_NOTE})}
+// 高頻法條（改版第一批）：名單來自法律社群別站自算的統計，畫面一律標「社群統計」；只在題目／主題有引到這條時顯示
+var HF=[{subj:'刑法',no:'271'},{subj:'民法',no:'767'},{subj:'民法',no:'1055'}];
+function hfHit(no,s){return new RegExp('§\\s*'+no+'(?![\\d-])|第\\s*'+no+'\\s*條(?!之)').test(String(s||''))}
+function hfTags(x,fields){
+  var out=HF.filter(function(h){return h.subj===x.subj&&fields.some(function(f){var v=x[f];return hfHit(h.no,Array.isArray(v)?v.join('\n'):v)})});
+  return out.map(function(h){return el('span',{cls:'hf'},['高頻法條 '+h.subj+' §'+h.no,el('small',{text:'社群統計'})])})}
+function hfTopic(t){return HF.filter(function(h){return h.subj===t.subj&&t.core.some(function(a){return String(a.no).split(/\s/)[0]===h.no})})
+  .map(function(h){return el('span',{cls:'hf'},['高頻法條 '+h.subj+' §'+h.no,el('small',{text:'社群統計'})])})}
+// 一試詳解固定格式（改版第一批）：只從現有解析拆句，不新增內容；拆不出來的欄位留空
+function exParts(q){
+  var L='ABCD'.charAt(q.a),ss=String(q.ex||'').match(/[^。；]+[。；]?/g)||[],why=[],elim=[];
+  ss.forEach(function(s){s=s.trim();if(!s)return;
+    var ls=(s.match(/(?:^|[^A-Za-z0-9§])([A-D])(?=[、，是為係錯不屬的同也應可項])/g)||[]).map(function(m){return m.slice(-1)});
+    if(ls.length&&ls.indexOf(L)<0)elim.push(s);else why.push(s)});
+  var t=TP[q.topic],k=t&&t.cards.length?D.cards.find(function(c){return c.id===t.cards[0]}):null;
+  return {pt:t?t.ch+'＞'+t.t:'',why:why.join(''),elim:elim,mem:k?k.front+' → '+k.back+'（主題口訣，'+k.book+' '+k.page+'）':''}}
+function exBox(q){
+  var p=exParts(q),na=function(){return el('div',{cls:'na',text:'（原解析沒寫，留空）'})};
+  return el('div',{cls:'exf'},[el('div',{cls:'k',text:'考點'}),p.pt?el('div',{text:p.pt}):na(),
+    el('div',{cls:'k',text:'正解理由'}),p.why?txt(p.why):na(),
+    el('div',{cls:'k',text:'逐項排除'}),p.elim.length?el('ul',{},p.elim.map(function(s){return el('li',{text:s})})):na(),
+    el('div',{cls:'k',text:'一句話記憶點'}),p.mem?el('div',{text:p.mem}):na()])}
+function modal(msg,btns){
+  var bg=el('div',{cls:'mdl-bg'}),row=el('div',{cls:'btns'});
+  btns.forEach(function(b){row.appendChild(el('button',{cls:'btn'+(b.sec?' sec':''),text:b.t,onclick:function(){bg.remove();if(b.f)b.f()}}))});
+  bg.appendChild(el('div',{cls:'mdl',role:'dialog','aria-modal':'true'},[el('div',{cls:'mdl-ic',text:'!'}),txt(msg,'mdl-t'),row]));
+  document.body.appendChild(bg);return bg}
 
 // ---------- 路由 ----------
 var cur='home';
@@ -213,6 +336,18 @@ R.home=function(){
       el('div',{cls:r.essay>=1?'done':''},[el('b',{text:Math.min(r.essay,1)+'/1'}),'申論'])]),
     el('button',{cls:'btn big',text:'開始今天',onclick:startToday})
   ]));
+  // 今天一題（改版第一批）
+  var pe=onePackEssay();
+  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'今天一題'}),
+    el('div',{cls:'mut',text:'申論 1 題＋選擇 10 題。先出今日複習，再出較少練過的。'+(pe?'今天的申論：'+pe.year+' 年 '+pe.cat:'')}),
+    el('button',{cls:'btn',text:'今天一題（申論 1＋選擇 10）',onclick:onePack})]));
+  // 今日複習（改版第一批）
+  var dm=rvDue(D.mcq.filter(inSubj)),de=rvDue(D.essays.filter(inSubj));
+  var rc=el('div',{cls:'card'},[el('div',{cls:'h2',text:'今日複習'}),
+    el('div',{cls:'mut',text:(dm.length+de.length)?'到期：選擇 '+dm.length+' 題、申論 '+de.length+' 題。做錯的會隔 1、3、7、14 天再回來。':'今天沒有到期的複習。做錯的會隔 1、3、7、14 天回到這裡。'})]);
+  if(dm.length)rc.appendChild(el('button',{cls:'btn',text:'複習選擇 '+Math.min(dm.length,10)+' 題',onclick:function(){mcqRun(dm.slice(0,10))}}));
+  de.slice(0,3).forEach(function(x){rc.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x)}},[el('span',{cls:'tag a',text:'申論'}),x.year+' 年 '+x.cat+'　'+clip(x.prompt,18)]))});
+  V.appendChild(rc);
   var e=dailyEssay();
   if(e)V.appendChild(el('div',{cls:'card'},[el('div',{cls:'mut',text:'今日一題申論'}),
     el('div',{cls:'h2'},[subjTag(e),e.year+' 年 '+e.cat+'（'+(e.points||'?')+' 分）']),
@@ -228,6 +363,15 @@ function startToday(){
   if(r.essay<1)steps.push(function(next){var e=dailyEssay();if(e)essayFlow(e,next);else next()});
   (function run(i){if(i>=steps.length){doneToday();return}steps[i](function(){run(i+1)})})(0);
 }
+// 今天一題（改版第一批）：今日複習優先，再挑練得最少的；同分用日期當種子固定順序
+function leastSeen(L,n,skip){var seed=today().replace(/-/g,'')|0;
+  return L.filter(function(x){return !skip[x.id]}).sort(function(a,b){var sa=(S.items[a.id]||{}).seen||0,sb=(S.items[b.id]||{}).seen||0;return sa-sb||h(a.id+seed)-h(b.id+seed)}).slice(0,n)}
+function onePackMcq(){var due=rvDue(D.mcq.filter(inSubj)).slice(0,10),skip={};due.forEach(function(x){skip[x.id]=1});
+  return due.concat(leastSeen(D.mcq.filter(inSubj),10-due.length,skip))}
+function onePackEssay(){var L=D.essays.filter(inSubj);if(!L.length)return null;
+  var t=today(),key='onepack_'+S.subj,m=load(key,null);if(m&&m.d===t){var f=L.find(function(e){return e.id===m.id});if(f)return f}
+  var pick=rvDue(L)[0]||leastSeen(L,1,{})[0];save(key,{d:t,id:pick.id});return pick}
+function onePack(){var e=onePackEssay();mcqRun(onePackMcq(),function(){if(e)essayFlow(e,doneToday);else doneToday()})}
 function doneToday(){clear();V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'今天完成'}),el('div',{cls:'mut',text:'明天會先出今天答錯、還不熟的。'}),el('button',{cls:'btn',text:'回首頁',onclick:function(){go('home')}})]))}
 
 // ---------- 閃卡 ----------
@@ -259,12 +403,14 @@ function mcqRun(L,next){
   function show(){
     clear();if(i>=L.length)return next?next():go('practice');
     var q=L[i],answered=false;
-    var c=el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(q),el('span',{cls:'mut',text:(q.year||'')+' 年 第 '+(q.n||'?')+' 題　'+(i+1)+'/'+L.length})]),txt(q.q,'h2')]);
+    var c=el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(q),el('span',{cls:'mut',text:(q.year||'')+' 年 第 '+(q.n||'?')+' 題　'+(i+1)+'/'+L.length})]),
+      el('div',{},hfTags(q,['q','o','ex'])),txt(q.q,'h2'),srcNote()]);
     var opts=[],exp=el('div');
     q.o.forEach(function(o,k){var b=el('button',{cls:'opt'},[String.fromCharCode(65+k)+'. ',o]);
       b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
-        grade(q.id,ok);dayRec().mcq++;persist();
-        exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:ok?'答對':'答錯，正解 '+String.fromCharCode(65+q.a)}),txt(q.ex),el('div',{cls:'qid',text:q.id})]));
+        grade(q.id,ok);rvMark(q.id,ok);dayRec().mcq++;persist();
+        exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:ok?'答對':'答錯，正解 '+String.fromCharCode(65+q.a)}),exBox(q),
+          rvNext(q.id)?el('div',{cls:'rvs',text:'複習：'+rvNext(q.id)}):null,el('div',{cls:'qid',text:q.id})]));
         exp.appendChild(el('button',{cls:'btn',text:i+1<L.length?'下一題':'完成',onclick:function(){i++;show()}}));
         exp.scrollIntoView({behavior:'smooth',block:'start'})};
       opts.push(b);c.appendChild(b)});
@@ -294,8 +440,12 @@ function essayFlow(e,next){
   clear();
   var stem=el('details',{open:''},[el('summary',{text:'題目事實（點一下收合）'}),txt(e.stem)]);
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(e),el('span',{cls:'mut',text:e.year+' 年律師二試 '+e.no+'（'+(e.points||'?')+' 分）'})]),
-    el('div',{cls:'qid',text:e.id}),stem,el('div',{cls:'sec-t',text:'問題'}),txt(e.prompt,'h2')]));
+    el('div',{cls:'qid',text:e.id}),el('div',{},hfTags(e,['stem','prompt','concl','full'])),stem,el('div',{cls:'sec-t',text:'問題'}),txt(e.prompt,'h2'),srcNote()]));
   V.appendChild(el('button',{cls:'btn big',text:'開始作答',onclick:write}));
+  // 二試電腦作答模擬（改版第一批）
+  V.appendChild(el('div',{cls:'card cbt-mode'},[el('div',{cls:'h2',text:'計時模擬二試電腦作答'}),
+    el('div',{cls:'mut',text:'畫面照考選部二試作答介面：每題 8 頁、每頁 26 行、每行 25 字，上限 5,200 字；時間到只提示、不鎖定。'}),
+    el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:'30 分鐘',onclick:function(){cbt(30)}}),el('button',{cls:'btn ghost',text:'45 分鐘',onclick:function(){cbt(45)}})])]));
   if(next)V.appendChild(el('button',{cls:'btn sec',text:'今天先跳過申論',onclick:next}));
   // 第 2 屏：打字作答
   function write(){
@@ -339,8 +489,174 @@ function essayFlow(e,next){
     V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'自評：這題你會了嗎？'}),
       el('div',{cls:'btns'},['會','半會','不會'].map(function(lb){return el('button',{cls:'btn'+(lb==='會'?'':' sec'),text:lb,onclick:function(){
         var x=it(e.id);x.self=lb;x.issues_hit=checks.filter(function(c){return c.checked}).length;x.issues_n=n;x.concl=verdict;x.at=Date.now();
-        grade(e.id,lb==='會');dayRec().essay++;persist();next?next():go('essay')}})}))]));
+        grade(e.id,lb==='會');rvMark(e.id,lb==='會');dayRec().essay++;persist();next?next():go('essay')}})}))]));
   }
+  // 第 2 屏（另一種）：模擬二試電腦作答
+  function cbt(mins){cbtRun(e,mins,dk,function(t){compare('',t)})}
+}
+
+// ---------- 二試電腦作答模擬（改版第一批） ----------
+// 依據：考選部〈司法官、律師考試第二試模擬作答網站操作手冊〉115.9.30、〈司法官、律師考試第二試作答常見問答集〉。
+// 每題 8 頁 × 26 行 × 25 字＝5,200 字；全形字算 1 格、半形算半格（換行規則為本 App 推算，考選部未公布）。
+var CBT_ROWS=26,CBT_COLS=25,CBT_PAGES=8,CBT_MAX=5200;
+var CBT_MK=[function(n){return '（'+cn(n)+'）'},function(n){return n+'.'},function(n){return '（'+n+'）'},
+  function(n){return az(n).toUpperCase()+'.'},function(n){return az(n)+'.'},function(n){return '（'+az(n)+'）'}];
+var CBT_RE=[/^（[一二三四五六七八九十百]+）/,/^\d+\./,/^（\d+）/,/^[A-Z]+\./,/^[a-z]+\./,/^（[a-z]+）/];
+function cn(n){var d='零一二三四五六七八九';if(n<=10)return n===10?'十':d[n];if(n<20)return '十'+d[n-10];var t=Math.floor(n/10),u=n%10;return d[t]+'十'+(u?d[u]:'')}
+function az(n){var s='';while(n>0){n--;s=String.fromCharCode(97+n%26)+s;n=Math.floor(n/26)}return s}
+function cw(ch){return /[\u0000-ÿ｡-ﾟ]/.test(ch)?0.5:1}
+function cbtRowsOf(text){           // 依 25 格切行，回傳每行 [起, 迄)
+  var rows=[],st=0,w=0;
+  for(var i=0;i<text.length;i++){var ch=text[i];if(ch==='\n'){rows.push([st,i]);st=i+1;w=0;continue}
+    var c=cw(ch);if(w+c>CBT_COLS){rows.push([st,i]);st=i;w=0}w+=c}
+  rows.push([st,text.length]);return rows}
+function cbtCount(text){return text.replace(/\n/g,'').length}
+function cbtParse(line){             // 編號段落：縮排（全形空白）數＝階層，後面接該階層的編號
+  var m=line.match(/^(　*)/),lv=m[1].length,rest=line.slice(lv);
+  if(lv<6&&CBT_RE[lv].test(rest)){var mk=rest.match(CBT_RE[lv])[0];return {lv:lv,mk:mk,body:rest.slice(mk.length)}}
+  return null}
+function cbtRenumber(text){          // 重編號：同一個編號段落內依階層接續編號；碰到一般段落就重新起算
+  var ls=text.split('\n'),c=[0,0,0,0,0,0];
+  for(var i=0;i<ls.length;i++){var p=cbtParse(ls[i]);
+    if(p){c[p.lv]++;for(var k=p.lv+1;k<6;k++)c[k]=0;ls[i]='　'.repeat(p.lv)+CBT_MK[p.lv](c[p.lv])+p.body}
+    else if(ls[i]&&ls[i].charAt(0)!=='　')c=[0,0,0,0,0,0]}
+  return ls.join('\n')}
+function cbtRun(e,mins,dk,done){
+  clear();document.body.classList.add('cbt-on');
+  var dr=load(dk,{c:'',t:''}),t0=Date.now(),total=mins*60,over=false,warned8=false,warnedOver=false,lastSave='';
+  // 版面
+  var paper=el('div',{cls:'cbt-paper'},[el('div',{cls:'ph',text:'紙本試題（正式考試試題與法條本都發紙本，螢幕只摘錄前 2 行）'}),
+    el('div',{cls:'h2',text:'第一題（'+(e.points||'?')+' 分）'}),txt(e.stem),el('div',{cls:'sec-t',text:'問題'}),txt(e.prompt)]);
+  var tm=el('span',{cls:'cbt-time'}),nAns=el('span'),nUn=el('span');
+  var info=el('div',{cls:'cbt-info'},[el('div',{cls:'t',text:'考試名稱：'+CFG.app_name+'　模擬二試電腦作答（練習）'}),
+    el('div',{text:'科目：'+e.subj+'　'+e.year+' 年律師二試 '+e.no+'（'+e.cat+'）'}),
+    el('div',{cls:'cnt'},[el('span',{text:'題數：1'}),nAns,nUn,el('span',{},['賸餘時間：',tm])])]);
+  var stat=el('div',{cls:'cbt-stat'}),saved=el('span',{cls:'mut'}),tm2=el('span',{cls:'cbt-time'}),cnt2=el('span');
+  var mini=el('div',{cls:'cbt-mini'},[el('span',{},['賸餘 ',tm2]),cnt2,el('span',{cls:'sp'}),el('button',{text:'結束作答',onclick:function(){finish()}})]);
+  var pop=el('div',{cls:'cbt-pop'});pop.style.display='none';
+  function showPop(kind){if(pop.style.display!=='none'&&pop.dataset.k===kind){pop.style.display='none';return}pop.dataset.k=kind;pop.innerHTML='';
+    pop.appendChild(el('div',{cls:'h2',text:kind==='g'?'操作引導':'作答注意事項'}));
+    pop.appendChild(el('ul',{},(kind==='g'?['剪下 Ctrl+X、複製 Ctrl+C、貼上 Ctrl+V（工具列也有按鈕）。','上一步 Ctrl+Z、下一步 Ctrl+Y；只提供 4 次還原，和 Word 逐字還原不同。',
+      '編號：游標放在要條列的文字前，按工具列「編號」。共 6 層：（一）→ 1. →（1）→ A. → a. →（a）。','下一層 Tab、上一層 Shift+Tab（手機用工具列按鈕）；子層會一起移動。',
+      'Enter＝分段（自動接續編號）；Shift+Enter＝分行（同一編號下對齊換行）。','在第一層空白編號按 Enter 或 Backspace，回到一般段落。']
+     :['每題 8 頁、每頁 26 行、每行 25 字，以 5,200 字為上限；從第 7 頁進到第 8 頁會提醒。','超過 8 頁的內容，正式考試不會產製作答圖檔（不算分）。',
+      '正式考試每 10 秒自動存檔，按上一題／下一題／預覽／結束作答也會存；本練習一樣每 10 秒存在這支手機。','時間到後紅字倒數 20 秒；正式考試倒數完自動存檔並結束，本練習只提示、不鎖定。',
+      '正式考試結束作答要確認 2 次；本練習一樣。','正式考試停用 Ctrl+A、Ctrl+S、Ctrl+P 等組合鍵；本練習在作答區同樣停用。']).map(function(s){return el('li',{text:s})})));
+    pop.style.display='block'}
+  var warn=el('div',{cls:'cbt-warn'});warn.style.display='none';
+  var top=el('div',{cls:'cbt-top'},[info,el('div',{cls:'cbt-keys'},[
+    el('button',{text:'儲存',onclick:function(){keep(true)}}),el('button',{text:'預覽',onclick:preview}),
+    el('button',{cls:'g',text:'操作引導',onclick:function(){showPop('g')}}),el('button',{cls:'g',text:'作答注意事項',onclick:function(){showPop('n')}}),
+    el('button',{text:'隱藏資訊區',onclick:function(){var hid=info.style.display==='none';info.style.display=hid?'':'none';this.textContent=hid?'隱藏資訊區':'顯示資訊區'}}),
+    el('button',{cls:'end',text:'結束作答',onclick:finish})]),warn]);
+  var exq=el('div',{cls:'ex',text:clip(e.prompt||e.stem,120)+'...(完整試題請見紙本)'});
+  var qbar=el('div',{cls:'cbt-q'},[el('div',{cls:'row'},[el('b',{text:'第一題（'+(e.points||'?')+' 分）'}),
+    el('button',{text:'▲ 收合',onclick:function(){var hid=exq.style.display==='none';exq.style.display=hid?'':'none';this.textContent=hid?'▲ 收合':'▼ 試題摘錄'}})]),exq]);
+  var ta=el('textarea',{cls:'cbt-ta',spellcheck:'false',autocapitalize:'off',autocomplete:'off','aria-label':'作答區'});ta.value=dr.t||'';
+  var side=el('div',{cls:'cbt-side'}),side2=el('div',{cls:'cbt-side'},[el('span',{style:'top:4px',text:'（請從本頁第一行依序開始繕打）'})]);
+  var SYM=['，','。','、','；','：','！','？','—','○','（）','「」','『』','§','…'];
+  function b(lbl,title,f,cls){return el('button',{cls:cls||'',title:title,'aria-label':title,text:lbl,onmousedown:function(ev){ev.preventDefault()},onclick:f})}
+  var tool=el('div',{cls:'cbt-tool'},SYM.map(function(s){return b(s,'插入 '+s,function(){ins(s)})}).concat([el('span',{cls:'sep'}),
+    b('剪下','剪下 Ctrl+X',function(){ta.focus();document.execCommand('cut')},'fx'),b('複製','複製 Ctrl+C',function(){ta.focus();document.execCommand('copy')},'fx'),
+    b('貼上','貼上 Ctrl+V',function(){ta.focus();if(navigator.clipboard&&navigator.clipboard.readText)navigator.clipboard.readText().then(function(s){ins(s)}).catch(function(){modal('瀏覽器不允許讀剪貼簿，請直接按 Ctrl+V 或長按貼上。',[{t:'好'}])});else modal('請直接按 Ctrl+V 或長按貼上。',[{t:'好'}])},'fx'),
+    el('span',{cls:'sep'}),b('上一步','上一步 Ctrl+Z',undo,'fx'),b('下一步','下一步 Ctrl+Y',redo,'fx'),el('span',{cls:'sep'}),
+    b('編號','編號段落',numToggle,'fx'),b('上一層','上一層 Shift+Tab',function(){shift(-1)},'fx'),b('下一層','下一層 Tab',function(){shift(1)},'fx')]));
+  var body=el('div',{cls:'cbt-body'},[qbar,tool,el('div',{cls:'cbt-sheet'},[side,ta,side2]),stat]);
+  var tabs=el('div',{cls:'cbt-tabs'},[el('button',{text:'試題（紙本）',onclick:function(){setTab(1)}}),el('button',{cls:'on',text:'作答',onclick:function(){setTab(0)}})]);
+  function setTab(p){wrap.classList.toggle('show-paper',!!p);tabs.children[0].classList.toggle('on',!!p);tabs.children[1].classList.toggle('on',!p);window.scrollTo(0,0)}
+  var screen=el('div',{cls:'cbt-screen'},[mini,top,tabs,pop,body]);
+  var wrap=el('div',{cls:'cbt'},[paper,screen]);
+  V.appendChild(wrap);
+  // 還原：只留 4 次（考選部手冊：提供 4 次還原，和逐字還原不同）；打字停 0.8 秒或用工具列算一步
+  var past=[],fut=[],cur={v:ta.value,s:0,e:0},pend=null;
+  function snap(){return {v:ta.value,s:ta.selectionStart,e:ta.selectionEnd}}
+  function commit(){clearTimeout(pend);pend=null;if(ta.value===cur.v)return;past.push(cur);if(past.length>4)past.shift();fut=[];cur=snap()}
+  function restore(x){ta.value=x.v;ta.setSelectionRange(x.s,x.e);cur=x;changed()}
+  function undo(){commit();if(!past.length)return;fut.push(snap());restore(past.pop())}
+  function redo(){commit();if(!fut.length)return;past.push(snap());if(past.length>4)past.shift();restore(fut.pop())}
+  // 編輯
+  function setVal(v,pos){ta.value=v;ta.setSelectionRange(pos,pos);changed()}
+  function ins(s){commit();var a=ta.selectionStart,z=ta.selectionEnd,v=ta.value;var pair=s.length===2&&/^[（「『]/.test(s);
+    setVal(v.slice(0,a)+s+v.slice(z),a+(pair?1:s.length));ta.focus();commit()}
+  function lineAt(pos){var v=ta.value,a=v.lastIndexOf('\n',pos-1)+1,z=v.indexOf('\n',pos);if(z<0)z=v.length;return {a:a,z:z,s:v.slice(a,z)}}
+  function relayout(fn){                // 改一行＋重編號，游標留在同一行、離行尾同樣距離
+    commit();var v=ta.value,pos=ta.selectionStart,ls=v.split('\n'),li=v.slice(0,pos).split('\n').length-1,fromEnd=ls[li].length-(pos-(v.lastIndexOf('\n',pos-1)+1));
+    li=fn(ls,li);var nv=cbtRenumber(ls.join('\n')),nl=nv.split('\n'),p=0;for(var i=0;i<li;i++)p+=nl[i].length+1;
+    var body0=cbtParse(nl[li]);setVal(nv,p+Math.max(body0?'　'.repeat(body0.lv).length+body0.mk.length:0,nl[li].length-Math.max(0,fromEnd)));commit()}
+  function numToggle(){relayout(function(ls,li){var p=cbtParse(ls[li]);ls[li]=p?p.body:CBT_MK[0](1)+ls[li].replace(/^　+/,'');return li});ta.focus()}
+  function shift(d){var L=lineAt(ta.selectionStart);if(!cbtParse(L.s))return;   // 一般段落不能用上／下一層（手冊）
+    relayout(function(ls,li){var p=cbtParse(ls[li]),nl=Math.max(0,Math.min(5,p.lv+d));if(nl===p.lv)return li;
+      ls[li]='　'.repeat(nl)+CBT_MK[nl](1)+p.body;
+      for(var j=li+1;j<ls.length;j++){var q=cbtParse(ls[j]);if(q&&q.lv>p.lv){var ql=Math.max(0,Math.min(5,q.lv+d));ls[j]='　'.repeat(ql)+CBT_MK[ql](1)+q.body}   // 子層連動
+        else if(!q&&ls[j].charAt(0)==='　'&&ls[j].trim()){continue}else break}
+      return li});ta.focus()}
+  ta.addEventListener('keydown',function(ev){
+    if(ev.isComposing||ev.keyCode===229)return;            // 輸入法選字中不攔
+    var k=ev.key,ctl=ev.ctrlKey||ev.metaKey;
+    if(ctl&&!ev.shiftKey&&(k==='z'||k==='Z')){ev.preventDefault();undo();return}
+    if(ctl&&(k==='y'||k==='Y'||(ev.shiftKey&&(k==='z'||k==='Z')))){ev.preventDefault();redo();return}
+    if(ev.ctrlKey&&/^[osrkdfghjlepaibu]$/i.test(k)){ev.preventDefault();return}   // 考選部應試環境停用的 Ctrl 組合鍵
+    if(k==='Tab'){ev.preventDefault();shift(ev.shiftKey?-1:1);return}
+    var L=lineAt(ta.selectionStart),p=cbtParse(L.s);
+    if(k==='Enter'&&ta.selectionStart===ta.selectionEnd){
+      if(ev.shiftKey&&p){ev.preventDefault();var pad='　'.repeat(p.lv)+p.mk.replace(/[^\u0000-ÿ]/g,'　').replace(/[\u0000-ÿ]{2}/g,'　').replace(/[\u0000-ÿ]/g,' ');ins('\n'+pad);return}
+      if(p&&!p.body.trim()){ev.preventDefault();         // 空白編號：非第一層就退一層；第一層就離開編號段落
+        relayout(function(ls,li){ls[li]=p.lv?'　'.repeat(p.lv-1)+CBT_MK[p.lv-1](1):'';return li});return}
+      if(p){ev.preventDefault();var pos=ta.selectionStart;relayout(function(ls,li){var off=pos-L.a,line=ls[li];ls[li]=line.slice(0,off);ls.splice(li+1,0,'　'.repeat(p.lv)+CBT_MK[p.lv](1)+line.slice(off));return li+1});
+        var nl2=lineAt(ta.selectionStart),q2=cbtParse(nl2.s);if(q2)ta.setSelectionRange(nl2.a+'　'.repeat(q2.lv).length+q2.mk.length,nl2.a+'　'.repeat(q2.lv).length+q2.mk.length);return}}
+    if(k==='Backspace'&&p&&ta.selectionStart===ta.selectionEnd&&ta.selectionStart===L.a+p.lv+p.mk.length){ev.preventDefault();   // 編號後行首退格
+      if(p.lv===0&&!p.body.trim()){relayout(function(ls,li){ls[li]='';return li});return}
+      relayout(function(ls,li){if(li===0){ls[0]=p.body;return 0}var prevLen=ls[li-1].length;ls[li-1]+=p.body;ls.splice(li,1);return li-1});return}
+  });
+  ta.addEventListener('input',function(){clearTimeout(pend);pend=setTimeout(commit,800);changed()});
+  ta.addEventListener('click',paintStat);ta.addEventListener('keyup',paintStat);
+  // 版面計算
+  function grow(){ta.style.height='auto';var lh=parseFloat(getComputedStyle(ta).lineHeight);ta.style.height=Math.max(ta.scrollHeight,lh*CBT_ROWS)+'px';
+    side.innerHTML='';var wide=window.innerWidth>=768,pages=wide?Math.max(1,Math.ceil(ta.scrollHeight/(lh*CBT_ROWS))):1;
+    for(var i=0;i<Math.min(pages,CBT_PAGES+1);i++)side.appendChild(el('span',{style:'top:'+(i*lh*CBT_ROWS+4)+'px',text:'第1題第'+(i+1)+'頁'}))}
+  function rowsPages(){var rows=cbtRowsOf(ta.value),pos=ta.selectionStart,r=0;for(var i=0;i<rows.length;i++){if(pos>=rows[i][0]&&pos<=rows[i][1]){r=i;break}}
+    return {n:rows.length,pages:Math.ceil(rows.length/CBT_ROWS),row:r%CBT_ROWS+1,page:Math.floor(r/CBT_ROWS)+1,rows:rows}}
+  function paintStat(){var rp=rowsPages(),n=cbtCount(ta.value);stat.innerHTML='';
+    stat.appendChild(el('span',{cls:n>CBT_MAX?'over':'',text:'字數 '+n.toLocaleString()+' / 5,200'}));
+    stat.appendChild(el('span',{cls:rp.pages>CBT_PAGES?'over':'',text:'第 '+rp.page+' 頁第 '+rp.row+' 行（共 '+Math.min(rp.pages,99)+' / 8 頁）'}));
+    if(rp.pages>CBT_PAGES)stat.appendChild(el('span',{cls:'over',text:'內容超過8頁，請調整內容。'}));
+    stat.appendChild(saved);cnt2.textContent='字數 '+n.toLocaleString()+'／5,200';
+    var has=ta.value.trim()?1:0;nAns.textContent='已作答題數：'+has;nUn.textContent='未作答題數：'+(1-has);return rp}
+  function changed(){grow();var rp=paintStat();
+    if(rp.pages>=CBT_PAGES&&!warned8){warned8=true;modal('已達最末頁，請注意作答範圍。',[{t:'OK'}])}
+    if(rp.pages>CBT_PAGES&&!warnedOver){warnedOver=true;modal('內容超過8頁，請調整內容。',[{t:'OK'}])}
+    if(rp.pages<=CBT_PAGES)warnedOver=false}
+  function keep(manual){commit();save(dk,{c:dr.c||'',t:ta.value});var d=new Date();lastSave=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+    saved.textContent=(manual?'已儲存 ':'已自動儲存 ')+lastSave}
+  // 計時：時間到紅字倒數 20 秒（手冊）；倒數完只提示，不鎖定
+  function hms(s){s=Math.max(0,s);return ('0'+Math.floor(s/3600)).slice(-2)+':'+('0'+Math.floor(s%3600/60)).slice(-2)+':'+('0'+s%60).slice(-2)}
+  function tick(){var left=total-Math.floor((Date.now()-t0)/1000);
+    if(left>0){tm.textContent=hms(left);return}
+    if(left>-20){tm.textContent='00:00:00';warn.style.display='';warn.classList.add('blink');warn.textContent='考試即將於 '+(20+left)+' 秒後結束';return}
+    if(!over){over=true;warn.classList.remove('blink');keep(false);
+      modal('作答時間到。正式考試這時會自動存檔並結束；本練習不鎖定，可以繼續寫，或按「結束作答」去對照擬答。',[{t:'繼續寫',sec:true},{t:'結束作答',f:function(){done(ta.value)}}])}
+    warn.textContent='已超過作答時間 '+hms(-left-20).slice(3);tm.textContent='已超時'}
+  function tick2(){tick();tm2.textContent=tm.textContent}
+  var iv=setInterval(tick2,1000),sv=setInterval(function(){keep(false)},10000);tick2();
+  CBT_STOP=function(){clearInterval(iv);clearInterval(sv);window.removeEventListener('resize',grow);save(dk,{c:dr.c||'',t:ta.value})};
+  window.addEventListener('resize',grow);
+  // 預覽：依 26 行 × 25 字切頁
+  function preview(){keep(false);var rp=rowsPages(),pv=el('div',{cls:'cbt-pv'}),pages=el('div',{cls:'pages'}),btns=el('div',{cls:'pg-btns'});
+    var np=Math.max(1,Math.min(rp.pages,CBT_PAGES));
+    function close(){pv.remove();window.removeEventListener('keydown',esc)}
+    function esc(ev){if(ev.key==='Escape')close()}
+    for(var p=0;p<np;p++)(function(p){var pg=el('div',{cls:'pg'},[el('div',{cls:'pt',text:'第1題第'+(p+1)+'頁'})]);
+      for(var r=0;r<CBT_ROWS;r++){var row=rp.rows[p*CBT_ROWS+r];pg.appendChild(el('div',{cls:'ln',text:row?ta.value.slice(row[0],row[1]):''}))}
+      pg.onclick=function(){close();var row=rp.rows[p*CBT_ROWS];var at=row?row[0]:0;ta.focus();ta.setSelectionRange(at,at);paintStat();
+        var lh=parseFloat(getComputedStyle(ta).lineHeight);window.scrollTo(0,ta.getBoundingClientRect().top+window.scrollY+(window.innerWidth>=768?p*CBT_ROWS*lh:0)-120)};
+      pages.appendChild(pg);btns.appendChild(el('button',{text:'第'+(p+1)+'頁',onclick:function(){pg.scrollIntoView({block:'start'})}}))})(p);
+    pv.appendChild(el('div',{cls:'row'},[el('button',{cls:'end',text:'結束預覽',onclick:close}),el('b',{text:'第一題　頁數：'})]));
+    pv.appendChild(btns);pv.appendChild(el('div',{cls:'mut',text:'點某一頁的內容，會回到那一頁繼續作答。'}));pv.appendChild(pages);
+    document.body.appendChild(pv);window.addEventListener('keydown',esc)}
+  // 結束作答：確認 2 次（手冊）
+  function finish(){modal('確定要結束作答嗎？',[{t:'取消',sec:true},{t:'確定',f:function(){
+    modal('再確認一次：結束後就去對照擬答。',[{t:'取消',sec:true},{t:'結束作答',f:function(){keep(false);done(ta.value)}}])}}])}
+  changed();keep(false);saved.textContent='';ta.focus();
 }
 R.essay=function(){
   var L=D.essays.filter(inSubj),e=dailyEssay();
@@ -362,6 +678,11 @@ R.wrong=function(){
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'錯題本'}),el('div',{cls:'mut',text:'選擇 '+mq.length+' 題、申論 '+es.length+' 題、口訣 '+cs.length+' 張'}),
     el('button',{cls:'btn',text:'重練錯題 5 題',disabled:mq.length?null:'',onclick:function(){mcqRun(mq.slice(0,5))}}),
     cs.length?el('button',{cls:'btn sec',text:'重練不熟口訣',onclick:function(){cardRun(cs.length,null,cs)}}):null]));
+  var rvL=[].concat(D.mcq,D.essays).filter(function(x){var r=S.rv[x.id];return inSubj(x)&&r&&!r.done}).sort(function(a,b){return S.rv[a.id].due-S.rv[b.id].due});
+  if(rvL.length){var cr=el('div',{cls:'card'},[el('div',{cls:'h2',text:'間隔複習排程（'+rvL.length+'）'}),el('div',{cls:'mut',text:'做錯的隔 1、3、7、14 天回來；14 天那輪也答對就畢業。'})]);
+    var dueM=rvDue(D.mcq.filter(inSubj));if(dueM.length)cr.appendChild(el('button',{cls:'btn',text:'今日複習：選擇 '+Math.min(dueM.length,10)+' 題',onclick:function(){mcqRun(dueM.slice(0,10))}}));
+    rvL.slice(0,30).forEach(function(x){var isE=!!x.prompt;cr.appendChild(el('button',{cls:'li',onclick:function(){isE?essayFlow(x):mcqRun([x])}},[el('span',{cls:'tag'+(S.rv[x.id].due<=Date.now()?' r':''),text:rvNext(x.id)}),(isE?'申論 '+x.year+' 年 '+x.cat:'選擇 ')+'　'+clip(isE?x.prompt:x.q,isE?14:22)]))});
+    V.appendChild(cr)}
   if(es.length){var c=el('div',{cls:'card'},[el('div',{cls:'h2',text:'申論：不會／半會'})]);
     es.forEach(function(x){var s=S.items[x.id];c.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x)}},[el('span',{cls:'tag '+(s.self==='不會'?'r':'a'),text:s.self}),x.year+' 年 '+x.cat+'　爭點 '+(s.issues_hit||0)+'/'+(s.issues_n||0)]))});V.appendChild(c)}
   if(mq.length){var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'選擇：依錯的次數'})]);
@@ -381,7 +702,7 @@ R.stats=function(){
   c.appendChild(el('div',{cls:'h2',text:'連續 '+streak()+' 天　本週約 '+Math.round(wk/60000)+' 分鐘'}));
   V.appendChild(c);
   V.appendChild(el('div',{cls:'card mut'},[el('div',{cls:'h2',text:'資料說明'}),
-    txt('申論題目來自考選部律師二試原卷；擬答是自製（入門版／完整版）。\n選擇題答案已對考選部公告答案。\n條號、判決字號都用 Taiwan Legal RAG（tlr.py）查證過才顯示；查不到的直接不顯示。\n進度只存在這支手機，不用帳號。\n版本 '+CFG.version)]));
+    txt(SRC_NOTE+'\n申論題目來自考選部律師二試原卷；擬答是自製（入門版／完整版）。\n選擇題答案已對考選部公告答案。\n條號、判決字號都用 Taiwan Legal RAG（tlr.py）查證過才顯示；查不到的直接不顯示。\n進度只存在這支手機，不用帳號。\n版本 '+CFG.version)]));
 };
 
 // ---------- 地圖（科目 → 章節 → 主題） ----------
@@ -419,6 +740,7 @@ function topicView(id){
   // 1. 重不重要
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:t.t}),
     el('div',{},[el('span',{cls:'lvb l'+LVN[t.imp.lv],text:t.imp.lv}),el('span',{cls:'byb'+(isEst(t)?' est':''),text:t.imp.by})]),
+    el('div',{},hfTopic(t)),
     el('div',{cls:'mut',text:t.imp.why}),
     el('div',{cls:'mut',text:'筆記 '+t.imp.pages})]));
   // 2. 核心條文與口訣

@@ -246,7 +246,7 @@ body.lm-on{overflow:hidden}
 .lm-top button{font:inherit;font-size:14px;border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:6px 12px;color:#1d2430;min-height:36px}
 .lm-top button.lm-on{background:#1d2430;color:#fff;border-color:#1d2430}
 .lm-top .lm-back{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;padding:6px 6px 6px 0}
-.lm-top input{font:inherit;font-size:16px;flex:1 1 100%;min-width:0;border:1px solid #d0d5dd;border-radius:10px;padding:7px 10px;background:#fff;color:#1d2430}
+.lm-top input{font:inherit;font-size:16px;flex:1 1 140px;min-width:0;border:1px solid #d0d5dd;border-radius:10px;padding:7px 10px;background:#fff;color:#1d2430}
 .lm-hits{position:absolute;z-index:6;left:10px;right:10px;max-width:520px;max-height:50vh;overflow:auto;background:#fff;border:1px solid #d0d5dd;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;-webkit-user-select:text;user-select:text}
 .lm-hits div{padding:9px 12px;border-bottom:1px solid #eef0f3;font-size:15px;cursor:pointer}
 .lm-hits small{color:#667085}
@@ -292,6 +292,16 @@ body.lm-on{overflow:hidden}
 .lm-legend{position:absolute;z-index:3;left:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.95);border:1px solid #d0d5dd;border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.6;max-width:330px}
 .lm-sw{display:inline-block;width:16px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:2px}
 .lm-legend.lm-hide{display:none}
+/* 2026-10-29 五科地圖：科目改下拉、航線開關移進圖例 */
+.lm-top select{font:inherit;font-size:14px;border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:6px 12px;color:#1d2430;min-height:36px;-webkit-appearance:none;appearance:none;max-width:40vw}
+.lm-legend{max-height:calc(100% - 150px);overflow:auto}
+.lm-legend .lm-x{position:static;float:right;min-width:36px;min-height:36px;margin:-8px -8px 0 4px;background:none}
+.lm-tg{font:inherit;font-size:13px;border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:4px 10px;margin:4px 4px 2px 0;min-height:34px;color:#1d2430}
+.lm-tg.lm-on{background:#1d2430;color:#fff;border-color:#1d2430}
+.lm-top .lm-tool{padding:6px 10px;white-space:nowrap}
+.lm-top .lm-tool[data-k="route"].lm-on{background:#0b6e65;border-color:#0b6e65}
+.lm-bd.lm-dense{background:#fef6ee;border-color:#f9dbaf;color:#93370d}
+.lm-rt{margin:4px 0 6px;line-height:1.55}
 .lm-msg{position:absolute;left:0;right:0;top:40%;text-align:center;color:#667085;font-size:16px;padding:0 20px}
 @media (max-width:700px){
  .lm-panel{top:auto!important;height:62%;width:100%;border-left:0;border-top:1px solid #d0d5dd;border-radius:14px 14px 0 0;transform:translateY(105%);box-shadow:0 -8px 24px rgba(0,0,0,.12)}
@@ -302,12 +312,198 @@ body.lm-on{overflow:hidden}
  .lm-zm{bottom:calc(86px + env(safe-area-inset-bottom))}
  .lm-po .lm-mini,.lm-po .lm-zm{display:none}
 }
+/* ===== 整體 UI 改版 2026-10-29「好用又好看」：一套設計規則（放最後、覆蓋上面的基本樣式；lm-／cbt- 不動） =====
+   色：從圖示（白底＋青綠天秤＋定位點）延伸——紙白底、白卡片、深青綠＝主要動作與進度、黃銅金＝成就（連續天數、倒數）；紅橘灰重要度照舊。
+   字：標題用明體（法典感），內文黑體；字級 34／26／20／17／15，按鈕 ≥16px。
+   間距 4 的倍數（8／12／16／20／24）；圓角 卡片 18、控制 12、膠囊 999；陰影只有兩階（卡片 1、浮層 2）。 */
+:root{--bg:#f5f4ef;--panel:#ffffff;--tile:#f6f6f2;--line:#e4e2da;--rule:#ebe9e2;--control:#cfd0c8;
+  --ink:#1c2422;--mut:#59615e;--acc:#1b6e66;--acc-press:#134f49;--acc-d:#134f49;--acc2:#e2efec;--soft:#ecebe5;
+  --gold:#94681a;--gold2:#f6edd6;--ok:#1e7a46;--ok2:#e3f3e8;--red:#b3261e;--red2:#fbeaea;
+  --serif:"Songti TC","Noto Serif TC","Noto Serif CJK TC","PMingLiU",serif;
+  --sh1:0 1px 2px rgba(28,36,34,.05),0 2px 10px rgba(28,36,34,.05);--sh2:0 10px 30px rgba(28,36,34,.16)}
+@media (prefers-color-scheme:dark){
+ :root{--bg:#111715;--panel:#1a2220;--tile:#212a28;--line:#2c3734;--rule:#283230;--control:#3b4744;
+  --ink:#e7ecea;--mut:#a5b0ac;--acc:#5bbcae;--acc-press:#48a194;--acc-d:#8fd6cb;--acc2:#1d3935;--soft:#25302d;
+  --gold:#e0b45c;--gold2:#3a3020;--ok:#63cf91;--ok2:#1b3325;--red:#f08a83;--red2:#3b2220;--amb:#e8b85a;--amb2:#3a301b;--blue:#93b8ea;--blue2:#1e2a3a;
+  --sh1:0 1px 2px rgba(0,0,0,.3);--sh2:0 10px 30px rgba(0,0,0,.5)}
+ .btn,.btn:active{color:#0c1f1c}
+ .jud .je,.ans .qa .aa{color:var(--mut)}
+ .unv{background:var(--soft);color:var(--mut)}
+}
+body{background:var(--bg)}
+header{background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule)}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand svg{width:30px;height:30px;flex:none;color:var(--acc)}
+header b{font-family:var(--serif);font-weight:700;font-size:21px;letter-spacing:.02em}
+nav{background:color-mix(in srgb,var(--panel) 94%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+nav button{color:var(--mut)}
+nav button.on{color:var(--acc)}
+nav button.on svg{color:var(--acc)}
+.nav-brand{display:none}
+.card{background:var(--panel);border:1px solid var(--line);box-shadow:var(--sh1);border-radius:18px}
+.card .card{box-shadow:none}
+.greet{font-family:var(--serif);font-weight:700;font-size:30px;letter-spacing:.01em}
+.h1{font-family:var(--serif);font-weight:700;letter-spacing:.01em}
+.prog div{background:var(--tile)}
+.opt{background:var(--panel);border-color:var(--line);box-shadow:var(--sh1)}
+.opt.right{background:var(--ok2)}
+.opt.wrong{background:var(--red2)}
+.mdl,.sj-menu{background:var(--panel);color:var(--ink)}
+.sj-menu{border-color:var(--line);box-shadow:var(--sh2)}
+.chip{background:var(--panel)}
+.seg button.on{background:var(--panel);box-shadow:var(--sh1)}
+.empty{padding:36px 16px}
+.empty .ic{width:56px;height:56px;margin:0 auto 10px;border-radius:50%;background:var(--acc2);color:var(--acc);display:flex;align-items:center;justify-content:center}
+.empty .ic svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.empty b{display:block;color:var(--ink);font-size:18px;margin-bottom:4px}
+.empty .btn{max-width:320px;margin:16px auto 0}
+/* 頁首：日期＋連續天數＋考試倒數 */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:4px 4px 16px}
+.pill{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:6px 14px;font-size:16px;min-height:40px;background:var(--gold2);color:var(--gold);font-weight:600}
+.pill svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pill.set{background:var(--panel);color:var(--acc);border:1.5px dashed var(--control);font-weight:600}
+.pill.mute{background:var(--soft);color:var(--mut)}
+/* 今日目標：進度環＋單一主按鈕 */
+.hero{display:flex;flex-direction:column;gap:14px;padding:22px}
+.hero-top{display:flex;align-items:center;gap:18px}
+.ring{position:relative;flex:none}
+.ring svg{display:block;width:100%;height:100%}
+.ring .rg-bg{fill:none;stroke:var(--soft)}
+.ring .rg-fg{fill:none;stroke:var(--acc);stroke-linecap:round;transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)}
+.ring.gold .rg-fg{stroke:var(--gold)}
+.ring .rg-in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+.ring .rg-in b{font-size:26px;font-weight:600;color:var(--ink)}
+.ring .rg-in small{font-size:13px;color:var(--mut)}
+.hero .prog{flex:1;flex-direction:column;gap:6px;margin:0}
+.hero .prog div{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-radius:12px;text-align:left;font-size:16px}
+.hero .prog b{display:inline;font-size:18px;order:2}
+.hero .prog div.done::after{content:"✓";order:3;margin-left:6px;font-weight:700}
+.hero .btn{margin:0}
+.hero .sub{font-size:15px;color:var(--mut);text-align:center}
+/* 法律地圖入口：七科大陸，擺位同地圖（實體法旁接程序法） */
+.mapc .h2{display:flex;align-items:center;gap:8px}
+.mapc .h2 svg{width:22px;height:22px;color:var(--acc)}
+.conts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(64px,auto));gap:6px;margin:10px 0 4px}
+.ct{position:relative;border:0;border-radius:14px;padding:8px 10px 10px;text-align:left;min-height:64px;font-size:16px;line-height:1.25;
+  background:hsl(var(--h) 38% 91%);color:hsl(var(--h) 45% 20%);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.ct b{font-family:var(--serif);font-size:17px;font-weight:700}
+.ct small{font-size:13px;opacity:.85}
+.ct i{position:absolute;left:0;bottom:0;height:4px;background:hsl(var(--h) 45% 38%);border-radius:0 4px 0 0}
+.ct.big b{font-size:22px}
+@media (prefers-color-scheme:dark){.ct{background:hsl(var(--h) 22% 22%);color:hsl(var(--h) 40% 86%)}.ct i{background:hsl(var(--h) 50% 60%)}}
+.c-民法{grid-column:1/3;grid-row:1/3;--h:162}.c-民事訴訟法{grid-column:3;grid-row:1/3;--h:262}.c-商事法{grid-column:4;grid-row:1;--h:88}
+.c-刑法{grid-column:1/3;grid-row:3;--h:16}.c-刑事訴訟法{grid-column:3;grid-row:3;--h:300}.c-憲法{grid-column:4;grid-row:2;--h:42}.c-行政法{grid-column:4;grid-row:3;--h:212}
+.linkb{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;min-height:44px;padding:4px 0}
+/* 小卡格線（電腦、平板兩欄） */
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:0 16px}
+@media (max-width:767px){.home2{display:flex;flex-direction:column}.home2>div{display:contents}.home2 .card{order:3}}
+.tile .h2{display:flex;align-items:center;gap:8px}
+.tile .h2 .ic{width:34px;height:34px;border-radius:10px;background:var(--acc2);color:var(--acc);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.tile .h2 .ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.kv{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:15px;color:var(--mut);margin:2px 0 0}
+.kv b{color:var(--ink);font-weight:600}
+.minibar{height:6px;background:var(--soft);border-radius:999px;overflow:hidden;margin:10px 0 0}
+.minibar i{display:block;height:100%;background:var(--acc);border-radius:999px}
+/* 做題：進度條＋即時回饋 */
+.qbar{position:sticky;top:calc(env(safe-area-inset-top) + 65px);z-index:4;display:flex;align-items:center;gap:10px;margin:-4px -4px 12px;padding:8px 4px;background:var(--bg)}
+.qbar .qx{border:0;background:var(--soft);color:var(--ink);border-radius:999px;width:40px;height:40px;font-size:20px;line-height:1;flex:none}
+.qtrack{flex:1;height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
+.qtrack i{display:block;height:100%;background:var(--acc);border-radius:999px;transition:width .4s ease}
+.qbar .qn{font-size:16px;font-weight:600;min-width:52px;text-align:right}
+.qbar .qs{font-size:15px;color:var(--ok);font-weight:600;white-space:nowrap}
+.opt .ok-ic{float:right;font-weight:700;margin-left:8px}
+.opt.right{animation:pq-pop .34s ease}
+.opt.wrong{animation:pq-shake .38s ease}
+@keyframes pq-pop{40%{transform:scale(1.025)}100%{transform:none}}
+@keyframes pq-shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}100%{transform:none}}
+.fb{display:flex;align-items:center;gap:10px;border-radius:14px;padding:12px 16px;margin:0 0 12px;font-size:18px;font-weight:600;animation:pq-in .3s ease}
+.fb.ok{background:var(--ok2);color:var(--ok)}
+.fb.no{background:var(--red2);color:var(--red)}
+.fb .fi{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:18px;flex:none}
+.fb.ok .fi{background:var(--ok)}.fb.no .fi{background:var(--red)}
+.fb small{font-size:14px;font-weight:400;margin-left:auto;opacity:.9}
+@keyframes pq-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* 結算頁 */
+.res{text-align:center}
+.res .ring{margin:4px auto 10px}
+.res .cmp{display:inline-block;border-radius:999px;padding:4px 14px;font-size:15px;font-weight:600;background:var(--soft);color:var(--mut);margin:6px 0 0}
+.res .cmp.up{background:var(--ok2);color:var(--ok)}.res .cmp.down{background:var(--red2);color:var(--red)}
+/* 進度頁：各科長條、各章熱度 */
+.stats4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.st{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;box-shadow:var(--sh1)}
+.st b{display:block;font-size:26px;line-height:1.25;font-weight:600}
+.st small{font-size:14px;color:var(--mut)}
+.st.gold b{color:var(--gold)}
+.st button{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;padding:0;min-height:30px}
+.st>button{display:block;font-size:18px;min-height:34px;text-align:left}
+.wk{display:flex;align-items:flex-end;gap:8px;height:110px;margin:8px 0 0}
+.wk div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:13px;color:var(--mut);gap:4px}
+.wk i{display:block;width:100%;max-width:34px;background:var(--acc);border-radius:6px 6px 2px 2px;min-height:3px}
+.wk i.z{background:var(--soft)}
+.wk div.td{color:var(--ink);font-weight:600}
+.sjr{display:block;width:100%;text-align:left;border:0;background:none;padding:10px 0;border-top:1px solid var(--rule);color:var(--ink)}
+.sjr:first-of-type{border-top:0}
+.sjr .nm{display:flex;justify-content:space-between;align-items:baseline;font-size:17px;font-weight:600}
+.sjr .nm small{font-size:14px;color:var(--mut);font-weight:400}
+.sjr .two{display:flex;gap:4px;height:12px;margin:6px 0 2px;background:var(--soft);border-radius:999px;overflow:hidden}
+.sjr .two i{display:block;height:100%}
+.sjr .two .m{background:var(--acc)}.sjr .two .s{background:color-mix(in srgb,var(--acc) 30%,var(--soft))}
+.sjr.cur .nm::after{content:"目前科目";font-size:12px;font-weight:600;color:var(--acc);background:var(--acc2);border-radius:999px;padding:1px 8px;margin-left:8px}
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin:8px 0 4px}
+.hc{border:0;border-radius:12px;padding:8px 10px;text-align:left;font-size:15px;line-height:1.3;min-height:58px;color:var(--ink)}
+.hc b{display:block;font-weight:600;font-size:15px}
+.hc small{font-size:13px;color:inherit;opacity:.85}
+.hc.h0{background:var(--panel);border:1.5px dashed var(--control);color:var(--mut)}
+.hc.h1{background:#f7d9d5;color:#7a1d16}.hc.h2{background:#f8e6c4;color:#6b4300}.hc.h3{background:#d8ece4;color:#14514a}.hc.h4{background:#b4dccf;color:#0e3f39}
+.hc.weak{outline:3px solid var(--red);outline-offset:1px}
+@media (prefers-color-scheme:dark){.hc.h1{background:#4a2421;color:#f6c8c3}.hc.h2{background:#4a3a1c;color:#f3d9a4}.hc.h3{background:#1f3f39;color:#b9e3d9}.hc.h4{background:#245a51;color:#d9f3ec}}
+.hleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--mut);margin:4px 0 0}
+.hleg span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px;background:var(--c)}
+.weakc{border:1.5px solid color-mix(in srgb,var(--red) 40%,var(--line))}
+/* 主題整理 ↔ 地圖 */
+.tli-row{display:flex;align-items:center;border-top:1px solid var(--rule)}
+.tli-row:first-of-type{border-top:0}
+.tli-row .tli{border-top:0;flex:1;min-width:0}
+.pin{flex:none;border:0;background:var(--acc2);color:var(--acc);border-radius:10px;width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;margin-left:4px}
+.pin svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sjh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.sjh .h2{margin:0;font-family:var(--serif);font-size:21px}
+.mbadge{font-size:13px;font-weight:600;border-radius:999px;padding:1px 8px;margin-left:6px;background:var(--soft);color:var(--mut);white-space:nowrap}
+.mbadge.g{background:var(--acc2);color:var(--acc)}
+.mapbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--control);background:var(--panel);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:600;min-height:40px;white-space:nowrap}
+.mapbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* 平板以上：兩欄；電腦：左側導覽、內容放寬，不再兩側空白 */
+@media (min-width:768px){
+ main{max-width:960px;padding-left:24px;padding-right:24px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .grid>.span2{grid-column:1/-1}
+ .stats4{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .home2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0 18px;align-items:start}
+}
+@media (min-width:1024px){
+ body{padding-left:248px}
+ body.cbt-on{padding-left:0}
+ nav{top:0;right:auto;bottom:0;width:248px;flex-direction:column;justify-content:flex-start;gap:4px;padding:18px 14px;border-top:0;border-right:1px solid var(--line);background:var(--panel)}
+ nav .nav-brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;margin-bottom:6px;border-bottom:1px solid var(--rule)}
+ nav .nav-brand svg{width:36px;height:36px;color:var(--acc)}
+ nav .nav-brand b{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink);letter-spacing:.02em}
+ nav button,nav button[data-t="map"]{flex:none;display:flex;align-items:center;gap:12px;padding:10px 14px;min-height:50px;font-size:17px;text-align:left;border-radius:12px}
+ nav button svg{margin:0}
+ nav button.on{background:var(--acc2)}
+ nav button:hover:not(.on){background:var(--soft)}
+ header .brand{visibility:hidden}
+ header{padding-left:32px;padding-right:32px}
+ main{max-width:1120px;padding:24px 40px 48px}
+ .qbar{top:65px}
+}
+@media (prefers-reduced-motion:reduce){.opt.right,.opt.wrong,.fb{animation:none}.ring .rg-fg,.qtrack i{transition:none}}
 </style>
 </head>
 <body>
-<header><b id="appName"></b><small id="appNote"></small><span class="sp"></span><button id="subjBtn" aria-label="切換科目"></button></header>
+<header><span class="brand"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 61C25.5 51.5 9 41.5 9 26.5a23 23 0 0 1 46 0C55 41.5 38.5 51.5 32 61z" fill="currentColor"/><g fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M32 13v24M25 37h14M19 19h26M19 19l-4.5 10M19 19l4.5 10M45 19l-4.5 10M45 19l4.5 10"/></g><path d="M13.5 29a5.5 5.5 0 0 0 11 0zM39.5 29a5.5 5.5 0 0 0 11 0z" fill="#fff"/><circle cx="32" cy="12.5" r="2.4" fill="#fff"/></svg><b id="appName"></b></span><small id="appNote"></small><span class="sp"></span><button id="subjBtn" aria-label="切換科目"></button></header>
 <main id="view"></main>
 <nav>
+  <div class="nav-brand" aria-hidden="true"></div>
   <button data-t="home"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4"/></svg>今天</button>
   <button data-t="map"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4.5 3.5 6.5v13L9 17.5l6 2 5.5-2v-13L15 6.5l-6-2z"/><path d="M9 4.5v13M15 6.5v13"/></svg>主題整理</button>
   <button data-t="practice"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7.5" y="3" width="12" height="15.5" rx="2.5"/><path d="M4.5 7.5v10.5a3 3 0 0 0 3 3h8"/></svg>練習</button>
@@ -327,6 +523,7 @@ var DAY=86400000;
 var V=document.getElementById('view');
 document.getElementById('appName').textContent=CFG.app_name;
 document.getElementById('appNote').textContent=CFG.app_name_note==='暫名'?'（暫名）':'';
+(function(){var nb=document.querySelector('.nav-brand');nb.innerHTML=document.querySelector('.brand svg').outerHTML+'<b></b>';nb.querySelector('b').textContent=CFG.app_name})();
 
 // ---------- 存取 ----------
 function load(k,d){try{var v=localStorage.getItem(K+k);return v?JSON.parse(v):d}catch(e){return d}}
@@ -463,7 +660,7 @@ function modal(msg,btns){
 var cur='home';
 var tabs=document.querySelectorAll('nav button');
 tabs.forEach(function(b){b.onclick=function(){go(b.dataset.t)}});
-function go(t,arg){cur=t;tabs.forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});clear();(R[t]||R.home)(arg)}
+function go(t,arg){if(t==='lmap'&&cur!=='lmap')LM_FROM=cur;cur=t;tabs.forEach(function(b){b.classList.toggle('on',b.dataset.t===t)});clear();(R[t]||R.home)(arg)}
 var R={};
 
 // ---------- 今天 ----------
@@ -477,36 +674,83 @@ function dailyEssay(){
   var seed=t.replace(/-/g,'')|0;
   cand.sort(function(a,b){return (a.points||99)-(b.points||99)||h(a.id+seed)-h(b.id+seed)});
   var pick=cand[Math.abs(seed)%Math.min(cand.length,8)];save(key,{d:t,id:pick.id});return pick}
+// ---------- 整體 UI 改版 2026-10-29：共用小元件（圖示、進度環、考試倒數、熟練度、七科大陸入口、空狀態） ----------
+var IC={map:'<path d="M9 4.5 3.5 6.5v13L9 17.5l6 2 5.5-2v-13L15 6.5l-6-2z"/><path d="M9 4.5v13M15 6.5v13"/>',
+  pin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  flame:'<path d="M12 3c.5 3.5 4.5 5.5 4.5 10a4.5 4.5 0 0 1-9 0c0-2.4 1.3-3.6 2.2-4.8.4 1.4 1.2 2.2 2.1 2.6C11.4 8.6 11.2 5.6 12 3z"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4"/>',
+  cards:'<rect x="7.5" y="3" width="12" height="15.5" rx="2.5"/><path d="M4.5 7.5v10.5a3 3 0 0 0 3 3h8"/>',
+  check:'<rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="m8 12 3 3 5-6"/>',
+  pen:'<path d="M4 20h4.5L19.5 9a2.1 2.1 0 0 0-3-3L5.5 17 4 20z"/><path d="M14.5 8l3 3M13 20h7"/>',
+  book:'<path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v15H7.5A2.5 2.5 0 0 0 5 20.5v-15z"/><path d="M5 20.5A2.5 2.5 0 0 1 7.5 18H19v3H7.5"/>',
+  list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+  chart:'<path d="M5 20v-7M12 20V5M19 20v-10"/>'};
+function ic(k,cls){var s=el('span',{cls:cls||'ic'});s.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">'+IC[k]+'</svg>';return s}
+function ring(p,size,big,small,gold){var w=size<100?8:11,r=(size-w)/2,c=2*Math.PI*r,box=el('div',{cls:'ring'+(gold?' gold':''),style:'width:'+size+'px;height:'+size+'px'});
+  box.innerHTML='<svg viewBox="0 0 '+size+' '+size+'" aria-hidden="true"><circle class="rg-bg" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke-width="'+w+'"/><circle class="rg-fg" cx="'+size/2+'" cy="'+size/2+'" r="'+r+'" stroke-width="'+w+'" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+c.toFixed(1)+'" transform="rotate(-90 '+size/2+' '+size/2+')"/></svg>';
+  box.appendChild(el('div',{cls:'rg-in'},[el('b',{text:big}),small?el('small',{text:small}):null]));
+  var fg=box.querySelector('.rg-fg');requestAnimationFrame(function(){requestAnimationFrame(function(){fg.setAttribute('stroke-dashoffset',(c*(1-Math.max(0,Math.min(1,p)))).toFixed(1))})});return box}
+// 考試倒數：考期由使用者自己設（App 不預設任何日期）
+function examDays(){if(!S.exam)return null;var d=new Date(S.exam+'T00:00:00');if(isNaN(d))return null;return Math.round((d.getTime()-sod(Date.now()))/DAY)}
+function examPill(){var n=examDays(),b=el('button',{cls:'pill'+(n==null?' set':n<0?' mute':''),onclick:examEdit},[ic('cal',''),n==null?'設定考試日期':n>0?'距考試 '+n+' 天':n===0?'今天考試':'考試已過 '+(-n)+' 天']);
+  b.setAttribute('aria-label',n==null?'設定考試日期（自己填，App 不預設）':'考試日期 '+S.exam+'，點一下修改');return b}
+function examEdit(){var inp=el('input',{type:'date',value:S.exam||'','aria-label':'考試日期'});inp.style.cssText='width:100%;font:inherit;font-size:18px;padding:10px 12px;border:1.5px solid var(--control);border-radius:12px;background:var(--panel);color:var(--ink);margin:8px 0 4px';
+  var bg=el('div',{cls:'mdl-bg'}),close=function(){bg.remove()};
+  bg.appendChild(el('div',{cls:'mdl',role:'dialog','aria-modal':'true'},[el('div',{cls:'h2',text:'考試日期'}),
+    el('div',{cls:'mut',style:'text-align:left',text:'填你自己確認過的日期（例如考選部公告的考期）。App 不會自己預設日期；只存在這支手機。'}),inp,
+    el('div',{cls:'btns'},[el('button',{cls:'btn sec',text:S.exam?'清除':'取消',onclick:function(){if(S.exam){delete S.exam;persist()}close();go(cur)}}),
+      el('button',{cls:'btn',text:'儲存',onclick:function(){if(/^\d{4}-\d{2}-\d{2}$/.test(inp.value)){S.exam=inp.value;persist()}close();go(cur)}})])]));
+  document.body.appendChild(bg);bg.onclick=function(e){if(e.target===bg)close()}}
+// 熟練度：熟練＝連續答對 2 次以上（box≥2），沿用原進度頁的定義
+function mast(L){var m=0,seen=0,r=0,w=0;L.forEach(function(x){var s=S.items[x.id];if(!s)return;if(s.box>=2)m++;if(s.seen)seen++;r+=s.right||0;w+=s.wrong||0});
+  return {n:L.length,m:m,seen:seen,p:L.length?m/L.length:0,acc:r+w?r/(r+w):null,att:r+w}}
+function sjItems(sj){return [].concat(D.cards,D.mcq,D.essays).filter(function(x){return x.subj===sj})}
+function contTiles(){var box=el('div',{cls:'conts',role:'group','aria-label':'七科大陸：點一科進地圖'});
+  SJ_ALL.forEach(function(sj){var L=sjItems(sj),q=D.mcq.filter(function(x){return x.subj===sj}).length+D.essays.filter(function(x){return x.subj===sj}).length,M=mast(L);
+    var b=el('button',{cls:'ct c-'+sj+(sj==='民法'||sj==='刑法'?' big':''),onclick:function(){go('lmap',{sj:sj})},'aria-label':sj+'：'+q+' 題，熟練 '+Math.round(M.p*100)+'%，點進地圖'},
+      [el('b',{text:SJ_SHORT[sj]||sj}),el('small',{text:q+' 題'+(M.m?'・熟練 '+Math.round(M.p*100)+'%':'')}),el('i')]);
+    b.lastChild.style.width=Math.max(M.p*100,M.m?4:0)+'%';box.appendChild(b)});return box}
+function mapCard(){return el('div',{cls:'card mapc'},[el('div',{cls:'h2'},[ic('map',''),'法律地圖']),
+  el('div',{cls:'mut',text:'七科七塊大陸：實體法旁邊就是它的程序法。點一科直接飛到那一塊；底線＝你的熟練度。'}),contTiles(),
+  el('button',{cls:'linkb',text:'打開整張地圖 →',onclick:function(){go('lmap')}})])}
+function emptyBox(k,title,msg,btn){var e=el('div',{cls:'empty'},[ic(k),el('b',{text:title}),el('div',{text:msg})]);if(btn)e.appendChild(el('button',{cls:'btn',text:btn[0],onclick:btn[1]}));return e}
+
 R.home=function(){
-  var r=dayRec(),st=streak();
-  var nd=new Date();
+  var r=dayRec(),st=streak(),nd=new Date(),g=[Math.min(r.card,3),Math.min(r.mcq,5),Math.min(r.essay,1)],dn=g[0]+g[1]+g[2];
   V.appendChild(el('h1',{cls:'greet streak',text:(nd.getMonth()+1)+' 月 '+nd.getDate()+' 日 週'+'日一二三四五六'[nd.getDay()]}));
-  V.appendChild(el('div',{cls:'greet-sub',text:st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘'}));
-  V.appendChild(el('div',{cls:'card'},[
+  V.appendChild(el('div',{cls:'greet-sub',text:dn>=9?'今天的目標完成了，明天會先出今天錯的。':st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘'}));
+  V.appendChild(el('div',{cls:'pills'},[el('span',{cls:'pill'+(st?'':' mute')},[ic('flame',''),st?'連續 '+st+' 天':'還沒開始連續']),examPill()]));
+  // 1. 今天：一個清楚的下一步（進度環＋單一主按鈕）
+  var main=dn===0?['開始今天',startToday]:dn<9?['繼續今天（還差 '+(9-dn)+' 項）',startToday]:['目標完成，再練 5 題選擇',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}];
+  var hero=el('div',{cls:'card hero'},[el('div',{cls:'hero-top'},[ring(dn/9,104,dn+'/9',dn>=9?'完成':'今日目標',dn>=9),
     el('div',{cls:'prog'},[
-      el('div',{cls:r.card>=3?'done':''},[el('b',{text:Math.min(r.card,3)+'/3'}),'閃卡']),
-      el('div',{cls:r.mcq>=5?'done':''},[el('b',{text:Math.min(r.mcq,5)+'/5'}),'選擇']),
-      el('div',{cls:r.essay>=1?'done':''},[el('b',{text:Math.min(r.essay,1)+'/1'}),'申論'])]),
-    el('button',{cls:'btn big',text:'開始今天',onclick:startToday})
-  ]));
-  // 今天一題（改版第一批）
-  var pe=onePackEssay();
-  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'今天一題'}),
-    el('div',{cls:'mut',text:'申論 1 題＋選擇 10 題。先出今日複習，再出較少練過的。'+(pe?'今天的申論：'+pe.year+' 年 '+pe.cat:'')}),
-    el('button',{cls:'btn',text:'今天一題（申論 1＋選擇 10）',onclick:onePack})]));
-  // 今日複習（改版第一批）
+      el('div',{cls:r.card>=3?'done':''},['閃卡',el('b',{text:Math.min(r.card,3)+'/3'})]),
+      el('div',{cls:r.mcq>=5?'done':''},['選擇',el('b',{text:Math.min(r.mcq,5)+'/5'})]),
+      el('div',{cls:r.essay>=1?'done':''},['申論',el('b',{text:Math.min(r.essay,1)+'/1'})])])]),
+    el('button',{cls:'btn big',text:main[0],onclick:main[1]}),
+    el('div',{cls:'sub',text:'閃卡 3 張 → 選擇 5 題 → 申論 1 題，照順序帶你做完'})]);
+  var L=el('div'),Rt=el('div');L.appendChild(hero);hero.style.order=1;
+  // 2. 今日複習（到期才有按鈕）
   var dm=rvDue(D.mcq.filter(inSubj)),de=rvDue(D.essays.filter(inSubj));
-  var rc=el('div',{cls:'card'},[el('div',{cls:'h2',text:'今日複習'}),
+  var rc=el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('check'),'今日複習']),
     el('div',{cls:'mut',text:(dm.length+de.length)?'到期：選擇 '+dm.length+' 題、申論 '+de.length+' 題。做錯的會隔 1、3、7、14 天再回來。':'今天沒有到期的複習。做錯的會隔 1、3、7、14 天回到這裡。'})]);
-  if(dm.length)rc.appendChild(el('button',{cls:'btn',text:'複習選擇 '+Math.min(dm.length,10)+' 題',onclick:function(){mcqRun(dm.slice(0,10))}}));
+  if(dm.length)rc.appendChild(el('button',{cls:'btn ghost',text:'複習選擇 '+Math.min(dm.length,10)+' 題',onclick:function(){mcqRun(dm.slice(0,10))}}));
   de.slice(0,3).forEach(function(x){rc.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x)}},[el('span',{cls:'tag a',text:'申論'}),x.year+' 年 '+x.cat+'　'+clip(x.prompt,18)]))});
-  V.appendChild(rc);
+  L.appendChild(rc);
+  // 3. 今天一題（改版第一批）
+  var pe=onePackEssay();
+  L.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('cards'),'今天一題']),
+    el('div',{cls:'mut',text:'申論 1 題＋選擇 10 題。先出今日複習，再出較少練過的。'+(pe?'今天的申論：'+pe.year+' 年 '+pe.cat:'')}),
+    el('button',{cls:'btn ghost',text:'今天一題（申論 1＋選擇 10）',onclick:onePack})]));
+  // 右欄：法律地圖入口（首頁主角之一）＋今日申論
+  var mpc=mapCard();mpc.style.order=2;Rt.appendChild(mpc);
   var e=dailyEssay();
-  if(e)V.appendChild(el('div',{cls:'card'},[el('div',{cls:'mut',text:'今日一題申論'}),
-    el('div',{cls:'h2'},[subjTag(e),e.year+' 年 '+e.cat+'（'+(e.points||'?')+' 分）']),
-    el('div',{cls:'mut',text:clip(e.prompt||e.stem,70)}),
+  if(e)Rt.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('pen'),'今日一題申論']),
+    el('div',{cls:'kv'},[subjTag(e),e.year+' 年 '+e.cat+'（'+(e.points||'?')+' 分）']),
+    el('div',{cls:'mut',style:'margin-top:6px',text:clip(e.prompt||e.stem,70)}),
     el('button',{cls:'btn ghost',text:'直接寫申論',onclick:function(){essayFlow(e)}})]));
-  V.appendChild(el('div',{cls:'card mut'},['題庫：申論 '+D.essays.filter(inSubj).length+' 題、選擇 '+D.mcq.filter(inSubj).length+' 題、口訣 '+D.cards.filter(inSubj).length+' 張（目前科目：'+SUBJ[S.subj]+'）。']));
+  var wrap=el('div',{cls:'home2'},[L,Rt]);V.appendChild(wrap);
+  V.appendChild(el('div',{cls:'mut',style:'text-align:center;margin:8px 0 0;font-size:14px',text:'題庫：申論 '+D.essays.filter(inSubj).length+' 題、選擇 '+D.mcq.filter(inSubj).length+' 題、口訣 '+D.cards.filter(inSubj).length+' 張（目前科目：'+SUBJ[S.subj]+'）'}));
 };
 function clip(s,n){s=String(s||'').replace(/\s+/g,' ');return s.length>n?s.slice(0,n)+'…':s}
 function startToday(){
@@ -544,43 +788,82 @@ function cardRun(n,next,list){
     function ans(ok){grade(c.id,ok);dayRec().card++;persist();i++;show()}
     var acts=el('div',{cls:'btns'},[el('button',{cls:'btn sec',text:'← 還不熟',onclick:function(){ans(false)}}),el('button',{cls:'btn',text:'會了 →',onclick:function(){ans(true)}})]);
     acts.style.visibility='hidden';
-    V.appendChild(box);V.appendChild(acts);
+    V.appendChild(qbar(i,L.length,null,function(){go(cur)}));V.appendChild(box);V.appendChild(acts);
     V.appendChild(el('div',{cls:'mut',style:'text-align:center;margin-top:8px',text:'翻面後可左滑「還不熟」、右滑「會了」'}));
   }
   show();
 }
 
 // ---------- 選擇題 ----------
+// 做題頂列（整體 UI 改版）：結束鍵、進度條、題數、本輪答對數
+function qbar(i,n,okN,quit){var t=el('div',{cls:'qtrack',role:'progressbar','aria-valuemin':'0','aria-valuemax':String(n),'aria-valuenow':String(i)},[el('i')]);t.firstChild.style.width=(i/n*100)+'%';
+  var bar=el('div',{cls:'qbar'},[el('button',{cls:'qx','aria-label':'結束這一輪',text:'×',onclick:quit}),t,okN==null?null:el('span',{cls:'qs',text:'✓ '+okN}),el('span',{cls:'qn',text:Math.min(i+1,n)+'/'+n})]);
+  bar.set=function(k,ok){t.firstChild.style.width=(k/n*100)+'%';t.setAttribute('aria-valuenow',String(k));if(ok!=null&&bar.querySelector('.qs'))bar.querySelector('.qs').textContent='✓ '+ok};return bar}
 function mcqRun(L,next){
-  var i=0;if(!L.length){alert('目前沒有到期的選擇題');return next&&next()}
+  var i=0,okN=0,wrongL=[],solo=!next&&L.length>=3;if(!L.length){alert('目前沒有到期的選擇題');return next&&next()}
+  function quit(){if(solo&&i>0)return mcqResult(L.slice(0,i),okN,wrongL);go(cur)}
   function show(){
-    clear();if(i>=L.length)return next?next():go('practice');
-    var q=L[i],answered=false;
+    clear();if(i>=L.length)return solo?mcqResult(L,okN,wrongL):next?next():go('practice');
+    var q=L[i],answered=false,bar=qbar(i,L.length,L.length>1?okN:null,quit);
     var c=el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(q),el('span',{cls:'mut',text:(q.year||'')+' 年 第 '+(q.n||'?')+' 題　'+(i+1)+'/'+L.length})]),
       el('div',{},hfTags(q,['q','o','ex'])),txt(q.q,'h2'),srcNote()]);
-    var opts=[],exp=el('div');
+    var opts=[],exp=el('div',{style:'scroll-margin-top:140px'});
     q.o.forEach(function(o,k){var b=el('button',{cls:'opt'},[String.fromCharCode(65+k)+'. ',o]);
       b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
+        opts[q.a].insertBefore(el('span',{cls:'ok-ic',text:'✓'}),opts[q.a].firstChild);if(!ok)b.insertBefore(el('span',{cls:'ok-ic',text:'✕'}),b.firstChild);
+        if(ok)okN++;else wrongL.push(q);bar.set(i+1,okN);
         grade(q.id,ok);rvMark(q.id,ok);dayRec().mcq++;persist();
-        exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:ok?'答對':'答錯，正解 '+String.fromCharCode(65+q.a)}),exBox(q),
+        exp.appendChild(el('div',{cls:'fb '+(ok?'ok':'no'),role:'status'},[el('span',{cls:'fi',text:ok?'✓':'✕'}),ok?'答對了':'答錯了，正解是 '+String.fromCharCode(65+q.a),
+          L.length>1?el('small',{text:'本輪 '+okN+'/'+(i+1)}):null]));
+        exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'詳解'}),exBox(q),
           rvNext(q.id)?el('div',{cls:'rvs',text:'複習：'+rvNext(q.id)}):null,el('div',{cls:'qid',text:q.id})]));
-        exp.appendChild(el('button',{cls:'btn',text:i+1<L.length?'下一題':'完成',onclick:function(){i++;show()}}));
+        exp.appendChild(el('button',{cls:'btn',text:i+1<L.length?'下一題':solo?'看結果':'完成',onclick:function(){i++;show()}}));
         exp.scrollIntoView({behavior:'smooth',block:'start'})};
       opts.push(b);c.appendChild(b)});
-    V.appendChild(c);V.appendChild(exp);
+    V.appendChild(bar);V.appendChild(c);V.appendChild(exp);
   }
   show();
 }
+// 結算頁（整體 UI 改版）：答對率、與上一輪比較（只比自己存在本機的上一輪）、錯題直達
+function mcqResult(L,okN,wrongL){
+  clear();var n=L.length,p=n?okN/n:0,last=load('last_mcq',null);save('last_mcq',{n:n,ok:okN,at:Date.now()});
+  var cmp=null;if(last&&last.n){var lp=Math.round(last.ok/last.n*100),d=Math.round(p*100)-lp;cmp=el('div',{cls:'cmp'+(d>0?' up':d<0?' down':''),text:'上一輪 '+lp+'%（'+last.ok+'/'+last.n+'）・'+(d>0?'進步 '+d+' 分':d<0?'退步 '+(-d)+' 分':'持平')})}
+  var c=el('div',{cls:'card res'},[ring(p,132,Math.round(p*100)+'%','答對率',p>=.8),el('div',{cls:'h1',text:'這一輪答對 '+okN+' / '+n}),
+    cmp||el('div',{cls:'cmp',text:'這是第一輪，下次會跟這次比'}),
+    el('div',{cls:'mut',style:'margin-top:8px',text:wrongL.length?'錯的 '+wrongL.length+' 題已排進間隔複習（明天開始）。':'全對！這幾題會隔 3 天以上再出。'})]);
+  V.appendChild(c);
+  if(wrongL.length){var w=el('div',{cls:'card'},[el('div',{cls:'h2',text:'這一輪錯的（'+wrongL.length+'）'})]);
+    wrongL.forEach(function(q){w.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([q])}},[subjTag(q),q.year+' 年 第 '+q.n+' 題　'+clip(q.q,26)]))});
+    w.appendChild(el('button',{cls:'btn',text:'重練這 '+wrongL.length+' 題錯題',onclick:function(){mcqRun(wrongL.slice())}}));
+    w.appendChild(el('button',{cls:'btn sec',text:'看錯題本',onclick:function(){go('wrong')}}));V.appendChild(w)}
+  V.appendChild(el('div',{cls:'btns'},[el('button',{cls:'btn sec',text:'回練習',onclick:function(){go('practice')}}),
+    el('button',{cls:wrongL.length?'btn ghost':'btn',text:'再練 5 題',onclick:function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}})]))}
 
 // ---------- 練習 ----------
 R.practice=function(){
-  var cards=D.cards.filter(inSubj),mcq=D.mcq.filter(inSubj),now=Date.now();
+  var cards=D.cards.filter(inSubj),mcq=D.mcq.filter(inSubj),now=Date.now(),es=D.essays.filter(inSubj);
   function dueN(L){return L.filter(function(x){var s=S.items[x.id];return s&&s.seen&&s.due<=now}).length}
-  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'口訣閃卡'}),el('div',{cls:'mut',text:'共 '+cards.length+' 張，到期 '+dueN(cards)+' 張'}),
-    el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}})]));
-  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'一試選擇題'}),el('div',{cls:'mut',text:'共 '+mcq.length+' 題（答案已對考選部公告），到期 '+dueN(mcq)+' 題'}),
+  var Mm=mast(mcq),Mc=mast(cards),wq=mcq.filter(function(x){var s=S.items[x.id];return s&&s.wrong>0});
+  function bar(p){var b=el('div',{cls:'minibar'},[el('i')]);b.firstChild.style.width=Math.round(p*100)+'%';return b}
+  V.appendChild(el('h1',{cls:'greet',text:'練習'}));
+  V.appendChild(el('div',{cls:'greet-sub',text:'目前科目：'+SUBJ[S.subj]+'（右上角切換）。做完一輪會給你答對率和錯題。'}));
+  var g=el('div',{cls:'grid'});
+  g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['一試選擇題']),
+    el('div',{cls:'kv'},[el('span',{},['共 ',el('b',{text:String(mcq.length)}),' 題']),el('span',{},['到期 ',el('b',{text:String(dueN(mcq))})]),
+      el('span',{},['答對率 ',el('b',{text:Mm.acc==null?'—':Math.round(Mm.acc*100)+'%'})]),el('span',{},['熟練 ',el('b',{text:Math.round(Mm.p*100)+'%'})])]),bar(Mm.p),
+    el('div',{cls:'mut',style:'margin-top:6px;font-size:14px',text:'答案已對考選部公告（含更正）。'}),
     el('button',{cls:'btn',text:'練 5 題',onclick:function(){mcqRun(pickDue(mcq,5))}}),
     el('button',{cls:'btn sec',text:'練 10 題',onclick:function(){mcqRun(pickDue(mcq,10))}})]));
+  g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['口訣閃卡']),
+    el('div',{cls:'kv'},[el('span',{},['共 ',el('b',{text:String(cards.length)}),' 張']),el('span',{},['到期 ',el('b',{text:String(dueN(cards))})]),el('span',{},['熟練 ',el('b',{text:Math.round(Mc.p*100)+'%'})])]),bar(Mc.p),
+    cards.length?el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}}):el('div',{cls:'sj-none',text:'這一科還沒有口訣卡（口訣卡目前只有民法、刑法）。'})]));
+  g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('map'),'依主題練']),
+    el('div',{cls:'mut',text:'從地圖或主題整理挑一個主題，練那個主題考過的題目。'}),
+    el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:'從地圖挑',onclick:function(){go('lmap')}}),el('button',{cls:'btn ghost',text:'主題整理',onclick:function(){go('map')}})])]));
+  g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('book'),'錯題與申論']),
+    el('div',{cls:'mut',text:'錯過的選擇 '+wq.length+' 題；申論 '+es.length+' 題可練。'}),
+    el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:wq.length?'重練錯題':'錯題本',onclick:function(){wq.length?mcqRun(wq.slice(0,5)):go('wrong')}}),el('button',{cls:'btn ghost',text:'寫申論',onclick:function(){go('essay')}})])]));
+  V.appendChild(g);
 };
 
 // ---------- 申論 ----------
@@ -847,7 +1130,12 @@ R.wrong=function(){
   var mq=D.mcq.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0}).sort(function(a,b){return S.items[b.id].wrong-S.items[a.id].wrong});
   var es=D.essays.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&(s.self==='不會'||s.self==='半會')});
   var cs=D.cards.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0&&s.box===0});
-  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'錯題本'}),el('div',{cls:'mut',text:'選擇 '+mq.length+' 題、申論 '+es.length+' 題、口訣 '+cs.length+' 張'}),
+  V.appendChild(el('h1',{cls:'greet',text:'錯題本'}));
+  V.appendChild(el('div',{cls:'greet-sub',text:'目前科目：'+SUBJ[S.subj]+'。錯的會隔 1、3、7、14 天自己回來。'}));
+  if(!mq.length&&!es.length&&!cs.length){V.appendChild(el('div',{cls:'card'},[emptyBox('book','還沒有錯題','做選擇題答錯、申論自評「不會／半會」、閃卡按「還不熟」的，都會收在這裡。',['去練 5 題',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}])]));return}
+  V.appendChild(el('div',{cls:'stats4'},[el('div',{cls:'st'},[el('b',{text:String(mq.length)}),el('small',{text:'選擇錯過'})]),el('div',{cls:'st'},[el('b',{text:String(es.length)}),el('small',{text:'申論不會／半會'})]),
+    el('div',{cls:'st'},[el('b',{text:String(cs.length)}),el('small',{text:'口訣不熟'})]),el('div',{cls:'st gold'},[el('b',{text:String(rvDue([].concat(D.mcq,D.essays).filter(inSubj)).length)}),el('small',{text:'今天到期複習'})])]));
+  V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'重練'}),el('div',{cls:'mut',text:'選擇 '+mq.length+' 題、申論 '+es.length+' 題、口訣 '+cs.length+' 張'}),
     el('button',{cls:'btn',text:'重練錯題 5 題',disabled:mq.length?null:'',onclick:function(){mcqRun(mq.slice(0,5))}}),
     cs.length?el('button',{cls:'btn sec',text:'重練不熟口訣',onclick:function(){cardRun(cs.length,null,cs)}}):null]));
   var rvL=[].concat(D.mcq,D.essays).filter(function(x){var r=S.rv[x.id];return inSubj(x)&&r&&!r.done}).sort(function(a,b){return S.rv[a.id].due-S.rv[b.id].due});
@@ -859,24 +1147,60 @@ R.wrong=function(){
     es.forEach(function(x){var s=S.items[x.id];c.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x)}},[el('span',{cls:'tag '+(s.self==='不會'?'r':'a'),text:s.self}),x.year+' 年 '+x.cat+'　爭點 '+(s.issues_hit||0)+'/'+(s.issues_n||0)]))});V.appendChild(c)}
   if(mq.length){var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'選擇：依錯的次數'})]);
     mq.slice(0,40).forEach(function(x){c2.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x])}},[el('span',{cls:'tag r',text:'錯 '+S.items[x.id].wrong}),clip(x.q,34)]))});V.appendChild(c2)}
-  if(!mq.length&&!es.length&&!cs.length)V.appendChild(el('div',{cls:'empty',text:'還沒有錯題。'}));
 };
 
 // ---------- 進度 ----------
+// 進度頁（整體 UI 改版）：各科強弱＋各章熱度＋最弱章一鍵練習；全部只用這支手機存的作答紀錄，沒有就顯示空狀態
+var MQ=null;function mqById(id){if(!MQ){MQ={};D.mcq.forEach(function(q){MQ[q.id]=q})}return MQ[id]}
+function lmLoad(cb){if(LMD)return cb(LMD);fetch('law_map.json').then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){LMD=d;cb(d)}).catch(function(){cb(null)})}
+function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
 R.stats=function(){
-  var c=el('div',{cls:'card'},[el('div',{cls:'h1',text:'進度'})]);
-  (S.subj==='every'?SJ_LIST:SJ_LIST.indexOf(S.subj)>1?[S.subj]:['民法','刑法']).forEach(function(sj){
-    var L=[].concat(D.cards,D.mcq,D.essays).filter(function(x){return x.subj===sj}),m=L.filter(function(x){var s=S.items[x.id];return s&&s.box>=2}).length,
-        seen=L.filter(function(x){var s=S.items[x.id];return s&&s.seen}).length,p=L.length?Math.round(m/L.length*100):0;
-    c.appendChild(el('div',{cls:'h2',text:sj+'　熟練 '+p+'%'}));var b=el('div',{cls:'bar'},[el('i')]);b.firstChild.style.width=p+'%';c.appendChild(b);
-    c.appendChild(el('div',{cls:'mut',text:'練過 '+seen+' / '+L.length+'（熟練＝連續答對 2 次以上）'}))});
-  var wk=0,d=new Date();for(var i=0;i<7;i++){var k=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);if(S.days[k])wk+=S.days[k].ms;d.setDate(d.getDate()-1)}
-  c.appendChild(el('div',{cls:'h2',text:'連續 '+streak()+' 天　本週約 '+Math.round(wk/60000)+' 分鐘'}));
-  V.appendChild(c);
+  var wk=0,d=new Date(),days=[];for(var i=0;i<7;i++){var k=dkey(d),r=S.days[k];if(r)wk+=r.ms;days.unshift({k:k,d:d.getDay(),n:r?r.card+r.mcq+r.essay:0});d.setDate(d.getDate()-1)}
+  var allM=mast([].concat(D.cards,D.mcq,D.essays)),ex=examDays();
+  V.appendChild(el('h1',{cls:'greet',text:'進度'}));
+  V.appendChild(el('div',{cls:'greet-sub',text:'熟練＝連續答對 2 次以上。只算這支手機上的作答紀錄。'}));
+  V.appendChild(el('div',{cls:'stats4'},[
+    el('div',{cls:'st gold'},[el('b',{text:String(streak())}),el('small',{text:'連續天數'})]),
+    el('div',{cls:'st'},[el('b',{text:String(Math.round(wk/60000))}),el('small',{text:'本週分鐘'})]),
+    el('div',{cls:'st'},[el('b',{text:String(allM.seen)}),el('small',{text:'練過題卡（共 '+allM.n+'）'})]),
+    el('div',{cls:'st'+(ex!=null&&ex>=0?' gold':'')},ex==null?[el('button',{text:'設定考試日期',onclick:examEdit}),el('small',{text:'考試倒數（自己設）'})]:
+      [el('b',{text:ex>=0?String(ex):'—'}),el('small',{},[ex>=0?'天後考試 ':'考試已過 ',el('button',{text:'改',onclick:examEdit})])])]));
+  // 近 7 天
+  var mx=Math.max.apply(null,days.map(function(x){return x.n}).concat([1])),wkb=el('div',{cls:'wk',role:'img','aria-label':'近 7 天練習題數'});
+  days.forEach(function(x,j){var i2=el('i',{cls:x.n?'':'z'});i2.style.height=(x.n?Math.max(6,x.n/mx*80):3)+'px';
+    wkb.appendChild(el('div',{cls:j===6?'td':''},[el('span',{text:x.n?String(x.n):''}),i2,el('span',{text:j===6?'今天':'週'+'日一二三四五六'[x.d]})]))});
+  var g=el('div',{cls:'grid'});
+  g.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'近 7 天練了幾題'}),days.some(function(x){return x.n})?wkb:emptyBox('chart','這 7 天還沒練','做閃卡、選擇題、申論都會算進來。')]));
+  // 各科強弱：深色＝熟練、淺色＝練過但還沒熟
+  var sc=el('div',{cls:'card'},[el('div',{cls:'h2',text:'各科強弱'}),el('div',{cls:'hleg'},[el('span',{style:'--c:var(--acc)',text:'熟練'}),el('span',{style:'--c:color-mix(in srgb,var(--acc) 30%,var(--soft))',text:'練過未熟'}),el('span',{style:'--c:var(--soft)',text:'沒練過'})])]);
+  SJ_LIST.forEach(function(sj){var L=sjItems(sj),M=mast(L),on=S.subj===sj||(S.subj==='all'&&(sj==='民法'||sj==='刑法'));
+    var two=el('div',{cls:'two'},[el('i',{cls:'m'}),el('i',{cls:'s'})]);two.children[0].style.width=(M.m/M.n*100)+'%';two.children[1].style.width=((M.seen-Math.min(M.m,M.seen))/M.n*100)+'%';if(!M.m)two.children[0].style.display='none';
+    sc.appendChild(el('button',{cls:'sjr'+(on&&S.subj!=='every'?' cur':''),onclick:function(){S.subj=sj;persist();paintSubj();go('stats')}},[el('div',{cls:'nm'},[el('span',{text:sj}),el('small',{text:'熟練 '+Math.round(M.p*100)+'%'})]),two,
+      el('div',{cls:'kv'},[el('span',{text:'練過 '+M.seen+' / '+M.n}),el('span',{text:M.acc==null?'答對率 —':'答對率 '+Math.round(M.acc*100)+'%'})])]))});
+  g.appendChild(sc);V.appendChild(g);
+  // 各章熱度（章＝法律地圖的編／章，七科同一套）
+  var hc=el('div',{cls:'card'},[el('div',{cls:'h2',text:'各章熱度'}),el('div',{cls:'mut',text:'載入章節…'})]),wc=el('div');V.appendChild(wc);V.appendChild(hc);
+  lmLoad(function(LD){if(!hc.isConnected)return;hc.lastChild.remove();
+    if(!LD){hc.appendChild(el('div',{cls:'mut',text:'章節資料沒有載入（第一次要連網路開一次地圖）。'}));return}
+    var sjs=S.subj==='every'?SJ_LIST:S.subj==='all'?['民法','刑法']:[S.subj],chs=[];
+    sjs.forEach(function(sj){var by={},ord=[];Object.keys(LD.topics).forEach(function(id){var t=LD.topics[id];if(t.subj!==sj||t.pseudo)return;if(!by[t.ch]){by[t.ch]=[];ord.push(t.ch)}by[t.ch]=by[t.ch].concat(t.mcq)});
+      ord.forEach(function(ch){var L=by[ch].map(mqById).filter(Boolean),M=mast(L);chs.push({sj:sj,ch:ch,L:L,M:M})})});
+    var cand=chs.filter(function(c){return c.M.att>=3}).sort(function(a,b){return a.M.acc-b.M.acc||a.M.p-b.M.p}),weak=cand[0]&&cand[0].M.acc<1?cand[0]:null;
+    hc.appendChild(el('div',{cls:'hleg'},[el('span',{style:'--c:#f7d9d5',text:'答對 <50%'}),el('span',{style:'--c:#f8e6c4',text:'50–69%'}),el('span',{style:'--c:#d8ece4',text:'70–84%'}),el('span',{style:'--c:#b4dccf',text:'≥85%'}),el('span',{style:'--c:transparent;outline:1.5px dashed var(--control)',text:'還沒練'})]));
+    sjs.forEach(function(sj){var C=chs.filter(function(c){return c.sj===sj});if(!C.length)return;
+      hc.appendChild(el('div',{cls:'sec-t',text:sj+'（'+C.length+' 章）'}));var hg=el('div',{cls:'heat'});
+      C.forEach(function(c){var a=c.M.acc,lv=c.M.att?(a<.5?1:a<.7?2:a<.85?3:4):0;
+        hg.appendChild(el('button',{cls:'hc h'+lv+(c===weak?' weak':''),disabled:c.L.length?null:'',onclick:function(){mcqRun(pickDue(c.L,5))},'aria-label':c.ch+(lv?'，答對 '+Math.round(a*100)+'%':'，還沒練')+'，點一下練 5 題'},
+          [el('b',{text:c.ch}),el('small',{text:lv?'答對 '+Math.round(a*100)+'%・練 '+c.M.seen+'/'+c.L.length:'還沒練・'+c.L.length+' 題'})]))});
+      hc.appendChild(hg)});
+    hc.appendChild(el('div',{cls:'mut',style:'font-size:14px;margin-top:6px',text:'點任一章練那一章 5 題（先出到期、再出沒做過的）。章與題目的對應同法律地圖。'}));
+    if(weak)wc.appendChild(el('div',{cls:'card weakc'},[el('div',{cls:'h2',text:'最弱的一章：'+weak.ch}),
+      el('div',{cls:'mut',text:weak.sj+'・答對 '+Math.round(weak.M.acc*100)+'%（作答 '+weak.M.att+' 次）。只比較作答 3 次以上的章。'}),
+      el('button',{cls:'btn',text:'練最弱章 5 題',onclick:function(){mcqRun(pickDue(weak.L,5))}})]));
+    else wc.appendChild(el('div',{cls:'card'},[emptyBox('chart','還看不出最弱的章','某一章作答滿 3 次後，這裡會標出答對率最低的一章，並可一鍵練習。')]))});
   V.appendChild(el('div',{cls:'card mut'},[el('div',{cls:'h2',text:'資料說明'}),
     txt(SRC_NOTE+'\n申論題目來自考選部律師二試原卷；擬答是自製（入門版／完整版）。\n選擇題答案已對考選部公告答案。\n條號、判決字號都用 Taiwan Legal RAG（tlr.py）查證過才顯示；查不到的直接不顯示。\n進度只存在這支手機，不用帳號。\n版本 '+CFG.version)]));
 };
-
 // ---------- 主題整理（科目 → 章節 → 主題；2026-10-28 22:10 由「地圖」改名） ----------
 var TP={};(D.topics||[]).forEach(function(t){TP[t.id]=t});
 var LVN={'必考':4,'常考':3,'略讀':2,'冷門':1};
@@ -885,26 +1209,28 @@ function tdot(t){return el('span',{cls:'dot lv'+LVN[t.imp.lv]+(isEst(t)?' est':'
 function findQ(id){return D.mcq.find(function(x){return x.id===id})}
 function findE(id){return D.essays.find(function(x){return x.id===id})}
 R.map=function(){
-  V.appendChild(el('div',{cls:'card lm-entry'},[el('div',{cls:'h2',text:'法律體系地圖（民法＋刑法）'}),
-    el('div',{cls:'mut',text:'像世界地圖一樣縮放：先看民法、刑法兩塊大陸，放大看章、主題，再放大看爭點、條文、考題。面積越大、顏色越深＝考越多。'}),
-    el('button',{cls:'btn',text:'打開法律體系地圖',onclick:function(){go('lmap')}})]));
+  var mc=mapCard();mc.classList.add('lm-entry');mc.querySelector('.mut').textContent='像世界地圖一樣縮放：七科七塊大陸，放大看章、主題、爭點、條文、考題。下面每個主題右邊的定位鈕，可直接飛到它在地圖上的位置。';
+  mc.appendChild(el('button',{cls:'btn',text:'打開法律體系地圖',onclick:function(){go('lmap')}}));mc.querySelector('.linkb').remove();V.appendChild(mc);
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'主題整理'}),
     el('div',{cls:'mut',text:'科目 → 章節 → 主題。章節照自製筆記目錄；色點是重要度。'}),
     el('div',{cls:'legend'},[el('span',{},[el('span',{cls:'dot lv4'}),'必考']),el('span',{},[el('span',{cls:'dot lv3'}),'常考']),
       el('span',{},[el('span',{cls:'dot lv2'}),'略讀']),el('span',{},[el('span',{cls:'dot lv1'}),'冷門']),
       el('span',{},[el('span',{cls:'dot est'}),'空心＝依題庫頻率推算'])])]));
-  if(!(D.tree||[]).some(function(sj){return inSubj(sj)}))V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:SUBJ[S.subj]}),
-    el('div',{cls:'sj-none',text:'這一科還沒有整理主題（目前只有民法、刑法）。題目在「練習」和「申論」都可以做。'})]));
+  SJ_LIST.filter(function(sj){return sj!=='民法'&&sj!=='刑法'&&(S.subj==='every'||S.subj===sj)}).forEach(function(sj){
+    V.appendChild(el('div',{cls:'card'},[el('div',{cls:'sjh'},[el('div',{cls:'h2',text:sj}),el('button',{cls:'mapbtn',onclick:function(){go('lmap',{sj:sj})}},[ic('pin',''),'在地圖上看'])]),
+      el('div',{cls:'sj-none',text:'這一科的編章、主題、爭點整理在法律地圖上（主題清單頁目前只有民法、刑法）。點「在地圖上看」直接飛到這一科。'})]))});
   (D.tree||[]).forEach(function(sj){
     if(!inSubj(sj))return;
-    var c=el('div',{cls:'card'},[el('div',{cls:'h2',text:sj.subj})]);
+    var c=el('div',{cls:'card'},[el('div',{cls:'sjh'},[el('div',{cls:'h2',text:sj.subj}),el('button',{cls:'mapbtn',onclick:function(){go('lmap',{sj:sj.subj})}},[ic('pin',''),'在地圖上看'])])]);
     sj.chs.forEach(function(ch){
       var ts=ch.topics.map(function(id){return TP[id]}),n4=ts.filter(function(t){return t.imp.lv==='必考'}).length;
-      var d=el('details',{},[el('summary',{},[el('span',{cls:'tt'},[ch.ch+'（'+ts.length+'）'+(n4?'　必考 '+n4:'')])])]);
+      var cm=mast([].concat.apply([],ts.map(function(t){return t.mcq.map(findQ).filter(Boolean)})));
+      var d=el('details',{},[el('summary',{},[el('span',{cls:'tt'},[ch.ch+'（'+ts.length+'）'+(n4?'　必考 '+n4:''),cm.att?el('span',{cls:'mbadge'+(cm.acc>=.7?' g':''),text:'答對 '+Math.round(cm.acc*100)+'%'}):null])])]);
       var list=el('div');
       list.appendChild(el('div',{cls:'mut',text:'筆記 '+ch.page}));
-      ts.forEach(function(t){list.appendChild(el('button',{cls:'tli',onclick:function(){topicView(t.id)}},[tdot(t),el('span',{cls:'tt',text:t.t}),
-        el('span',{cls:'tm',text:'題 '+(t.mcq.length+t.essay.length)+(t.jud.length?'・判 '+t.jud.length:'')})]))});
+      ts.forEach(function(t){list.appendChild(el('div',{cls:'tli-row'},[el('button',{cls:'tli',onclick:function(){topicView(t.id)}},[tdot(t),el('span',{cls:'tt',text:t.t}),
+        el('span',{cls:'tm',text:'題 '+(t.mcq.length+t.essay.length)+(t.jud.length?'・判 '+t.jud.length:'')})]),
+        (function(b){b.setAttribute('aria-label','在地圖上看「'+t.t+'」');b.title='在地圖上看';return b})(el('button',{cls:'pin',onclick:function(){go('lmap',{t:t.id})}},[ic('pin','')]))]))});
       d.appendChild(list);c.appendChild(d)});
     V.appendChild(c)});
 };
@@ -919,7 +1245,8 @@ function topicView(id){
     el('div',{},[el('span',{cls:'lvb l'+LVN[t.imp.lv],text:t.imp.lv}),el('span',{cls:'byb'+(isEst(t)?' est':''),text:t.imp.by})]),
     el('div',{},hfTopic(t)),
     el('div',{cls:'mut',text:t.imp.why}),
-    el('div',{cls:'mut',text:'筆記 '+t.imp.pages})]));
+    el('div',{cls:'mut',text:'筆記 '+t.imp.pages}),
+    el('button',{cls:'mapbtn',style:'margin-top:10px',onclick:function(){go('lmap',{t:id})}},[ic('pin',''),'在地圖上看這個主題'])]));
   // 2. 核心條文與口訣
   var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'核心條文'+(t.a?'（'+t.a+'）':'')})]);
   if(!t.core.length)c2.appendChild(el('div',{cls:'mut',text:'這個主題是實務／學說概念，沒有單一核心條文。'}));
@@ -947,9 +1274,9 @@ function topicView(id){
   if(mq.length)V.appendChild(el('button',{cls:'btn big',text:'練這個主題 '+Math.min(5,mq.length)+' 題',onclick:function(){mcqRun(pickDue(mq,5),back)}}));
 }
 
-// ---------- 法律體系地圖（2026-10-28 地圖整合；22:10 重做成語意縮放的世界地圖式 Canvas）：民刑考題主軸總地圖，資料 law_map.json 開頁才載入（由 地圖/法律體系地圖.html 抽出，build_app.py 產生） ----------
+// ---------- 法律體系地圖（2026-10-28 地圖整合；22:10 重做成語意縮放的世界地圖式 Canvas；10-29 七科）：考題主軸總地圖，資料 law_map.json 開頁才載入（由 地圖/法律體系地圖.html 抽出，build_app.py 產生） ----------
 // 側欄內容與「未能確認」標示照搬 地圖/map_template.html；版圖由 lmDraw 依 law_map.json 自算（科目＝大陸、章＝國、主題＝州）；整頁蓋在最上層，離開（clear）時拆掉監聽。
-var LMD=null,LM_STOP=null,LM_OTH=null;
+var LMD=null,LM_STOP=null,LM_OTH=null,LM_FROM='map';
 R.lmap=function(arg){
   if(!LM_OTH){LM_OTH={};SJ_ALL.forEach(function(s){if(s==='民法'||s==='刑法')return;var m=D.mcq.filter(function(q){return q.subj===s}).length,e=D.essays.filter(function(q){return q.subj===s}).length;
     if(m+e)LM_OTH[s]={n:m+e,mcq:m,essay:e}})}
@@ -966,12 +1293,14 @@ R.lmap=function(arg){
 };
 function lmDraw(root,D,signal,arg){
   // 2026-10-28 22:10 重做：像世界地圖的語意縮放地圖（Canvas）。科目＝大陸、章（編）＝國、主題＝州；放大才出現爭點、條文、考題。
-  // 面積與顏色深淺＝出題次數；沒考過＝淡色虛線；其他科目＝灰色「未建地圖」；連線（航線）預設淡、點選才強調。
+  // 2026-10-29 01:40／01:45：七科都有地圖；擺位改成實體法旁接程序法（民法↔民訴、刑法↔刑訴、憲法↔行政法、商事法靠民法）；
+  // 預設只畫大區（科目、章）與章名，主題格線放大才淡入；航線預設不畫、點主題才出現（圖例可整批打開）；未歸類改成海岸邊的小標＋說明。
   root.innerHTML='';
-  root.insertAdjacentHTML('beforeend','<div class="lm-top"><button class="lm-back">← 返回</button><span class="lm-h">法律體系地圖</span><button data-k="leg">圖例</button>'+
-    '<input class="lm-q" type="search" placeholder="搜主題、爭點、條號（如 179）" autocomplete="off" enterkeyhint="search">'+
-    '<button data-go="民法">民法</button><button data-go="刑法">刑法</button><button data-go="all">全圖</button>'+
-    '<button data-k="co" class="lm-on" title="同一申論題同時考到的兩個主題">同題合考</button><button data-k="cx" class="lm-on" title="民法、刑法交會（用 RAG 判決驗證）">民刑交會</button></div>'+
+  const SUBJ=['民法','民事訴訟法','商事法','刑法','刑事訴訟法','憲法','行政法'],SH=s=>SJ_SHORT[s]||s;
+  root.insertAdjacentHTML('beforeend','<div class="lm-top"><button class="lm-back">← 返回</button><span class="lm-h">法律體系地圖</span>'+
+    '<select class="lm-jump" aria-label="跳到科目"><option value="">跳到科目 ▾</option><option value="all">全圖</option>'+SUBJ.map(s=>`<option value="${s}">${SH(s)}</option>`).join('')+'</select><button data-k="leg">圖例</button>'+
+    '<input class="lm-q" type="search" placeholder="搜主題、爭點、條號" autocomplete="off" enterkeyhint="search">'+
+    '<button class="lm-tool" data-k="route" aria-pressed="false">念書路線</button><button class="lm-tool" data-k="area">面積＝題數</button></div>'+
     '<div class="lm-hits"></div><canvas class="lm-cv" aria-label="法律體系地圖：雙指或滾輪縮放、拖曳平移、點區塊放大"></canvas><div class="lm-where"></div>'+
     '<div class="lm-zm"><button data-z="1" aria-label="放大">＋</button><button data-z="-1" aria-label="縮小">－</button></div><canvas class="lm-mini" aria-label="縮略導覽圖"></canvas>'+
     '<div class="lm-legend"></div><div class="lm-panel"></div><div class="lm-modal"><div class="lm-box"></div></div>');
@@ -981,78 +1310,131 @@ function lmDraw(root,D,signal,arg){
   const top=$('.lm-top'),TOP=()=>top.offsetHeight;
   const T=D.topics,FONT='-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),sstep=(v,a,b)=>{const u=clamp((v-a)/(b-a),0,1);return u*u*(3-2*u)};
-  // ---------- 版圖：二分 treemap（保留筆記順序＝相鄰概念相鄰），面積＝2＋出題次數 ----------
-  const wt=t=>2+t.n;
+  // 條號：民刑沿用「民§179」；五科的鍵是「法名|條號」
+  const LSH={民法:'民',刑法:'刑',民事訴訟法:'民訴',刑事訴訟法:'刑訴',憲法:'憲',中華民國憲法增修條文:'增修',憲法訴訟法:'憲訴',行政程序法:'行程',行政訴訟法:'行訴',訴願法:'訴願',
+    行政執行法:'行執',行政罰法:'行罰',國家賠償法:'國賠',公司法:'公司',保險法:'保險',票據法:'票據',證券交易法:'證交',政府資訊公開法:'政資',企業併購法:'企併'};
+  const artKey=(subj,a)=>String(a).includes('|')?String(a):subj+'|'+a;
+  const artLbl=(subj,a)=>{const [l,n]=artKey(subj,a).split('|');return (LSH[l]||l)+'§'+n};
+  const artNo=a=>String(a).split('|').pop();
+  // ---------- 2026-10-29 08:05 易讀易記：顏色＝概念類別（每科一致、不再隨機）、五科★●（依出題次數）、念書路線、面積＝題數／均等 ----------
+  const MR=s=>s==='民法'||s==='刑法';
+  const CLS={gen:['總則・基本原則',212],sub:['實體：權利義務・犯罪成立',140],eff:['法律效果・制裁',24],org:['國家組織',48],proc:['程序・審理',272],rem:['救濟・事後填補',340]};
+  const CH_CLS={民法總則:'gen',債總:'sub',債各:'sub',物權:'sub',親屬:'sub',繼承:'sub',
+    刑罰原則:'gen',刑事責任:'sub','未遂、不能、中止':'sub',正犯與共犯:'sub',刑與沒收:'eff',累犯:'eff',數罪併罰與競合:'eff',酌科:'eff',緩刑:'eff',時效:'eff',保安處分:'eff','分則：國家法益':'sub','分則：社會法益':'sub','分則：個人法益':'sub',
+    '總則：法院與當事人':'gen','總則：費用與程序':'gen','第一審：起訴與審理':'proc','第一審：證據':'proc','第一審：判決與效力':'proc','調解、簡易與小額':'proc',上訴審:'rem','抗告、再審與第三人撤銷':'rem','督促、保全與公示催告':'proc',
+    '總則：法院與訴訟主體':'gen',強制處分:'proc',證據:'proc',偵查與起訴:'proc','上訴、抗告與救濟':'rem',特別程序:'proc',
+    基本原則與基本權總論:'gen',平等與人身自由:'sub',自由權:'sub',經濟與社會權:'sub',國家組織:'org',憲法訴訟:'rem',
+    '總論：原則與組織':'gen',行政作用:'sub',行政罰與行政執行:'eff',行政救濟:'rem',國家責任:'rem',公司法:'sub',保險法:'sub',票據法:'sub',證券交易法:'sub'};
+  const clsOf=ch=>CH_CLS[ch]||(/總則|總論/.test(ch)?'gen':'sub');
+  // 全景用的最短名稱（放不下全名時用；再放不下就用念書路線編號，圖例有對照）
+  const CH_SHORT={民法總則:'總則','未遂、不能、中止':'未遂',正犯與共犯:'共犯',刑與沒收:'沒收',數罪併罰與競合:'競合',保安處分:'保安','分則：國家法益':'國家法益','分則：社會法益':'社會法益','分則：個人法益':'個人法益',
+    '總則：法院與當事人':'當事人','總則：費用與程序':'費用程序','第一審：起訴與審理':'起訴審理','第一審：證據':'證據','第一審：判決與效力':'判決效力','調解、簡易與小額':'簡易小額','抗告、再審與第三人撤銷':'抗告再審','督促、保全與公示催告':'督促保全',
+    '總則：法院與訴訟主體':'訴訟主體',強制處分:'強制處分',偵查與起訴:'偵查起訴','上訴、抗告與救濟':'上訴救濟',基本原則與基本權總論:'基本權總論',平等與人身自由:'平等人身',經濟與社會權:'社會權',憲法訴訟:'憲訴',
+    '總論：原則與組織':'總論',行政罰與行政執行:'罰與執行',行政救濟:'救濟',國家責任:'國賠',公司法:'公司',保險法:'保險',票據法:'票據',證券交易法:'證交'};
+  // 念書路線：章依法典編章（條文順序），章內主題依條文範圍的起始條號；依據寫在圖例，沒有依據的標「未能確認」
+  const ROUTE={民法:[1,'民法典編次：總則→債（總、各）→物權→親屬→繼承（先總則後分則）'],
+    刑法:[1,'刑法條文順序：總則第 1–99 條各章（法例→刑事責任→未遂→共犯→刑→累犯→併罰→酌科→緩刑→時效→保安處分）→分則（國家→社會→個人法益，即第 100 條起的章次）'],
+    民事訴訟法:[1,'民事訴訟法編次：總則→第一審程序（起訴、證據、判決、調解、簡易、小額）→上訴審→抗告、再審、第三人撤銷→督促、保全、公示催告'],
+    刑事訴訟法:[1,'刑事訴訟法條文順序：總則（主體、強制處分第 71 條起、證據第 154 條起）→第一審（偵查、起訴第 228 條起）→上訴、抗告、再審、非常上訴→特別程序（簡易、協商、沒收、附帶民訴）'],
+    憲法:[1,'先總論後各論：基本原則與基本權總論→憲法本文第二章人民權利（第 7 條起依條次）→國家組織（第 35 條起）→憲法訴訟（另一部法律：憲法訴訟法，放最後）'],
+    行政法:[1,'先總論後各論；之後依行政活動的先後：行政行為（行政作用）→違反義務的制裁與執行→救濟（訴願、行政訴訟）→國家責任。行政法沒有單一法典，沒有對照考選部命題大綱'],
+    商事法:[0,'未能確認：公司法、保險法、票據法、證交法四部法之間沒有法定先後，考選部命題大綱未取得；章序暫依資料順序（公司→保險→票據→證交），各法內部依條文順序']};
+  // 主題排序鍵：條文範圍裡第一個「法名§條號」（同一章有兩部法時，依該法在本章第一次出現的先後）；沒有條號的排在章末、路線標未能確認
+  const artSort=(t,laws)=>{const m=String(t.a||'').match(/([^\s§、–（）0-9-]*)§(\d+)(?:-(\d+))?/);if(!m)return null;const l=m[1]||'';if(!laws.includes(l))laws.push(l);return laws.indexOf(l)*1e6+(+m[2])*100+(+(m[3]||0))};
+  // 必考／常考：民刑沿用原本的標示（作者標示／筆記標色／依題庫頻率推算）；五科沒有筆記，用民刑同一套「依題庫頻率推算」（build_topics.py 熱度）：
+  // 熱度＝108–115 年每題 1 分（113 年以後 1.5 分）＋主題判決數×0.2；同一科內排名前 20%＝必考、20–50%＝常考；一題都沒有的主題無從排名＝未能確認
+  const IMP={},HEAT={},yw=y=>(y||0)>=113?1.5:1;
+  Object.values(T).forEach(t=>{if(t.pseudo)return;if(MR(t.subj)){IMP[t.id]=t.imp||'';return}
+    HEAT[t.id]=Math.round((t.mcq.reduce((a,q)=>a+yw(D.mcq[q]?.y),0)+t.essay.reduce((a,e)=>a+yw(D.essays[e]?.y),0)+.2*(t.jud||[]).length)*100)/100});
+  SUBJ.filter(s=>!MR(s)).forEach(s=>{const L=Object.values(T).filter(t=>!t.pseudo&&t.subj===s).sort((a,b)=>HEAT[b.id]-HEAT[a.id]);
+    L.forEach((t,i)=>{const r=i/L.length;IMP[t.id]=!t.n?'未能確認':r<.2?'必考':r<.5?'常考':''})});
+  const DENSE=6,dense=t=>(t.iss||[]).length>=DENSE;   // 爭點密集：掛了 6 個以上申論爭點
+  // ---------- 版圖：二分 treemap（保留路線順序＝相鄰概念相鄰）；面積＝2＋出題次數，或切換成每個主題一樣大 ----------
+  let AREA='n';
+  const wt=t=>AREA==='eq'?6:2+t.n;
   function bin(items,x,y,w,h,out){if(!items.length)return;if(items.length===1){out.push([items[0],x,y,w,h]);return}
     const tot=items.reduce((s,i)=>s+i.w,0);let acc=0,k=0,best=1e18;
     for(let i=0;i<items.length-1;i++){acc+=items[i].w;const d=Math.abs(acc-tot/2);if(d<best){best=d;k=i}}
     const A=items.slice(0,k+1),B=items.slice(k+1),f=A.reduce((s,i)=>s+i.w,0)/tot;
     if(w>=h){bin(A,x,y,w*f,h,out);bin(B,x+w*f,y,w*(1-f),h,out)}else{bin(A,x,y,w,h*f,out);bin(B,x,y+h*f,w,h*(1-f),out)}}
-  const chList={民法:[],刑法:[]},chT={};
-  D.regions.forEach(r=>{if(!r.continent&&chList[r.subj]&&r.ch!=='未能歸類'){chList[r.subj].push(r);chT[r.subj+'|'+r.ch]=[]}});
-  D.nodes.forEach(n=>{const t=T[n.id];if(!t||t.pseudo)return;const k=t.subj+'|'+t.ch;if(!chT[k]){chT[k]=[];chList[t.subj].push({subj:t.subj,ch:t.ch,page:''})}chT[k].push(t)});
-  const wS=s=>chList[s].reduce((a,c)=>a+chT[c.subj+'|'+c.ch].reduce((b,t)=>b+wt(t),0),0);
-  const G=260,CW=2200,CH=1500,UNIT=CW*CH/wS('民法');
-  const conts=[],chaps=[],cells=[],cellOf={};
-  const civ={subj:'民法',x:0,y:0,w:CW,h:CH},cw=1300,crim={subj:'刑法',x:CW+G,y:0,w:cw,h:wS('刑法')*UNIT/cw};
-  conts.push(civ,crim);
-  // 其他科目：題庫已有、地圖未建 ⇒ 灰色未開發區（面積照題數），民事系靠民法、刑事系靠刑法、公法另成一塊
-  const OC=LM_OTH||{},oa=s=>(OC[s]?OC[s].n:0)*1100+120000;
-  const grey=(s,x,y,w,h)=>OC[s]&&conts.push({subj:s,x,y,w,h,grey:1,n:OC[s]});
-  const ucW=520,ucH=420,portrait=root.clientHeight>root.clientWidth*1.1;let isl;
-  if(portrait){ // 手機直放：民法在上，刑法＋公法在中，其他科目一排在下
-    crim.x=0;crim.y=CH+G;const pw=CW-cw-G,px=cw+G;grey('憲法',px,crim.y,pw,oa('憲法')/pw);grey('行政法',px,crim.y+oa('憲法')/pw+G,pw,oa('行政法')/pw);
-    const row2=Math.max(crim.y+crim.h,crim.y+(oa('憲法')+oa('行政法'))/pw+G)+G,avail=CW-G*2,rh=(oa('商事法')+oa('民事訴訟法')+oa('刑事訴訟法'))/avail;
-    isl={subj:'未能歸類',x:0,y:row2+rh+G,w:ucW,h:ucH*.85,uc:1};let x=0;
-    ['商事法','民事訴訟法','刑事訴訟法'].forEach(s=>{if(!OC[s])return;grey(s,x,row2,oa(s)/rh,rh);x+=oa(s)/rh+G})}
-  else{const row2=CH+G,avail=CW-ucW-G*2,rh=(oa('商事法')+oa('民事訴訟法'))/avail;
-    isl={subj:'未能歸類',x:0,y:row2,w:ucW,h:ucH,uc:1};
-    grey('商事法',ucW+G,row2,oa('商事法')/rh,rh);grey('民事訴訟法',ucW+G*2+oa('商事法')/rh,row2,oa('民事訴訟法')/rh,rh);
-    grey('刑事訴訟法',crim.x,crim.y+crim.h+G,cw,oa('刑事訴訟法')/cw);
-    const pc=crim.x+cw+G,pw=820;grey('憲法',pc,0,pw,oa('憲法')/pw);grey('行政法',pc,oa('憲法')/pw+G,pw,oa('行政法')/pw)}
-  if(T.UC)conts.push(isl);
+  const chList={},chT={};
+  D.regions.forEach(r=>{if(r.continent||r.ch==='未能歸類'||r.ch==='未歸類')return;const k=r.subj+'|'+r.ch;if(chT[k])return;(chList[r.subj]=chList[r.subj]||[]).push(r);chT[k]=[]});
+  D.nodes.forEach(n=>{const t=T[n.id];if(!t||t.pseudo)return;const k=t.subj+'|'+t.ch;if(!chT[k]){chT[k]=[];(chList[t.subj]=chList[t.subj]||[]).push({subj:t.subj,ch:t.ch,page:''})}chT[k].push(t)});
+  Object.keys(chList).forEach(s=>{chList[s]=chList[s].filter(c=>chT[c.subj+'|'+c.ch].length)});
+  const RNO={},RNV={};   // 路線編號「章-主題」；沒有條號可排的主題
+  Object.keys(chList).forEach(s=>chList[s].forEach((c,i)=>{const k=c.subj+'|'+c.ch,laws=[],ts=chT[k].map((t,j)=>[t,artSort(t,laws),j]);
+    ts.sort((p,q)=>(p[1]===null)-(q[1]===null)||(p[1]??0)-(q[1]??0)||p[2]-q[2]);chT[k]=ts.map(p=>p[0]);
+    ts.forEach((p,j)=>{RNO[p[0].id]=[i+1,j+1];if(p[1]===null)RNV[p[0].id]=1})}));
+  const wS=s=>(chList[s]||[]).reduce((a,c)=>a+chT[c.subj+'|'+c.ch].reduce((b,t)=>b+wt(t),0),0);
+  const OC=LM_OTH||{};
+  const S_=130,GR=300,G_=560;   // 同一列相鄰（海峽）、同法系上下、不同法系（大洋）
+  let conts,chaps,cells,cellOf,contOf,WB;
+  // 出題次數 → 深淺
+  const STEPS=[[0,96,'未考過'],[1,88,'1–2 題'],[3,80,'3–5 題'],[6,71,'6–9 題'],[10,62,'10–14 題'],[15,52,'15–24 題'],[25,42,'25 題以上']];
+  const lum=n=>{let L=STEPS[0][1];for(const s of STEPS)if(n>=s[0])L=s[1];return L};
+  const fillOf=c=>`hsl(${c.ch.hue},${c.t.n?58:22}%,${lum(c.t.n)}%)`;
+  const darkTxt=c=>lum(c.t.n)>=60;
   // ---------- 自然邊界：同一個位移場套在所有頂點上，相鄰區塊的共用邊界一定吻合 ----------
   const nz=(x,y,s)=>Math.sin(x*.0021*s+1.3)*Math.cos(y*.0017*s+.7)+Math.sin((x+y)*.0013*s+2.1)*.6+Math.sin((x-y*1.3)*.0031*s+.4)*.4;
   function warp(cb,x,y){
-    let dx=nz(x,y,1)*16+nz(y,x,3.3)*6,dy=nz(y+500,x,1)*16+nz(x+300,y,3.3)*6;
+    let dx=nz(x,y,4)*30+nz(y,x,11)*7,dy=nz(y+500,x,4)*30+nz(x+300,y,11)*7;          // 內部國界、州界彎曲
     const cx=cb.x+cb.w/2,cy=cb.y+cb.h/2,rx=x-cx,ry=y-cy,rl=Math.hypot(rx,ry)||1;
-    const e=Math.min(x-cb.x,cb.x+cb.w-x,y-cb.y,cb.y+cb.h-y),f=Math.max(0,1-e/150);
-    const a=f*(nz(x*1.6,y*1.6,1.7)*38+nz(x,y,5)*12);           // 海岸線起伏
-    const ex=Math.min(x-cb.x,cb.x+cb.w-x),ey=Math.min(y-cb.y,cb.y+cb.h-y),c=Math.max(0,1-(ex+ey)/(cb.grey||cb.uc?300:520));
-    const pull=c*c*(cb.grey||cb.uc?110:190);                     // 圓角
+    const e=Math.min(x-cb.x,cb.x+cb.w-x,y-cb.y,cb.y+cb.h-y),f=Math.max(0,1-e/240);
+    const a=f*(nz(x,y,2.2)*72+nz(x,y,6.5)*22);                                       // 海岸線：半島與海灣
+    const R=Math.min(cb.w,cb.h)*(cb.grey?.6:.48),ex=Math.min(x-cb.x,cb.x+cb.w-x),ey=Math.min(y-cb.y,cb.y+cb.h-y),c=Math.max(0,1-(ex+ey)/R);
+    const pull=c*c*R*.4;                                                              // 圓角
     return [x+dx+(a-pull)*rx/rl,y+dy+(a-pull)*ry/rl]}
   const STEP=14;
   function poly(cb,x,y,w,h){const P=[],seg=(x0,y0,x1,y1)=>{const hz=y0===y1,a=hz?x0:y0,b=hz?x1:y1,d=b>a?1:-1;P.push(warp(cb,x0,y0));
       let v=d>0?Math.floor(a/STEP+1)*STEP:Math.ceil(a/STEP-1)*STEP;for(;d>0?v<b-.5:v>b+.5;v+=d*STEP)P.push(hz?warp(cb,v,y0):warp(cb,x0,v))};
     seg(x,y,x+w,y);seg(x+w,y,x+w,y+h);seg(x+w,y+h,x,y+h);seg(x,y+h,x,y);
     const p=new Path2D();P.forEach((q,i)=>i?p.lineTo(q[0],q[1]):p.moveTo(q[0],q[1]));p.closePath();return p}
-  conts.forEach(c=>{c.path=poly(c,c.x,c.y,c.w,c.h);c.r=[c.x,c.y,c.w,c.h]});
-  const HUE=[212,150,28,276,350,186,48,320,96,240,12,170,262,64];
-  [civ,crim].forEach(cb=>{const out=[];bin(chList[cb.subj].map(c=>({w:chT[c.subj+'|'+c.ch].reduce((b,t)=>b+wt(t),0),c})),cb.x,cb.y,cb.w,cb.h,out);
-    out.forEach(([it,x,y,w,h],i)=>{const ch={subj:cb.subj,ch:it.c.ch,page:it.c.page,r:[x,y,w,h],cb,hue:HUE[(i+(cb===crim?3:0))%HUE.length]};ch.path=poly(cb,x,y,w,h);
-      const ts=chT[cb.subj+'|'+it.c.ch];ch.n=ts.reduce((a,t)=>a+t.n,0);ch.must=ts.filter(t=>t.imp==='必考').length;ch.cells=[];chaps.push(ch);
-      const o2=[];bin(ts.map(t=>({w:wt(t),t})),x,y,w,h,o2);
-      o2.forEach(([q,x2,y2,w2,h2])=>{const c={t:q.t,id:q.t.id,r:[x2,y2,w2,h2],ch,cb};c.path=poly(cb,x2,y2,w2,h2);c.ctr=warp(cb,x2+w2/2,y2+h2/2);
-        ch.cells.push(c);cells.push(c);cellOf[c.id]=c})})});
-  if(T.UC){const c={t:T.UC,id:'UC',r:isl.r,ch:{subj:'民法',ch:'未能歸類',hue:0,r:isl.r},cb:isl,path:isl.path,ctr:warp(isl,isl.x+isl.w/2,isl.y+isl.h/2),uc:1};cells.push(c);cellOf.UC=c}
-  let bx0=1e9,by0=1e9,bx1=-1e9,by1=-1e9;conts.forEach(c=>{bx0=Math.min(bx0,c.x);by0=Math.min(by0,c.y);bx1=Math.max(bx1,c.x+c.w);by1=Math.max(by1,c.y+c.h)});
-  const WB=[bx0-120,by0-120,bx1-bx0+240,by1-by0+240];
-  // 出題次數 → 深淺
-  const STEPS=[[0,96,'未考過'],[1,88,'1–2 題'],[3,80,'3–5 題'],[6,71,'6–9 題'],[10,62,'10–14 題'],[15,52,'15–24 題'],[25,42,'25 題以上']];
-  const lum=n=>{let L=STEPS[0][1];for(const s of STEPS)if(n>=s[0])L=s[1];return L};
-  const fillOf=c=>c.uc?'#f4f1ea':`hsl(${c.ch.hue},${c.t.n?58:22}%,${lum(c.t.n)}%)`;
-  const darkTxt=c=>c.uc||lum(c.t.n)>=60;
+  function layout(){
+    conts=[];chaps=[];cells=[];cellOf={};contOf={};
+    const UNIT=2200*1500/wS('民法');
+    // 題庫有、地圖資料沒有的科目（將來新增科目時）：灰色未開發區，面積照題數
+    const A=s=>wS(s)?wS(s)*UNIT:(OC[s]?OC[s].n*1100+120000:0);
+    const place=(s,x,y,w,h)=>{const c={subj:s,x,y,w,h};if(!wS(s)){c.grey=1;c.n=OC[s]}conts.push(c);contOf[s]=c};
+    function rowsIn(rows,x0,y0,Wb,gaps){let y=y0;rows.forEach((row,i)=>{row=row.filter(s=>A(s)>0);if(!row.length)return;
+      const tot=row.reduce((a,s)=>a+A(s),0),h=tot/(Wb-S_*(row.length-1));let x=x0;row.forEach(s=>{const w=A(s)/h;place(s,x,y,w,h);x+=w+S_});y+=h+(gaps[i]??G_)})}
+    const portrait=root.clientHeight>root.clientWidth*1.1;
+    if(portrait){ // 直放：一科一列往下排（民訴、商事法緊貼民法下方，刑訴緊貼刑法，行政法緊貼憲法）；整體寬度依螢幕長寬比解出來，讓地圖盡量填滿手機
+      const rows=[['民法'],['商事法','民事訴訟法'],['刑法','刑事訴訟法'],['憲法','行政法']],g=[GR,G_,GR];
+      const hOf=Wb=>rows.reduce((a,row,i)=>a+row.reduce((x,s)=>x+A(s),0)/(Wb-S_*(row.length-1))+(i<rows.length-1?g[i]:0),0);
+      const ar=Math.max(300,root.clientHeight-150)/Math.max(200,root.clientWidth-80);let lo=1200,hi=9000;
+      for(let i=0;i<40;i++){const m=(lo+hi)/2;(hOf(m)+420)/(m+320)>ar?lo=m:hi=m}
+      rowsIn(rows,0,0,lo,g)}
+    else{ // 橫放：三欄＝民事法系｜刑事法系｜公法；每欄上實體、下程序
+      const cols=[[['民法'],['商事法','民事訴訟法']],[['刑法'],['刑事訴訟法']],[['憲法'],['行政法']]];
+      const ar=Math.max(1.2,(root.clientWidth-16)/Math.max(300,root.clientHeight-140)),Ac=cols.map(c=>c.flat().reduce((a,s)=>a+A(s),0));
+      const H=Math.sqrt(Ac.reduce((a,b)=>a+b,0)/ar);let x=0;
+      cols.forEach((c,i)=>{if(!Ac[i])return;const w=Ac[i]/H;rowsIn(c,x,0,w,[GR]);x+=w+G_})}
+    SUBJ.concat(Object.keys(OC)).forEach(s=>{if(!contOf[s]&&A(s)>0){const b=conts.reduce((m,c)=>Math.max(m,c.y+c.h),0);place(s,0,b+G_,1200,A(s)/1200)}});
+    conts.forEach(c=>{c.path=poly(c,c.x,c.y,c.w,c.h);c.r=[c.x,c.y,c.w,c.h]});
+    conts.forEach(cb=>{if(cb.grey)return;const out=[];bin(chList[cb.subj].map((c,i)=>({w:chT[c.subj+'|'+c.ch].reduce((b,t)=>b+wt(t),0),c,i})),cb.x,cb.y,cb.w,cb.h,out);
+      out.forEach(([it,x,y,w,h])=>{const cl=clsOf(it.c.ch),ch={subj:cb.subj,ch:it.c.ch,page:it.c.page,r:[x,y,w,h],cb,cls:cl,hue:CLS[cl][1],no:it.i+1,short:CH_SHORT[it.c.ch]||it.c.ch};ch.path=poly(cb,x,y,w,h);
+        const ts=chT[cb.subj+'|'+it.c.ch];ch.n=ts.reduce((a,t)=>a+t.n,0);ch.must=ts.filter(t=>IMP[t.id]==='必考').length;ch.cells=[];ch.ctr=warp(cb,x+w/2,y+h/2);chaps.push(ch);
+        const o2=[];bin(ts.map(t=>({w:wt(t),t})),x,y,w,h,o2);
+        o2.forEach(([q,x2,y2,w2,h2])=>{const c={t:q.t,id:q.t.id,r:[x2,y2,w2,h2],ch,cb,no:RNO[q.t.id]};c.path=poly(cb,x2,y2,w2,h2);c.ctr=warp(cb,x2+w2/2,y2+h2/2);
+          ch.cells.push(c);cells.push(c);cellOf[c.id]=c})})});
+    chaps.sort((a,b)=>SUBJ.indexOf(a.subj)-SUBJ.indexOf(b.subj)||a.no-b.no);
+    let bx0=1e9,by0=1e9,bx1=-1e9,by1=-1e9;conts.forEach(c=>{bx0=Math.min(bx0,c.x);by0=Math.min(by0,c.y);bx1=Math.max(bx1,c.x+c.w);by1=Math.max(by1,c.y+c.h)});
+    WB=[bx0-160,by0-260,bx1-bx0+320,by1-by0+420];
+    chaps.forEach(ch=>{const avg=ch.n/ch.cells.length;ch.fill=`hsl(${ch.hue},52%,${clamp(lum(Math.round(avg*1.6))+14,70,89)}%)`})}
+  layout();
+  // 未歸類的考題：不占版圖，改成大陸左下角的小標（點了看說明與題目）
+  const pseudo=Object.values(T).filter(t=>t.pseudo&&contOf[t.subj]&&!contOf[t.subj].grey);
   // ---------- 畫布、視角 ----------
   const cv=$('.lm-cv'),ctx=cv.getContext('2d'),hit=document.createElement('canvas').getContext('2d');
-  let V={k:.1,x:0,y:0},DPR=1,raf=0,sel=null,hits=new Set(),showCo=true,showCx=true,dragging=false;
+  let V={k:.1,x:0,y:0},DPR=1,raf=0,sel=null,hits=new Set(),showCo=false,showCx=false;
   const Wd=()=>cv.clientWidth,Hd=()=>cv.clientHeight,wide=()=>Wd()>700;
   const P=$('.lm-panel'),panelOpen=()=>P.classList.contains('lm-open');
-  function area(){const W=Wd(),H=Hd(),t=TOP()+(W<=700?34:40);let r=W,b=H-(W<=700?8:16);
-    if(panelOpen()){if(wide())r=W-Math.min(460,W);else b=H-P.offsetHeight}return [8,t,r-8,Math.max(t+60,b)]}
+  function area(){const W=Wd(),H=Hd(),t=TOP()+(W<=700?34:40);let r=W-58,b=H-(W<=700?8:16);   // 右側 58px 是＋－鍵
+    if(panelOpen()){if(wide())r=W-Math.min(460,W);else{r=W;b=H-P.offsetHeight}}return [8,t,r-8,Math.max(t+60,b)]}
   function fitV(x,y,w,h,pad=.08){const [l,t,r,b]=area(),k=Math.min((r-l)/(w*(1+pad*2)),(b-t)/(h*(1+pad*2)));
     return {k,x:(l+r)/2-(x+w/2)*k,y:(t+b)/2-(y+h/2)*k}}
   function resize(){DPR=Math.min(2.5,window.devicePixelRatio||1);cv.width=Math.round(Wd()*DPR);cv.height=Math.round(Hd()*DPR);
-    const mi=$('.lm-mini'),mw=Math.min(wide()?190:128,(wide()?120:124)*WB[2]/WB[3]);mi.style.width=mw+'px';mi.style.height=Math.round(mw*WB[3]/WB[2])+'px';mi.width=mw*DPR;$('.lm-zm').style.bottom=`calc(${Math.round(mw*WB[3]/WB[2])+22}px + env(safe-area-inset-bottom))`;mi.height=Math.round(mw*WB[3]/WB[2])*DPR;miniBase=null;req()}
+    const mi=$('.lm-mini'),mw=Math.round(Math.min((wide()?190:110)/WB[2],(wide()?130:170)/WB[3])*WB[2]);mi.style.width=mw+'px';mi.style.height=Math.round(mw*WB[3]/WB[2])+'px';mi.width=mw*DPR;$('.lm-zm').style.bottom=`calc(${Math.round(mw*WB[3]/WB[2])+22}px + env(safe-area-inset-bottom))`;mi.height=Math.round(mw*WB[3]/WB[2])*DPR;miniBase=null;req()}
   const req=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})};
   const KMIN=()=>fitV(...WB,0).k*.6,KMAX=4;
   let anim=0;
@@ -1073,71 +1455,117 @@ function lmDraw(root,D,signal,arg){
   function wrap2(s,fs,maxW){if(tw(s,fs)<=maxW)return [s];for(let i=Math.ceil(s.length/2);i<s.length;i++){const a=s.slice(0,i),b=s.slice(i);if(tw(a,fs)<=maxW&&tw(b,fs)<=maxW)return [a,b]}
     for(let i=Math.ceil(s.length/2)-1;i>0;i--){const a=s.slice(0,i),b=s.slice(i);if(tw(a,fs)<=maxW&&tw(b,fs)<=maxW)return [a,b]}return null}
   const clip1=(s,fs,maxW,w)=>{if(tw(s,fs,w)<=maxW)return s;let lo=0,hi=s.length;while(lo<hi){const m=(lo+hi+1)>>1;tw(s.slice(0,m)+'…',fs,w)<=maxW?lo=m:hi=m-1}return lo?s.slice(0,lo)+'…':''};
+  function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
   // ---------- 主繪製 ----------
-  let issueHit=[],shownT=new Set(),shownCh=new Set(),lvName='全景';
+  let issueHit=[],badgeHit=[],routeHit=[],unnamed=[],pillLog=[],shownT=new Set(),shownCh=new Set(),lvName='全景',ROUTE_ON=false;
   const IMPC={'必考':'#d92d20','常考':'#f79009'};
   function star(x,y,r,c){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,q=i%2?r*.45:r;ctx.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q)}ctx.closePath();
     ctx.fillStyle=c;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke()}
   function draw(){
-    const W=Wd(),H=Hd(),k=V.k;issueHit=[];minFs=99;shownT=new Set();shownCh=new Set();
-    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle='#dce9f3';ctx.fillRect(0,0,W,H);
-    // 經緯網
+    const W=Wd(),H=Hd(),k=V.k;issueHit=[];badgeHit=[];routeHit=[];minFs=99;shownT=new Set();shownCh=new Set();
+    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle='#d6e6f2';ctx.fillRect(0,0,W,H);
     ctx.setTransform(DPR*k,0,0,DPR*k,DPR*V.x,DPR*V.y);
-    ctx.strokeStyle='rgba(120,150,180,.18)';ctx.lineWidth=1/k;ctx.beginPath();
-    const g=400,x0=Math.floor(-V.x/k/g)*g,y0=Math.floor(-V.y/k/g)*g;for(let x=x0;x<(W-V.x)/k;x+=g){ctx.moveTo(x,(-V.y)/k);ctx.lineTo(x,(H-V.y)/k)}for(let y=y0;y<(H-V.y)/k;y+=g){ctx.moveTo(-V.x/k,y);ctx.lineTo((W-V.x)/k,y)}ctx.stroke();
-    // 陸地：淺海光暈＋底色
-    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineJoin='round';ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=14/k;ctx.stroke(c.path);
-      ctx.fillStyle=c.grey?'#e6e4df':c.uc?'#f4f1ea':'#f6f3ec';ctx.fill(c.path)});
-    // 灰色未建地圖區：斜線
+    // 每章「主題格線」淡入程度：畫面內最小的主題短邊 26→38px、平均大小 48→70px 之間由無到有；過半（tA≥.5）就換成主題層，每塊都要有名字或編號
+    const tA=new Map(),chA=new Map();
+    chaps.forEach(ch=>{const s=sr(ch.r),avg=Math.sqrt(s[2]*s[3]/ch.cells.length);let m=1e9;
+      ch.cells.forEach(c=>{const p=[c.ctr[0]*k+V.x,c.ctr[1]*k+V.y];if(p[0]>=0&&p[0]<=W&&p[1]>=0&&p[1]<=H){const q=sr(c.r);m=Math.min(m,q[2],q[3])}});
+      const a=Math.min(sstep(m,22,32),sstep(avg,50,80));tA.set(ch,a);chA.set(ch,a>=.5?1:0)});
+    // 淺海帶＋陸地底色
+    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineJoin='round';ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=110;ctx.stroke(c.path);
+      ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=44;ctx.stroke(c.path);ctx.fillStyle=c.grey?'#e6e4df':'#f6f3ec';ctx.fill(c.path)});
     conts.forEach(c=>{if(!c.grey||!inView(c.r))return;ctx.save();ctx.clip(c.path);ctx.strokeStyle='rgba(120,120,120,.18)';ctx.lineWidth=2/k;ctx.beginPath();
       const s=26/k;for(let d=c.x-c.h;d<c.x+c.w;d+=Math.max(s,12)){ctx.moveTo(d,c.y+c.h);ctx.lineTo(d+c.h,c.y)}ctx.stroke();ctx.restore()});
-    // 主題（州）
-    cells.forEach(c=>{if(c.uc||!inView(c.r))return;ctx.fillStyle=fillOf(c);ctx.fill(c.path)});
-    cells.forEach(c=>{if(c.uc||!inView(c.r))return;const z=!c.t.n;ctx.lineWidth=(z?1.4:1)/k;ctx.strokeStyle=z?'rgba(110,110,110,.75)':'rgba(255,255,255,.85)';
-      ctx.setLineDash(z?[5/k,4/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);
-    // 章（國）界
-    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.lineWidth=2.4/k;ctx.strokeStyle='rgba(70,60,50,.62)';ctx.stroke(ch.path)});
-    // 海岸線
-    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineWidth=(c.grey||c.uc?2:2.6)/k;ctx.strokeStyle=c.grey?'#9a9a94':c.uc?'#667085':'#5b7896';
-      ctx.setLineDash(c.grey||c.uc?[9/k,6/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);
-    // 航線：同題合考、民刑交會（預設淡，選到的主題才強調）
+    // 章（國）底色：顏色＝概念類別（固定），深淺＝章內主題平均考題數
+    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.fillStyle=ch.fill;ctx.fill(ch.path)});
+    // 主題（州）：放大才淡入；爭點密集的主題加琥珀斜紋
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!inView(c.r))return;ctx.globalAlpha=a;ctx.fillStyle=fillOf(c);ctx.fill(c.path)});
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!dense(c.t)||!inView(c.r))return;ctx.save();ctx.clip(c.path);ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=a*.55;
+      const s=sr(c.r);ctx.strokeStyle='#b54708';ctx.lineWidth=2.5;ctx.beginPath();for(let d=Math.floor((s[0]-s[3])/10)*10;d<s[0]+s[2];d+=10){ctx.moveTo(d,s[1]+s[3]);ctx.lineTo(d+s[3],s[1])}ctx.stroke();ctx.restore()});
+    ctx.globalAlpha=1;
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!inView(c.r))return;const z=!c.t.n;ctx.globalAlpha=a;ctx.lineWidth=(z?1.3:1)/k;ctx.strokeStyle=z?'rgba(110,110,110,.7)':'rgba(255,255,255,.9)';
+      ctx.setLineDash(z?[5/k,4/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);ctx.globalAlpha=1;
+    // 章（國）界、海岸線
+    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.lineWidth=2/k;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.stroke(ch.path);ctx.lineWidth=1.1/k;ctx.strokeStyle='rgba(70,60,50,.45)';ctx.stroke(ch.path)});
+    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineWidth=(c.grey?2:2.4)/k;ctx.strokeStyle=c.grey?'#9a9a94':'#4f6f8f';
+      ctx.setLineDash(c.grey?[9/k,6/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);
+    // 航線：預設不畫；點了主題才畫它的線（圖例裡可整批打開）
     const curve=(a,b,bend)=>{const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1];return [mx-dy*bend,my+dx*bend]};
     const lbl=[];
-    D.links.forEach(l=>{const A=cellOf[l.a],B=cellOf[l.b];if(!A||!B)return;const co=l.kind==='同題合考';if(co?!showCo:!showCx)return;
-      const hl=sel&&(l.a===sel||l.b===sel),nv=!co&&l.status!=='已驗證',[qx,qy]=curve(A.ctr,B.ctr,co?.14:-.22);
+    D.links.forEach(l=>{const A=cellOf[l.a],B=cellOf[l.b];if(!A||!B)return;const co=l.kind==='同題合考',hl=sel&&(l.a===sel||l.b===sel);
+      if(!hl&&!(co?showCo:showCx))return;
+      const nv=!co&&l.status!=='已驗證',[qx,qy]=curve(A.ctr,B.ctr,co?.14:-.22);
       ctx.beginPath();ctx.moveTo(A.ctr[0],A.ctr[1]);ctx.quadraticCurveTo(qx,qy,B.ctr[0],B.ctr[1]);
-      if(co){ctx.strokeStyle=hl?'rgba(220,104,3,.8)':'rgba(60,80,110,'+(sel?.04:.09)+')';ctx.lineWidth=(hl?2.2:1+.5*l.n)/k;ctx.setLineDash([])}
-      else{ctx.strokeStyle=hl?(nv?'rgba(102,112,133,.95)':'rgba(180,35,24,.95)'):(nv?'rgba(102,112,133,.28)':'rgba(180,35,24,.34)');ctx.lineWidth=(hl?3.2:1.8)/k;ctx.setLineDash([10/k,7/k])}
+      if(co){ctx.strokeStyle=hl?'rgba(220,104,3,.85)':'rgba(60,80,110,.22)';ctx.lineWidth=(hl?2.4:1.2)/k;ctx.setLineDash([])}
+      else{ctx.strokeStyle=nv?(hl?'rgba(102,112,133,.95)':'rgba(102,112,133,.4)'):(hl?'rgba(180,35,24,.95)':'rgba(180,35,24,.45)');ctx.lineWidth=(hl?3.2:1.8)/k;ctx.setLineDash([10/k,7/k])}
       ctx.stroke();ctx.setLineDash([]);
       if(hl&&!co)lbl.push([l.name+(nv?'（未能確認）':''),(A.ctr[0]+B.ctr[0])/4+qx/2,(A.ctr[1]+B.ctr[1])/4+qy/2,nv])});
-    // 選取、搜尋標示
     if(sel&&cellOf[sel]){const c=cellOf[sel];ctx.lineWidth=4/k;ctx.strokeStyle='#111';ctx.stroke(c.path)}
     hits.forEach(id=>{const c=cellOf[id];if(!c)return;ctx.lineWidth=5/k;ctx.strokeStyle='#f79009';ctx.stroke(c.path)});
-    // ---------- 標籤（螢幕座標；字級隨層級自動調整，太小就不畫） ----------
+    // ---------- 標籤（螢幕座標；字級隨層級自動調整；放不下全名就用短名，再放不下用編號） ----------
     ctx.setTransform(DPR,0,0,DPR,0,0);
-    // 主題層
-    const chA=new Map();
-    chaps.forEach(ch=>{const s=sr(ch.r),avg=Math.sqrt(s[2]*s[3]/ch.cells.length);chA.set(ch,avg>=72?1:0)});
-    cells.forEach(c=>{if(c.uc)return;const a=chA.get(c.ch),s=sr(c.r);if(s[0]>W||s[1]>H||s[0]+s[2]<0||s[1]+s[3]<0)return;
-      const t=c.t,imp=IMPC[t.imp],dk=darkTxt(c),cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;
-      if(a<.05){if(imp&&t.imp==='必考'&&s[2]>16&&s[3]>16&&V.k>KMIN()/.6*1.15)star(c.ctr[0]*V.k+V.x,c.ctr[1]*V.k+V.y,clamp(s[2]*.12,4,7),'#d92d20');return}
+    const placed=[],free=(x,y,w,h)=>!placed.some(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]),take=(x,y,w,h)=>placed.push([x,y,w,h]);
+    const off=s=>s[0]>W||s[1]>H||s[0]+s[2]<0||s[1]+s[3]<0,toS=p=>[p[0]*V.k+V.x,p[1]*V.k+V.y];
+    const crowd=[],late=[],named=new Set(),vis=p=>p[0]>=0&&p[0]<=W&&p[1]>=TOP()&&p[1]<=H;
+    // 編號小牌（白底）：名稱放不下時用；編號＝念書路線順序，圖例有對照
+    pillLog=[];const pill=(txt,x,y,o)=>{o=o||{};pillLog.push([txt,Math.round(x),Math.round(y)]);const w=Math.max(20,tw(txt,12,700)+10),h=20;rrect(x-w/2,y-h/2,w,h,10);ctx.fillStyle=o.bg||'rgba(255,255,255,.96)';ctx.fill();ctx.lineWidth=1.4;ctx.strokeStyle=o.bd||'#344054';ctx.stroke();
+      label(txt,x,y+.5,12,{w:700,c:o.c||'#101828',halo:'rgba(0,0,0,0)'});return [x-w/2,y-h/2,w,h]};
+    // 位置：先放中心，擠到就在附近找空位，但中心一定留在該區塊（box）裡，不跑到海上或別科
+    const pillAt=(txt,x,y,o,box,box2)=>{const w=Math.max(20,tw(txt,12,700)+10),ins=(b,px,py)=>!b||(px>=b[0]+4&&px<=b[0]+b[2]-4&&py>=b[1]+4&&py<=b[1]+b[3]-4);
+      const ring=[[0,0],[0,22],[0,-22],[w,0],[-w,0],[w,22],[-w,22],[w,-22],[-w,-22],[0,44],[0,-44],[w*2,0],[-w*2,0],[w,44],[-w,44],[w,-44],[-w,-44]];
+      for(const b of box2?[box,box2]:[box])for(const [dx,dy] of ring)if(ins(b,x+dx,y+dy)&&(b===box||ins(box2&&[box2[0]+16,box2[1]+16,box2[2]-32,box2[3]-32],x+dx,y+dy))&&free(x+dx-w/2,y+dy-10,w,20)){const r=pill(txt,x+dx,y+dy,o);take(...r);return r}
+      if(o&&o.strict)return null;
+      if(o&&o.late){late.push([txt,x,y,o]);take(x-w/2,y-10,w,20);return [x-w/2,y-10,w,20]}
+      const r=pill(txt,x,y,o);take(...r);return r};
+    // 先算大陸名、未歸類小標的位置（畫在最上層，其他標籤要避開）
+    const cLbl=[],bLbl=[];
+    conts.forEach(c=>{if(c.grey)return;const s=sr(c.r);if(off(s))return;
+      const nm=c.subj,fs=clamp(Math.min(s[2]*.075,(s[2]+40)/nm.length),18,40),a=1-sstep(s[2]/W,1.25,2);if(a<.03)return;
+      const tw0=tw(nm,fs,800),y=s[1]-fs*.55-6,x=clamp(s[0]+s[2]/2,tw0/2+6,W-tw0/2-6);if(y<TOP()+fs*.7)return;
+      cLbl.push([nm,x,y,fs,a]);take(x-tw0/2-4,y-fs*.6,tw0+8,fs*1.2)});
+    // 小章的中心先保留給編號牌，未歸類小標不要壓在上面
+    const resv=chaps.filter(ch=>{const q=sr(ch.r);return !off(q)&&(q[2]<70||q[3]<45)}).map(ch=>{const p=toS(ch.ctr);return [p[0]-16,p[1]-12,32,24]});
+    // 未歸類小標（先占位；大陸左下角優先，擠到就換右下、中下，最後放海岸外）
+    pseudo.forEach(t=>{const c=contOf[t.subj],s=sr(c.r);if(s[2]<110||s[2]>W*2.2||off(s))return;
+      const txt=`未歸類 ${t.n} 題 ⓘ`,w=tw(txt,12,600)+16,h=24,C=[];
+      for(const yy of [s[1]+s[3]*.95-h,s[1]+s[3]*.86-h,s[1]+s[3]*.76-h,s[1]+s[3]+2])for(const xx of [s[0]+s[2]*.05,s[0]+s[2]*.95-w,s[0]+(s[2]-w)/2])C.push([xx,yy]);
+      const ok=C.filter(([x,y])=>y>=TOP()+4&&y+h<=H);if(!ok.length)return;const fr=(x,y)=>free(x-2,y-2,w+4,h+4)&&!resv.some(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]);const nO=(x,y)=>resv.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length*10+placed.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length;
+      const [x,y]=ok.find(([x,y])=>fr(x,y))||ok.slice().sort((p,q)=>nO(...p)-nO(...q))[0];
+      bLbl.push([t,txt,x,y,w,h]);take(x-2,y-2,w+4,h+4)});
+    // 念書路線（可開關，預設關）：每科一條，章層畫「章編號」，放大到主題層的章改畫「章-主題」編號；先占位，名稱標籤會避開
+    const rDots=[];
+    if(ROUTE_ON)SUBJ.forEach(sj=>{const cb=contOf[sj];if(!cb||cb.grey||off(sr(cb.r)))return;const pts=[];
+      chaps.filter(ch=>ch.subj===sj).forEach(ch=>{if(chA.get(ch)){ch.cells.slice().sort((p,q)=>p.no[1]-q.no[1]).forEach(c=>{const s=sr(c.r),txt=c.no[0]+'-'+c.no[1],w=Math.max(20,tw(txt,12,700)+10);
+          pts.push({x:s[0]+Math.min(s[2]/2,w/2+6),y:s[1]+Math.min(s[3]/2,16),txt,id:c.id,c})})}
+        else{const p=toS(ch.ctr);pts.push({x:p[0],y:p[1],txt:String(ch.no),ch})}});
+      ctx.lineJoin='round';ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=7;ctx.stroke();
+      ctx.strokeStyle='#0b6e65';ctx.lineWidth=3;ctx.setLineDash([9,6]);ctx.stroke();ctx.setLineDash([]);
+      pts.forEach(p=>{if(p.x<-20||p.x>W+20||p.y<TOP()-10||p.y>H+20)return;const w=Math.max(20,tw(p.txt,12,700)+10);
+        if(!free(p.x-w/2,p.y-10,w,20)&&!p.c)return;take(p.x-w/2,p.y-10,w,20);rDots.push(p)})});
+    rDots.forEach(p=>{if(p.ch)named.add(p.ch);if(p.c)named.add(p.c)});
+    cells.forEach(c=>{const a=chA.get(c.ch),s=sr(c.r);if(off(s)&&!vis(toS(c.ctr)))return;
+      const t=c.t,ip=IMP[c.id],imp=IMPC[ip],dk=darkTxt(c),cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;
+      if(a<.05){if(ip==='必考'&&tA.get(c.ch)>.3&&s[2]>16&&s[3]>16)star(c.ctr[0]*V.k+V.x,c.ctr[1]*V.k+V.y,clamp(s[2]*.12,4,7),'#d92d20');return}
       const deep=s[2]>=230&&s[3]>=150;
       if(!deep){const maxW=s[2]-10;let fs=clamp(Math.min(maxW/Math.max(2,t.t.length)*1.05,s[3]*.22),12,22),L=null;
         for(;fs>=12;fs-=1){L=wrap2(t.t,fs,maxW-(imp?fs:0));if(L&&L.length*fs*1.25+16<=s[3])break;L=null}
-        if(!L)return;shownT.add(c.id);
+        const bw=L?Math.max(...L.map(x=>tw(x,fs)))+(imp?fs:0):0,bh=L?L.length*fs*1.25+16:0;
+        if(!L||!free(cx-bw/2,cy-bh/2,bw,bh)){   // 名稱放不下：用「章-主題」編號（點一下會放大到看得到名稱）
+          if(!named.has(c)){const txt=tw(c.no[0]+'-'+c.no[1],12,700)+10<=s[2]-4?c.no[0]+'-'+c.no[1]:String(c.no[1]);pillAt(txt,cx,cy,imp?{bd:imp}:null,s);named.add(c)}
+          if(imp)ip==='必考'?star(cx-tw(String(c.no[1]),12,700)/2-14,cy,6,imp):(ctx.beginPath(),ctx.arc(cx-tw(String(c.no[1]),12,700)/2-13,cy,4,0,7),ctx.fillStyle=imp,ctx.fill());return}
+        take(cx-bw/2,cy-bh/2,bw,bh);shownT.add(c.id);named.add(c);
         const sub=t.n?`${t.n} 題`:'未考過',h=L.length*fs*1.25,y=cy-(h+14)/2+fs*.62;
         L.forEach((ln,i)=>{const yy=y+i*fs*1.25,w=tw(ln,fs);label(ln,cx+(imp&&i===0?fs*.55:0),yy,fs,{a,c:dk?(t.n?'#1d2430':'#667085'):'#fff',halo:dk?'rgba(255,255,255,.9)':'rgba(16,24,40,.55)'});
-          if(imp&&i===0)t.imp==='必考'?star(cx+fs*.55-w/2-fs*.65,yy,fs*.42,imp):(ctx.beginPath(),ctx.arc(cx+fs*.55-w/2-fs*.65,yy,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill())});
+          if(imp&&i===0)ip==='必考'?star(cx+fs*.55-w/2-fs*.65,yy,fs*.42,imp):(ctx.beginPath(),ctx.arc(cx+fs*.55-w/2-fs*.65,yy,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill())});
         label(sub,cx,y+h-fs*.62+13,12,{a,w:500,c:dk?'#475467':'#eef2f6',halo:dk?'rgba(255,255,255,.9)':'rgba(16,24,40,.5)'});return}
       // 最深層：主題名＋統計＋爭點（城市點）＋條文
-      shownT.add(c.id);ctx.save();ctx.beginPath();ctx.rect(s[0]+4,s[1]+4,s[2]-8,s[3]-8);ctx.clip();
-      const pad=clamp(s[2]*.05,10,22),x=s[0]+pad,mw=s[2]-pad*2,fs=clamp(s[2]/16,16,24);let y=s[1]+pad+fs*.6;
+      shownT.add(c.id);named.add(c);ctx.save();ctx.beginPath();ctx.rect(s[0]+4,s[1]+4,s[2]-8,s[3]-8);ctx.clip();
+      const pad=clamp(s[2]*.05,10,22),x=s[0]+pad,mw=s[2]-pad*2,fs=clamp(s[2]/16,16,24);let y=s[1]+pad+fs*.6+(ROUTE_ON?18:0);
       const tc=dk?'#101828':'#fff',sc=dk?'#344054':'#f2f4f7',halo=dk?'rgba(255,255,255,.92)':'rgba(16,24,40,.6)';
-      let tx=x;if(imp){t.imp==='必考'?star(x+fs*.42,y,fs*.42,imp):(ctx.beginPath(),ctx.arc(x+fs*.42,y,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill());tx=x+fs*1.05}
+      let tx=x;if(imp){ip==='必考'?star(x+fs*.42,y,fs*.42,imp):(ctx.beginPath(),ctx.arc(x+fs*.42,y,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill());tx=x+fs*1.05}
       label(clip1(t.t,fs,mw-(tx-x),700),tx,y,fs,{al:'left',w:700,a,c:tc,halo});y+=fs*.6+12;
       const fs2=clamp(fs*.62,12,15);
-      label(clip1((t.imp?t.imp+'｜':'')+(t.n?`考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）｜${t.ys.join(' ')}`:'未考過'),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10;
-      if(t.core&&t.core.length){label(clip1('條文 '+t.core.map(n=>'§'+n).join(' '),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10}
+      label(clip1((ip?(ip==='未能確認'?'必考／常考未能確認':ip)+'｜':'')+(dense(t)?'爭點密集｜':'')+(t.n?`考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）｜${t.ys.join(' ')}`:'未考過'),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10;
+      if(t.core&&t.core.length){label(clip1('條文 '+t.core.map(n=>String(n).includes('|')?artLbl(t.subj,n):'§'+n).join(' '),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10}
       const iss=(t.iss||[]).map(i=>D.issues[i]).filter(Boolean),fs3=clamp(fs*.6,12,14),lh=fs3+11;
       if(iss.length){label(`爭點 ${iss.length}`,x,y,fs3,{al:'left',w:700,a,c:tc,halo});y+=lh}
       let shown=0;for(const I of iss){if(y+lh>s[1]+s[3]-pad-(iss.length-shown>1?lh:0))break;
@@ -1145,42 +1573,58 @@ function lmDraw(root,D,signal,arg){
         label(clip1(`${I.year}｜${I.t}`,fs3,mw-18,500),x+16,y,fs3,{al:'left',w:500,a,c:tc,halo});
         issueHit.push([x-4,y-lh/2,mw+8,lh,c.id,I.id]);y+=lh;shown++}
       if(iss.length>shown)label(`…還有 ${iss.length-shown} 個爭點，點主題看全部`,x,y,fs3,{al:'left',w:500,a,c:sc,halo});
-      else if(!iss.length&&t.mcq.length){const ms=t.mcq.slice(0,12).join('、');label(clip1('選擇題 '+ms,fs3,mw,500),x,y,fs3,{al:'left',w:500,a,c:sc,halo})}
+      else if(!iss.length&&t.mcq.length){const ms=t.mcq.slice(0,12).map(q=>D.mcq[q]?`${D.mcq[q].y}-${String(D.mcq[q].n).padStart(2,'0')}`:q).join('、');label(clip1('選擇題 '+ms,fs3,mw,500),x,y,fs3,{al:'left',w:500,a,c:sc,halo})}
       ctx.restore()});
-    // 章（國）名：放大到主題名出現時淡出
-    chaps.forEach(ch=>{const a=1-chA.get(ch),s=sr(ch.r);if(a<.03||s[0]>W||s[1]>H||s[0]+s[2]<0||s[1]+s[3]<0)return;
-      const ca=V.k<KMIN()/.6*1.15?0:1;if(!ca)return;
-      const nm=ch.ch,maxW=s[2]-10;let fs=clamp(Math.min(maxW/(nm.length+.5),s[3]*.2),13,34);if(tw(nm,fs,700)>maxW||fs*2.2>s[3])return;
-      shownCh.add(ch);const cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;label(nm,cx,cy-fs*.35,fs,{w:700,a,c:'#101828'});
-      const sub=`${ch.n} 題${ch.must?`・必考 ${ch.must}`:''}`;if(tw(sub,12,500)<maxW&&fs*2+14<s[3])label(sub,cx,cy+fs*.75,12,{w:500,a,c:'#344054'})});
-    // 大陸名：放在陸塊上方的海面；其他科目寫「未建地圖」
-    conts.forEach(c=>{const s=sr(c.r);if(s[0]>W||s[1]>H||s[0]+s[2]<0||s[1]+s[3]<0)return;
-      if(c.grey||c.uc){let nm=c.grey?(SJ_SHORT[c.subj]||c.subj):'未能歸類的考題';if(c.uc&&tw(nm,12,700)>s[2]-10)nm='未能歸類';
-        const subs=c.grey?[`未建地圖・題庫 ${c.n.n} 題`,'未建地圖']:[`${T.UC.n} 題（未能確認主題）`,`${T.UC.n} 題`],sub=subs.find(x=>tw(x,12,500)<s[2]-10);
-        let fs=clamp(Math.min((s[2]-10)/(nm.length+.4),s[3]*.22),12,30);if(tw(nm,fs,700)>s[2]-8)return;
-        const cx=s[0]+s[2]/2,cy=s[1]+s[3]/2,two=sub&&s[3]>fs+30;label(nm,cx,cy-(two?fs*.4:0),fs,{w:700,c:c.grey?'#475467':'#344054'});
-        if(two)label(sub,cx,cy+fs*.6+4,12,{w:500,c:'#475467'});return}
-      const fs=clamp(s[2]*.075,20,44),a=1-sstep(s[2]/W,1.25,2);if(a<.03)return;
-      const y=s[1]-fs*.85,x=clamp(s[0]+s[2]/2,fs*2,W-fs*2);if(y<TOP()+fs*.7)return;
-      label(c.subj,x,y,fs,{w:800,a,c:'#0f2a47',halo:'rgba(220,233,243,.95)'})});
+    // 章（國）名：全名 → 短名 → 編號（＝念書路線順序）；放大到主題層時換成主題名
+    chaps.map(ch=>[ch,sr(ch.r)]).sort((p,q)=>q[1][2]*q[1][3]-p[1][2]*p[1][3]).forEach(([ch,s])=>{const a=1-chA.get(ch);if(a<.03||off(s))return;
+      const [cx,cy0]=toS(ch.ctr),maxW=s[2]*.86-6,hasDot=named.has(ch);
+      for(const nm of ch.short!==ch.ch?[ch.ch,ch.short]:[ch.ch]){
+        let fs=clamp(Math.min(maxW/(nm.length+.3),s[3]*.24),12.5,30),L=[nm];
+        if(tw(nm,fs,700)>maxW){if(nm.length<4)continue;fs=clamp(Math.min(maxW/(Math.ceil(nm.length/2)+.3),s[3]*.16),12.5,24);L=wrap2(nm,fs,maxW)||[]}
+        if(!L.length||L.length*fs*1.2+4>s[3])continue;
+        const sub=`${ch.n} 題${ch.must?`・必考 ${ch.must}`:''}`,two=nm===ch.ch&&tw(sub,12,500)<maxW&&(L.length*fs*1.2+18)<s[3];
+        const bw=Math.max(two?tw(sub,12,500):0,...L.map(x=>tw(x,fs,700)))+6,bh=L.length*fs*1.2+(two?18:0);
+        for(const dy of hasDot?[0,bh/2+14,-bh/2-14]:[0]){const cy=cy0+dy,y0=cy-(L.length-1)*fs*.6-(two?8:0);
+          if(!free(cx-bw/2,y0-fs*.6,bw,bh))continue;take(cx-bw/2,y0-fs*.6,bw,bh);shownCh.add(ch);named.add(ch);
+          L.forEach((ln,i)=>label(ln,cx,y0+i*fs*1.2,fs,{w:700,a,c:'#101828'}));
+          if(two)label(sub,cx,y0+(L.length-1)*fs*1.2+fs*.6+10,12,{w:500,a,c:'#344054'});return}}
+      if(!hasDot&&s[2]>=3&&s[3]>=3){if(pillAt(String(ch.no),cx,cy0,{bd:`hsl(${ch.hue},45%,35%)`,strict:1},s))named.add(ch);else crowd.push(ch)}});
+    // 很小、擠在一起的章：連號合成一個編號牌（如「8–11」），放在那群章的中間；點一下放大就看得到各章名
+    crowd.sort((p,q)=>SUBJ.indexOf(p.subj)-SUBJ.indexOf(q.subj)||p.no-q.no).reduce((G,ch)=>{const g=G[G.length-1];if(g&&g[0].subj===ch.subj&&g[g.length-1].no===ch.no-1)g.push(ch);else G.push([ch]);return G},[])
+      .forEach(g=>{const p=g.map(ch=>toS(ch.ctr)),x=p.reduce((a,q)=>a+q[0],0)/p.length,y=p.reduce((a,q)=>a+q[1],0)/p.length,cb=sr(g[0].cb.r);
+        pillAt(g.length>1?`${g[0].no}–${g[g.length-1].no}`:String(g[0].no),x,y,{bd:`hsl(${g[0].hue},45%,35%)`,late:1},[cb[0]+14,cb[1]+14,cb[2]-28,cb[3]-28]);g.forEach(ch=>named.add(ch))});
+    // 大陸名：放在陸塊上方的海面
+    conts.forEach(c=>{if(!c.grey)return;const s=sr(c.r);if(off(s))return;
+      const nm=SH(c.subj);let fs=clamp(Math.min((s[2]-10)/(nm.length+.4),s[3]*.22),12,30);if(tw(nm,fs,700)>s[2]-8)return;
+      const cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;label(nm,cx,cy,fs,{w:700,c:'#475467'});if(s[3]>fs+30)label('未建地圖',cx,cy+fs*.6+8,12,{w:500,c:'#475467'})});
+    cLbl.forEach(([nm,x,y,fs,a])=>label(nm,x,y,fs,{w:800,a,c:'#0f2a47',halo:'rgba(214,230,242,.95)'}));
+    // 念書路線的編號圓點（最上層；點了直接進該章／該主題）
+    rDots.forEach(p=>{const r=pill(p.txt,p.x,p.y,{bg:'#0b6e65',bd:'#fff',c:'#fff'});routeHit.push([r[0]-6,r[1]-8,r[2]+12,r[3]+16,p])});
+    // 未歸類小標（大陸左下角）
+    bLbl.forEach(([t,txt,x,y,w,h])=>{rrect(x,y,w,h,12);ctx.fillStyle='rgba(255,255,255,.95)';ctx.fill();ctx.setLineDash([4,3]);ctx.lineWidth=1.2;ctx.strokeStyle='#667085';ctx.stroke();ctx.setLineDash([]);
+      label(txt,x+w/2,y+h/2+.5,12,{w:600,c:'#344054',halo:'rgba(255,255,255,0)'});badgeHit.push([x-4,y-6,w+8,h+12,t.id])});
+    late.forEach(([txt,x,y,o])=>pill(txt,x,y,o));   // 擠不出空位的編號：畫在最上層，不被小標蓋住
     linkLbl=lbl.map(q=>q[0]);lbl.forEach(([s,x,y,nv])=>{const p=[x*V.k+V.x,y*V.k+V.y];label(s,p[0],p[1],14,{w:700,c:nv?'#475467':'#b42318'})});
     hits.forEach(id=>{const c=cellOf[id];if(!c)return;const p=[c.ctr[0]*V.k+V.x,c.ctr[1]*V.k+V.y];ctx.beginPath();ctx.arc(p[0],p[1]-14,9,Math.PI*.15,Math.PI*.85,true);ctx.lineTo(p[0],p[1]);
       ctx.closePath();ctx.fillStyle='#f79009';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke()});
+    // 每塊都要有名字：畫面上看得到的區塊（章層的章、主題層的主題）中心在畫面內卻沒有名字／編號的，記下來給檢查用
+    unnamed=[];chaps.forEach(ch=>{const s=sr(ch.r);if(chA.get(ch)){ch.cells.forEach(c=>{if(vis(toS(c.ctr))&&!named.has(c))unnamed.push(c.t.subj+'›'+c.t.t)});return}
+      if(s[2]>=3&&s[3]>=3&&vis(toS(ch.ctr))&&!named.has(ch))unnamed.push(ch.subj+'›'+ch.ch)});
     // 目前位置（畫面中央在哪一區）
     const [l,t,r,b]=area(),cxw=((l+r)/2-V.x)/V.k,cyw=((t+b)/2-V.y)/V.k;let where='';
     const cc=cells.find(c=>c.r[0]<=cxw&&cxw<=c.r[0]+c.r[2]&&c.r[1]<=cyw&&cyw<=c.r[1]+c.r[3]);
     const anyT=shownT.size>0,anyCh=shownCh.size>0;
-    lvName=cells.some(c=>{const s=sr(c.r);return shownT.has(c.id)&&s[2]>=230&&s[3]>=150})?'爭點':anyT?'主題':anyCh?'章':'全景';
-    if(cc&&lvName!=='全景')where=cc.uc?'民法 › 未能歸類的考題':(cc.t.subj+' › '+cc.ch.ch+(lvName==='主題'||lvName==='爭點'?' › '+cc.t.t:''));
+    lvName=cells.some(c=>{const s=sr(c.r);return shownT.has(c.id)&&s[2]>=230&&s[3]>=150})?'爭點':anyT?'主題':(anyCh&&V.k>fitV(...WB,0).k*1.3)?'章':'全景';
+    if(cc&&lvName!=='全景')where=cc.t.subj+' › '+cc.ch.ch+(lvName==='主題'||lvName==='爭點'?' › '+cc.t.t:'');
     const we=$('.lm-where');we.textContent=where;we.style.top=TOP()+6+'px';we.style.display=where?'':'none';
-    cv.dataset.level=lvName;drawMini()}
+    cv.dataset.level=lvName;mi.style.visibility=V.k<fitV(...WB,0).k*1.15?'hidden':'';drawMini()}
   // ---------- 縮略導覽圖 ----------
   let miniBase=null;const mi=$('.lm-mini'),mctx=mi.getContext('2d');
   const mk=()=>mi.width/WB[2];
   function drawMini(){const K=mk();if(!miniBase){miniBase=document.createElement('canvas');miniBase.width=mi.width;miniBase.height=mi.height;const m=miniBase.getContext('2d');
-      m.fillStyle='#dce9f3';m.fillRect(0,0,mi.width,mi.height);m.setTransform(K,0,0,K,-WB[0]*K,-WB[1]*K);
-      conts.forEach(c=>{m.fillStyle=c.grey?'#d5d3cd':'#f6f3ec';m.fill(c.path)});cells.forEach(c=>{if(c.uc)return;m.fillStyle=fillOf(c);m.fill(c.path)});
-      conts.forEach(c=>{m.lineWidth=1.2/K;m.strokeStyle=c.grey?'#9a9a94':'#5b7896';m.stroke(c.path)})}
+      m.fillStyle='#d6e6f2';m.fillRect(0,0,mi.width,mi.height);m.setTransform(K,0,0,K,-WB[0]*K,-WB[1]*K);
+      conts.forEach(c=>{m.fillStyle=c.grey?'#d5d3cd':'#f6f3ec';m.fill(c.path)});chaps.forEach(ch=>{m.fillStyle=ch.fill;m.fill(ch.path)});
+      conts.forEach(c=>{m.lineWidth=1.2/K;m.strokeStyle=c.grey?'#9a9a94':'#4f6f8f';m.stroke(c.path)})}
     mctx.setTransform(1,0,0,1,0,0);mctx.drawImage(miniBase,0,0);
     const x=(-V.x/V.k-WB[0])*K,y=(-V.y/V.k-WB[1])*K,w=Wd()/V.k*K,h=Hd()/V.k*K;
     mctx.lineWidth=2*DPR;mctx.strokeStyle='#d92d20';mctx.strokeRect(clamp(x,1,mi.width-4),clamp(y,1,mi.height-4),Math.min(w,mi.width-2),Math.min(h,mi.height-2))}
@@ -1198,50 +1642,62 @@ function lmDraw(root,D,signal,arg){
       if(last){zoomAt(dd/last.d,mx,my);V.x+=mx-last.mx;V.y+=my-last.my;req()}last={d:dd,mx,my}}});
   const up=e=>{if(!pts.has(e.pointerId))return;pts.delete(e.pointerId);last=null;if(!pts.size){cv.classList.remove('lm-drag');if(!moved)tap(e)}};
   on(window,'pointerup',up);on(window,'pointercancel',e=>{pts.delete(e.pointerId);last=null});
-  const cellAt=(wx,wy)=>cells.find(c=>!c.uc&&c.r[0]-30<=wx&&wx<=c.r[0]+c.r[2]+30&&c.r[1]-30<=wy&&wy<=c.r[1]+c.r[3]+30&&hit.isPointInPath(c.path,wx,wy));
+  const cellAt=(wx,wy)=>cells.find(c=>c.r[0]-60<=wx&&wx<=c.r[0]+c.r[2]+60&&c.r[1]-60<=wy&&wy<=c.r[1]+c.r[3]+60&&hit.isPointInPath(c.path,wx,wy));
   const fitR=(r,pad)=>fitV(r[0],r[1],r[2],r[3],pad);
   function tap(e){const b=cv.getBoundingClientRect(),sx=e.clientX-b.left,sy=e.clientY-b.top;
+    const rh=routeHit.find(h=>sx>=h[0]&&sx<=h[0]+h[2]&&sy>=h[1]&&sy<=h[1]+h[3]);if(rh)return rh[4].id?select(rh[4].id):animTo(fitR(rh[4].ch.r,.04));
+    const bh=badgeHit.find(h=>sx>=h[0]&&sx<=h[0]+h[2]&&sy>=h[1]&&sy<=h[1]+h[3]);if(bh)return select(bh[4]);
     const ih=issueHit.find(h=>sx>=h[0]&&sx<=h[0]+h[2]&&sy>=h[1]&&sy<=h[1]+h[3]);if(ih)return select(ih[4],ih[5]);
     const wx=(sx-V.x)/V.k,wy=(sy-V.y)/V.k,c=cellAt(wx,wy);
-    if(c){if(shownT.has(c.id))return select(c.id);if(shownCh.has(c.ch))return animTo(fitR(c.ch.r,.04));return animTo(fitR(c.cb.r,.05))}
+    if(c){if(shownT.has(c.id))return select(c.id);            // 一層一層放大：大陸 → 章 → 主題附近（主題名放得下）→ 再點才開側欄
+      if(V.k<fitR(c.cb.r,.05).k*.97)return animTo(fitR(c.cb.r,.05));
+      if(V.k<fitR(c.ch.r,.04).k*.9)return animTo(fitR(c.ch.r,.04));
+      const m=Math.max(c.r[2],c.r[3])*2.4,z=fitR([c.ctr[0]-m/2,c.ctr[1]-m/2,m,m],0);if(z.k*Math.min(...c.ch.cells.map(q=>Math.min(q.r[2],q.r[3])))<34){const k2=Math.min(KMAX,34/Math.min(c.r[2],c.r[3])*1.15);if(k2>z.k){const [l,t,r,b]=area();z.k=k2;z.x=(l+r)/2-c.ctr[0]*k2;z.y=(t+b)/2-c.ctr[1]*k2}}if(z.k>V.k*1.15)return animTo(z);return select(c.id)}
     const ct=conts.find(q=>hit.isPointInPath(q.path,wx,wy));
-    if(ct&&ct.uc)return select('UC');
     if(ct&&ct.grey)return greyInfo(ct);
     if(ct)return animTo(fitR(ct.r,.05));
     if(panelOpen())closePanel()}
   // ---------- 選主題：側欄 ----------
-  function select(id,issue){const c=cellOf[id];if(!c)return;sel=id;renderPanel(id);
-    animTo(c.uc?fitR(c.r,.15):fitR(c.r,.1));
+  function select(id,issue){const c=cellOf[id],t=T[id];if(!c&&!(t&&t.pseudo&&contOf[t.subj]))return;sel=id;renderPanel(id);
+    animTo(c?fitR(c.r,.1):fitR(contOf[t.subj].r,.05));
     if(issue)setTimeout(()=>{const e=P.querySelector('[data-iss="'+CSS.escape(issue)+'"]');if(e){e.scrollIntoView({block:'center'});e.classList.add('lm-flash')}},250)}
   function greyInfo(ct){sel=null;const n=ct.n;
     P.innerHTML=`<button class="lm-x" aria-label="關閉">×</button><div class="lm-crumb">其他科目</div><h2>${esc(ct.subj)}</h2><div><span class="lm-bd lm-nv">未建地圖</span><span class="lm-bd">題庫已有：選擇 ${n.mcq}・申論 ${n.essay}</span></div>
       <div class="lm-p">這一科的題目已經在題庫（「練習」「申論」用上方科目選單切換），但還沒有整理成主題、爭點，所以地圖上先畫成灰色未開發區。</div>`;
     P.classList.add('lm-open');P.scrollTop=0;root.classList.add('lm-po');animTo(fitR(ct.r,.2))}
-  const artChip=(subj,a)=>`<span class="lm-art" data-k="${esc(subj+'|'+a)}">${esc((subj==='民法'?'民§':'刑§')+a)}</span>`;
+  const artChip=(subj,a)=>`<span class="lm-art" data-k="${esc(artKey(subj,a))}">${esc(artLbl(subj,a))}</span>`;
   const link=j=>j.url?`<a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.cite)}</a>`:esc(j.cite);
   const judHtml=(js,emptyMsg)=>!js||!js.length?`<div class="lm-nv">${esc(emptyMsg)}</div>`:
     js.map(j=>`<div class="lm-jd">${link(j)}${j.date?` <small class="lm-nv">${esc(j.date)}</small>`:''}<br><q>${esc(j.ex)}</q></div>`).join('');
   const eLabel=id=>{const e=D.essays[id];return e?`${e.y} 二試 ${e.no}`:id};
+  function issJudMsg(I){if(I.jud_status==='未歸主題')return '代表判決：未能確認（這個爭點沒有對上主題，沒有查）';
+    if(I.jud_status!=='已查')return (I.subj==='憲法'?'代表釋字／憲判':'代表判決')+'：RAG 無回應，未能確認';
+    return I.subj==='憲法'?'代表釋字／憲判：未能確認（RAG 查到的內容沒有對上本爭點的原文句）':'代表判決：未能確認（RAG 查到的判決理由段沒有對上本爭點的原文句）'}
   function renderPanel(id){
-    const t=T[id],law=t.subj,iss=(t.iss||[]).map(x=>D.issues[x]),rel=D.links.filter(l=>l.a===id||l.b===id);
+    const t=T[id],law=t.subj,iss=(t.iss||[]).map(x=>D.issues[x]).filter(Boolean),rel=D.links.filter(l=>l.a===id||l.b===id);
     const byY={};t.mcq.forEach(q=>{const y=D.mcq[q]?.y;(byY[y]=byY[y]||[]).push(q)});
-    let h=`<button class="lm-x" aria-label="關閉">×</button><div class="lm-crumb">${esc(t.subj)} › ${esc(t.ch)}</div><h2>${esc(t.t)}</h2>
-    <div>${t.imp?`<span class="lm-bd lm-i${esc(t.imp)}">${esc(t.imp)}</span>`:''}<span class="lm-bd">考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）</span>${t.ys.length?`<span class="lm-bd">${t.ys.join('、')}</span>`:'<span class="lm-bd lm-nv">未考過</span>'}</div>`;
+    const ip=IMP[id]||'',no=RNO[id],cc=cellOf[id];
+    let h=`<button class="lm-x" aria-label="關閉">×</button><div class="lm-crumb">${esc(t.subj)} › ${esc(t.ch)}${cc?`｜${esc(CLS[cc.ch.cls][0])}`:''}${no?`｜念書路線 ${no[0]}-${no[1]}${RNV[id]?'（順序未能確認：沒有條號可排）':''}`:''}</div><h2>${esc(t.t)}</h2>
+    <div>${ip==='未能確認'?'<span class="lm-bd lm-nv">必考／常考：未能確認</span>':ip?`<span class="lm-bd lm-i${esc(ip)}">${esc(ip)}</span>`:''}${!t.pseudo&&dense(t)?`<span class="lm-bd lm-dense">爭點密集（${iss.length}）</span>`:''}<span class="lm-bd">考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）</span>${t.ys.length?`<span class="lm-bd">${t.ys.join('、')}</span>`:'<span class="lm-bd lm-nv">未考過</span>'}</div>`;
+    if(!MR(law)&&!t.pseudo)h+=`<div class="lm-nv">★必考／●常考依題庫頻率推算（與民刑沒有筆記標色的主題同一套）：熱度 ${HEAT[id]}（108–115 年每題 1 分、113 年起 1.5 分，加判決數×0.2），本科排名前 20％＝必考、20–50％＝常考${ip==='未能確認'?'；本主題沒有歸到任何考題，無從排名':''}。</div>`;
     if(t.k)h+=`<div class="lm-p">${esc(t.k)}</div>`;
-    if(t.core&&t.core.length)h+=`<h3>核心條文（點開看條文）</h3><div>${t.core.map(a=>artChip(law,a)).join('')}</div><div class="lm-artbox"></div>`;
+    if(TP[id]||t.mcq.length)h+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px">${TP[id]?`<button class="lm-tg" data-tp="${esc(id)}">看主題整理頁 →</button>`:''}${t.mcq.length?`<button class="lm-tg lm-on" data-pr="${esc(id)}">練這個主題 ${Math.min(5,t.mcq.length)} 題</button>`:''}</div>`;
+    if(!MR(law)&&t.a)h+=`<div class="lm-p lm-nv">條文範圍：${esc(t.a)}</div>`;
+    if(t.core&&t.core.length)h+=`<h3>${MR(law)?'核心條文':'本主題考題最常引的條文'}（點開看條文）</h3><div>${t.core.map(a=>artChip(law,a)).join('')}</div><div class="lm-artbox"></div>`;
     h+=`<h3>爭點（二試申論，${iss.length}）</h3>`;
     if(!iss.length)h+=`<div class="lm-nv">這個主題沒有申論爭點掛上來${t.mcq.length?'，只考過選擇題':''}。</div>`;
     iss.forEach(I=>{h+=`<div class="lm-iss" data-iss="${esc(I.id)}"><b>${esc(I.t)}</b><span class="lm-src" data-e="${esc(I.e)}">${esc(eLabel(I.e))}</span>
-      <div>${I.arts.length?I.arts.map(a=>artChip(I.subj,a)).join(''):'<span class="lm-nv">關鍵條文：未能確認（擬答段落沒有可查證的本法條號）</span>'}</div><div class="lm-artbox"></div>
-      ${judHtml(I.jud,I.jud_status==='已查'?'代表判決：未能確認（RAG 查到的判決理由段沒有對上本爭點的原文句）':'代表判決：RAG 無回應，未能確認')}</div>`});
+      <div>${I.arts.length?I.arts.map(a=>artChip(I.subj,a)).join(''):'<span class="lm-nv">關鍵條文：未能確認（擬答段落沒有可查證的條號）</span>'}</div><div class="lm-artbox"></div>
+      ${judHtml(I.jud,issJudMsg(I))}</div>`});
     h+=`<h3>選擇題（一試，${t.mcq.length}）</h3>`;
     if(!t.mcq.length)h+='<div class="lm-nv">沒有選擇題掛在這個主題。</div>';
     Object.keys(byY).sort().forEach(y=>byY[y].forEach(q=>{const Q=D.mcq[q];h+=`<div class="lm-ql" data-q="${esc(q)}"><span>${Q.y}-${String(Q.n).padStart(2,'0')}</span>${esc(Q.q.slice(0,46))}${Q.q.length>46?'…':''}</div>`}));
     const ess=t.essay.filter(e=>!iss.some(I=>I.e===e));
     if(ess.length){h+=`<h3>其他相關申論題（${ess.length}）</h3>`;ess.forEach(e=>{h+=`<div class="lm-ql" data-e="${esc(e)}"><span>${esc(eLabel(e))}</span>${esc(D.essays[e].prompt.slice(0,44))}…</div>`})}
     if(!t.pseudo){
-      h+=`<h3>主題判決${t.jud_src?`（${esc(t.jud_src)}）`:''}</h3>`+judHtml(t.jud,'未能確認：題庫與 RAG 都沒有查到可摘原文的判決');
-      h+=`<h3>釋字・憲判・函釋（RAG）</h3>`+(t.refs.length?t.refs.map(r=>`<div class="lm-jd">${esc(r.cite)} <small class="lm-nv">${esc(r.date||'')}</small><br><q>${esc(r.ex)}</q></div>`).join(''):`<div class="lm-nv">${t.refs_status==='已查'?'未能確認：RAG 結果中沒有原文提到本主題條號者':'RAG 無回應，未能確認'}</div>`)}
+      if(t.jud_src==='看各爭點')h+=`<h3>主題判決</h3><div class="lm-nv">代表判決列在上面各爭點下。</div>`;
+      else if(t.jud_src!=='不適用')h+=`<h3>主題判決${t.jud_src?`（${esc(t.jud_src)}）`:''}</h3>`+judHtml(t.jud,'未能確認：題庫與 RAG 都沒有查到可摘原文的判決');
+      h+=`<h3>釋字・憲判・函釋（RAG）</h3>`+(t.refs.length?t.refs.map(r=>`<div class="lm-jd">${esc(r.cite)} <small class="lm-nv">${esc(r.date||'')}</small><br><q>${esc(r.ex)}</q></div>`).join(''):`<div class="lm-nv">${t.refs_status==='已查'?'未能確認：RAG 結果中沒有原文對上本主題者':'RAG 無回應，未能確認'}</div>`)}
     if(rel.length){h+='<h3>關聯主題</h3>';rel.forEach(l=>{const o=l.a===id?l.b:l.a,ot=T[o];
       if(l.kind==='同題合考')h+=`<div class="lm-rel" data-t="${esc(o)}">↔ ${esc(ot?.t||'')}（${esc(ot?.subj||'')}）｜同題合考 ${l.n} 次：${esc(l.q.join('、'))}</div>`;
       else h+=`<div class="lm-rel" data-t="${esc(o||'')}">⇄ ${esc(l.name)}｜${esc(l.arts.join(' × '))}｜${l.status==='已驗證'?`已驗證：${link(l.ev)} 同時引用兩條`:'<b>未能確認</b>（RAG 沒找到同時引用兩條的判決）'}${l.miss&&l.miss.length?`；${esc(l.miss.join('、'))} 不在任何主題`:''}</div>`})}
@@ -1251,6 +1707,8 @@ function lmDraw(root,D,signal,arg){
   on(window,'resize',()=>{const [l,t,r,b]=area(),cx=((l+r)/2-V.x)/V.k,cy=((t+b)/2-V.y)/V.k;placePanel();resize();const A=area();V.x=(A[0]+A[2])/2-cx*V.k;V.y=(A[1]+A[3])/2-cy*V.k;req()});
   on(P,'click',e=>{
     if(e.target.closest('.lm-x'))return closePanel();
+    const tp=e.target.closest('[data-tp]');if(tp)return topicView(tp.dataset.tp);
+    const pr=e.target.closest('[data-pr]');if(pr){const L=T[pr.dataset.pr].mcq.map(findQ).filter(Boolean);return mcqRun(pickDue(L,5),back())}
     const a=e.target.closest('.lm-art');if(a){const box=a.parentElement.nextElementSibling,k=a.dataset.k;
       box.innerHTML=box.dataset.k===k?'':`<div class="lm-artx"><b>${esc(a.textContent)}</b>　${esc(D.arts[k]||'（條文內容未取得）')}</div>`;box.dataset.k=box.dataset.k===k?'':k;return}
     const q=e.target.closest('[data-q]');if(q)return showQ(q.dataset.q);
@@ -1274,37 +1732,67 @@ function lmDraw(root,D,signal,arg){
   on($('.lm-q'),'input',e=>{const s=e.target.value.trim();hits=new Set();firstHit=null;
     if(!s){H.style.display='none';req();return}
     const num=s.replace(/[§第條]/g,''),isNum=/^\d+(-\d+)?$/.test(num),out=[];
-    Object.values(T).forEach(t=>{if(!cellOf[t.id])return;if(t.t.includes(s)||t.ch.includes(s)||(isNum&&(t.core||[]).includes(num))){out.push([t.id,'',t.t,`${t.subj}・${t.ch}・${t.n} 題`]);hits.add(t.id)}});
-    Object.values(D.issues).forEach(I=>{if(I.topic&&(I.t.includes(s)||(isNum&&I.arts.includes(num)))){out.push([I.topic,I.id,I.t,`爭點｜${I.year} ${I.no}｜${T[I.topic]?.t||''}`]);hits.add(I.topic)}});
+    Object.values(T).forEach(t=>{if(!cellOf[t.id])return;if(t.t.includes(s)||t.ch.includes(s)||(isNum&&(t.core||[]).some(c=>artNo(c)===num))){out.push([t.id,'',t.t,`${t.subj}・${t.ch}・${t.n} 題`]);hits.add(t.id)}});
+    Object.values(D.issues).forEach(I=>{if(I.topic&&T[I.topic]&&(I.t.includes(s)||(isNum&&I.arts.some(c=>artNo(c)===num)))){out.push([I.topic,I.id,I.t,`爭點｜${I.subj}｜${I.year} ${I.no}｜${T[I.topic].t}`]);if(cellOf[I.topic])hits.add(I.topic)}});
     firstHit=out[0]||null;
     H.innerHTML=out.slice(0,60).map(o=>`<div data-t="${esc(o[0])}" data-i="${esc(o[1])}">${esc(o[2])}<br><small>${esc(o[3])}</small></div>`).join('')||'<div><small>沒有符合的主題或爭點</small></div>';
     placeHits();H.style.display='block';req()});
   on($('.lm-q'),'keydown',e=>{if(e.key==='Enter'&&firstHit){H.style.display='none';e.target.blur();select(firstHit[0],firstHit[1]||null)}});
   on(H,'click',e=>{const d=e.target.closest('[data-t]');if(!d)return;H.style.display='none';$('.lm-q').blur();select(d.dataset.t,d.dataset.i||null)});
   // ---------- 按鈕 ----------
+  const jump=g=>{H.style.display='none';if(g==='all')animTo(fitR(WB,0));else if(contOf[g])animTo(fitR(contOf[g].r,.05))};
+  on($('.lm-jump'),'change',e=>{const g=e.target.value;e.target.value='';if(g)jump(g)});
   on(top,'click',e=>{const b=e.target.closest('button');if(!b)return;
-    if(b.classList.contains('lm-back'))return go('map');
-    const g=b.dataset.go;if(g){H.style.display='none';if(g==='all')animTo(fitR(WB,0));else animTo(fitR(conts.find(c=>c.subj===g).r,.05));return}
-    if(b.dataset.k==='co'){showCo=!showCo;b.classList.toggle('lm-on',showCo);req()}
-    else if(b.dataset.k==='cx'){showCx=!showCx;b.classList.toggle('lm-on',showCx);req()}
-    else if(b.dataset.k==='leg')$('.lm-legend').classList.toggle('lm-hide')});
+    if(b.classList.contains('lm-back'))return go(LM_FROM||'map');
+    if(b.dataset.k==='leg')$('.lm-legend').classList.toggle('lm-hide');
+    if(b.dataset.k==='route')setRoute(!ROUTE_ON);
+    if(b.dataset.k==='area')setArea(AREA==='eq'?'n':'eq')});
+  // 念書路線：一鍵開關（預設關）
+  function setRoute(v){ROUTE_ON=!!v;const b=$('.lm-top [data-k="route"]');b.classList.toggle('lm-on',ROUTE_ON);b.setAttribute('aria-pressed',String(ROUTE_ON));b.textContent=ROUTE_ON?'路線：開':'念書路線';req()}
+  // 面積＝題數／均等：重算版圖；換版後飛回原本看的那一科（有選主題就回主題）
+  function setArea(m){if(m===AREA)return;const [l,t,r,b]=area(),cx=((l+r)/2-V.x)/V.k,cy=((t+b)/2-V.y)/V.k,full=V.k<fitV(...WB,0).k*1.15;
+    const cb=conts.find(c=>cx>=c.x-S_&&cx<=c.x+c.w+S_&&cy>=c.y-S_&&cy<=c.y+c.h+S_);
+    AREA=m;layout();resize();const bt=$('.lm-top [data-k="area"]');bt.textContent=m==='eq'?'面積＝均等':'面積＝題數';bt.classList.toggle('lm-on',m==='eq');
+    cancelAnimationFrame(anim);anim=0;V=sel&&cellOf[sel]?fitR(cellOf[sel].r,.1):(!full&&cb)?fitR(contOf[cb.subj].r,.05):fitR(WB,0);draw();legend()}
   on($('.lm-zm'),'click',e=>{const b=e.target.closest('button');if(!b)return;const [l,t,r,bb]=area(),f=b.dataset.z>0?1.8:1/1.8,k=clamp(V.k*f,KMIN(),KMAX),cx=((l+r)/2-V.x)/V.k,cy=((t+bb)/2-V.y)/V.k;
     animTo({k,x:(l+r)/2-cx*k,y:(t+bb)/2-cy*k},320)});
-  // ---------- 圖例 ----------
-  const nT=Object.values(T).filter(t=>!t.pseudo),nZ=nT.filter(t=>!t.n).length,cxv=D.links.filter(l=>l.kind==='民刑交會'),cxok=cxv.filter(l=>l.status==='已驗證').length;
-  $('.lm-legend').innerHTML=`<b>怎麼看</b>：科目＝大陸、章＝國、主題＝州；放大才出現爭點、條文、考題。<br>面積越大、顏色越深＝考越多次（選擇題＋申論小題）：<br>${STEPS.map(s=>`<span class="lm-sw" style="background:hsl(212,${s[0]?58:22}%,${s[1]}%);${s[0]?'':'border:1px dashed #888'}"></span>${s[2]}`).join('　')}<br>
-  <span style="color:#d92d20">★</span> 必考　<span style="color:#f79009">●</span> 常考（筆記標色／作者明示）　淡色虛線框＝未考過<br>
-  <span style="color:#6b7a90">━ 淡線</span> 同一申論題同時考到（點主題才變橘色強調）<br>
-  <span style="color:#b42318">┅ 紅虛線</span> 民刑交會：RAG 找到判決同時引用兩條（${cxok}/${cxv.length}）；灰虛線＝未能確認<br>
-  <span class="lm-sw" style="background:#e6e4df;border:1px dashed #9a9a94"></span> 灰色斜線＝其他科目，題庫已有、未建地圖<br>
+  // ---------- 圖例（航線開關也在這裡；預設關） ----------
+  const nT=Object.values(T).filter(t=>!t.pseudo),nZ=nT.filter(t=>!t.n).length,cxv=D.links.filter(l=>l.kind!=='同題合考'),cxok=cxv.filter(l=>l.status==='已驗證').length;
+  const nU=pseudo.reduce((a,t)=>a+t.n,0);
+  const cntI=v=>SUBJ.filter(x=>!MR(x)).reduce((a,x)=>a+Object.values(T).filter(t=>!t.pseudo&&t.subj===x&&IMP[t.id]===v).length,0);
+  const SWD='repeating-linear-gradient(135deg,rgba(181,71,8,.6) 0 2px,transparent 2px 6px)';
+  function legend(){const L=$('.lm-legend'),hid=L.classList.contains('lm-hide');
+  L.innerHTML=`<button class="lm-x" data-k="legx" aria-label="關閉圖例">×</button><b>怎麼看</b>：科目＝大陸、編／章＝國、主題＝州；遠看只有科目與章，放大才出現主題，再放大出現爭點、條文、考題。每一塊都有名字：放不下全名用短名，再放不下用編號（＝念書路線順序，對照在下面），點一下就放大到看得到名字。<br>
+  擺位：實體法旁邊就是它的程序法（民法↔民訴、刑法↔刑訴），商事法靠民法，憲法與行政法同一區。<br>
+  <b>顏色＝概念類別</b>（七科同一套，不再隨機）：<br>${Object.values(CLS).map(c=>`<span class="lm-sw" style="background:hsl(${c[1]},52%,74%)"></span>${c[0]}`).join('<br>')}<br>
+  <span class="lm-sw" style="background:${SWD},hsl(140,52%,84%)"></span>琥珀斜紋＝爭點密集（掛了 ${DENSE} 個以上申論爭點；放大到主題才看得到）<br>
+  <b>深淺＝考幾次</b>（選擇題＋申論小題；以藍色為例）：<br>${STEPS.map(s=>`<span class="lm-sw" style="background:hsl(212,${s[0]?58:22}%,${s[1]}%);${s[0]?'':'border:1px dashed #888'}"></span>${s[2]}`).join('　')}　淡色虛線框＝未考過<br>
+  <b>面積</b>：${AREA==='eq'?'目前「均等」——每個主題一樣大，方便看名字；切回「題數」看哪裡考得多':'目前「題數」——主題越大考越多（2＋出題次數）；上方「面積」鍵可切成均等'}<br>
+  <span style="color:#d92d20">★</span> 必考　<span style="color:#f79009">●</span> 常考：民刑沿用原本標示（作者標示／筆記標色，沒有的依題庫頻率推算）。五科沒有筆記，用民刑同一套「依題庫頻率推算」：熱度＝108–115 年每題 1 分（113 年起 1.5 分）＋主題判決數×0.2，同一科內排名前 20％＝必考、20–50％＝常考。五科★ ${cntI('必考')}・● ${cntI('常考')}・未能確認 ${cntI('未能確認')}（一題都沒歸到，無從排名）<br>
+  <span class="lm-sw" style="background:#fff;border:1px dashed #667085;border-radius:8px"></span> 未歸類 N 題：題目沒對上任何主題（未能確認），點開看清單與原因，共 ${nU} 題<br>
+  <b>念書路線</b>（上方「念書路線」鍵，預設關）：每科一條，章依下列順序編號 1→2→3…，放大到主題層再分成「章-主題」（章內依條文範圍的起始條號；沒有條號的排章末、側欄標未能確認）。點路線上的編號：章→放大進該章，主題→直接開該主題。<br>
+  ${SUBJ.map(sj=>{const R=ROUTE[sj];return `<div class="lm-rt"><b>${esc(SH(sj))}</b>${R[0]?'':'<span class="lm-nv">（章序未能確認）</span>'}：${(chList[sj]||[]).map((c,i)=>`${i+1} ${esc(c.ch)}`).join(' → ')}<br><small class="lm-nv">依據：${esc(R[1])}</small></div>`}).join('')}
+  <b>航線</b>（預設不畫，點主題只畫它自己的）：<br><button class="lm-tg${showCo?' lm-on':''}" data-k="co">同題合考線：${showCo?'開':'關'}</button> <button class="lm-tg${showCx?' lm-on':''}" data-k="cx">科目交會線：${showCx?'開':'關'}</button><br>
+  <small class="lm-nv">橘線＝同一申論題同時考到；紅虛線＝科目交會（RAG 找到判決同時引用兩條，${cxok}/${cxv.length}），灰虛線＝未能確認</small><br>
   主題 ${nT.length}（未考過 ${nZ}）・爭點 ${Object.keys(D.issues).length}・選擇題 ${Object.keys(D.mcq).length}・申論 ${Object.keys(D.essays).length}<br>
-  <small class="lm-nv">點區塊放大、點主題看爭點／條文／判決／題目；右下角縮略圖可拖。資料 ${esc(D.src)}・建於 ${esc(D.built)}</small>`;
+  <small class="lm-nv">點區塊放大、點主題看爭點／條文／判決／題目；右下角縮略圖可拖。民刑資料 ${esc(D.src)}・建於 ${esc(D.built)}${D.built_other?`；五科建於 ${esc(D.built_other)}`:''}</small>`;
+  L.classList.toggle('lm-hide',hid)}
+  legend();
   $('.lm-legend').classList.add('lm-hide');
+  on($('.lm-legend'),'click',e=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.k==='legx')return $('.lm-legend').classList.add('lm-hide');
+    if(b.dataset.k==='co'){showCo=!showCo;b.textContent='同題合考線：'+(showCo?'開':'關');b.classList.toggle('lm-on',showCo);req()}
+    if(b.dataset.k==='cx'){showCx=!showCx;b.textContent='科目交會線：'+(showCx?'開':'關');b.classList.toggle('lm-on',showCx);req()}});
   resize();V=fitR(WB,0);draw();
   // 給無頭檢查用（唯讀狀態＋同一套操作入口）
-  root.__lm={get V(){return V},get level(){return lvName},get shownT(){return shownT.size},get issues(){return issueHit.length},get minFs(){return minFs},get linkLbl(){return linkLbl},get where(){return $('.lm-where').textContent},hits:()=>[...hits],
-    cells:cells.length,conts:conts.map(c=>c.subj+(c.grey?'(未建地圖)':'')),select,fitR,animTo,cell:id=>cellOf[id]&&{r:cellOf[id].r,ctr:cellOf[id].ctr},ch:n=>{const c=chaps.find(c=>c.ch===n);return c&&c.r},cont:s=>{const c=conts.find(c=>c.subj===s);return c&&c.r},WB};
+  root.__lm={get V(){return V},get level(){return lvName},get shownT(){return shownT.size},get shownCh(){return shownCh.size},get issues(){return issueHit.length},get minFs(){return minFs},get linkLbl(){return linkLbl},get where(){return $('.lm-where').textContent},hits:()=>[...hits],
+    get badges(){return badgeHit.map(b=>({id:b[4],x:b[0]+b[2]/2,y:b[1]+b[3]/2}))},get co(){return showCo},get cx(){return showCx},
+    get cells(){return cells.length},get chaps(){return chaps.length},get conts(){return conts.map(c=>c.subj+(c.grey?'(未建地圖)':''))},pseudo:pseudo.map(t=>t.id),select,fitR,animTo,jump,
+    get unnamed(){return unnamed.slice()},get pills(){return pillLog.slice()},get route(){return ROUTE_ON},get area(){return AREA},get routeDots(){return routeHit.map(h=>({x:h[0]+h[2]/2,y:h[1]+h[3]/2,txt:h[4].txt,id:h[4].id||'',ch:h[4].ch?h[4].ch.ch:''}))},
+    imp:id=>IMP[id],rno:id=>RNO[id],cls:(n,s)=>{const c=chaps.find(c=>c.ch===n&&(!s||c.subj===s));return c&&c.cls},chNames:()=>chaps.map(c=>({subj:c.subj,ch:c.ch,no:c.no,cls:c.cls,r:c.r,ctr:c.ctr})),setRoute,setArea,
+    cell:id=>cellOf[id]&&{r:cellOf[id].r,ctr:cellOf[id].ctr},ch:(n,s)=>{const c=chaps.find(c=>c.ch===n&&(!s||c.subj===s));return c&&c.r},cont:s=>contOf[s]&&contOf[s].r,WB};
   if(arg&&arg.t&&T[arg.t])select(arg.t);
+  else if(arg&&arg.sj&&contOf[arg.sj]){V=fitR(contOf[arg.sj].r,.05);draw()}
 }
 
 // ---------- 深連結：#q=題號（將來給 LEXO 用同一套題號連進來） ----------

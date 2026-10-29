@@ -1802,7 +1802,7 @@ function deep(){if(location.hash==='#lmap'){if(cur!=='lmap')go('lmap');return tr
   var q=D.mcq.find(function(x){return x.id===id});if(q){go('practice');mcqRun([q]);return true}return false}
 if(!deep())go('home');
 window.addEventListener('hashchange',deep);
-if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js').catch(function(){});
+if('serviceWorker' in navigator&&location.protocol!=='file:'){var swC=!!navigator.serviceWorker.controller,swR=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(!swC||swR)return;try{var t=+sessionStorage.getItem('pq_sw_rl')||0;if(Date.now()-t<10000)return;sessionStorage.setItem('pq_sw_rl',Date.now())}catch(x){}swR=true;location.reload()});navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(function(r){if(r&&r.update)r.update().catch(function(){})}).catch(function(){})}
 })();
 </script>
 </body>

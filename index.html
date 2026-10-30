@@ -582,6 +582,10 @@ function persist(){save('state',S)}
 function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
 function dayRec(){var t=today();if(!S.days[t]){S.days[t]={card:0,mcq:0,essay:0,ms:0};Object.keys(S.days).forEach(function(k){if(k!==t)delete S.days[k].ids})}return S.days[t]}
 // 2026-10-30 整夜優化：同一題同一天只算一次今日進度（錯題本重做同一題不再把今日目標灌滿）
+var IDX=null;function byId(id){if(!IDX){IDX={};[].concat(D.cards,D.mcq,D.essays).forEach(function(x){IDX[x.id]=x})}return IDX[id]}
+// 2026-10-30 整夜優化批次8：今日題數只算目前科目（原本各科合計，切到國文還顯示民法做的題）
+function dayView(){var r=dayRec();if(!r.ids||S.subj==='every')return r;var o={card:0,mcq:0,essay:0,ms:r.ms,sj:1};
+  Object.keys(r.ids).forEach(function(key){var p=key.indexOf(':'),k=key.slice(0,p),x=byId(key.slice(p+1));if(x&&inSubj(x)&&k in o)o[k]++});return o}
 function dayCnt(id,k){var r=dayRec();r.ids=r.ids||{};var key=k+':'+id;if(r.ids[key])return;r.ids[key]=1;r[k]++}
 function it(id){return S.items[id]||(S.items[id]={box:0,due:0,seen:0,wrong:0,right:0})}
 function grade(id,ok){            // 答錯隔天再出；答對 3／7／14 天
@@ -800,9 +804,9 @@ function emptyBox(k,title,msg,btn){var e=el('div',{cls:'empty'},[ic(k),el('b',{t
 // 2026-10-30 整夜優化：今日目標只算目前科目有的題型（沒有口訣卡／選擇題的科目，分母跟著變）
 function goalT(){return {card:D.cards.some(inSubj)?3:0,mcq:D.mcq.some(inSubj)?5:0,essay:D.essays.some(inSubj)?1:0}}
 R.home=function(){
-  var r=dayRec(),st=streak(),nd=new Date(),G=goalT(),GN=G.card+G.mcq+G.essay,dn=Math.min(r.card,G.card)+Math.min(r.mcq,G.mcq)+Math.min(r.essay,G.essay);
+  var r=dayView(),st=streak(),nd=new Date(),G=goalT(),GN=G.card+G.mcq+G.essay,dn=Math.min(r.card,G.card)+Math.min(r.mcq,G.mcq)+Math.min(r.essay,G.essay);
   V.appendChild(el('h1',{cls:'greet streak',text:(nd.getMonth()+1)+' 月 '+nd.getDate()+' 日 週'+'日一二三四五六'[nd.getDay()]}));
-  V.appendChild(el('div',{cls:'greet-sub',text:dn>=GN?'今天的目標完成了，明天會先出今天錯的。':st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘'}));
+  V.appendChild(el('div',{cls:'greet-sub',text:dn>=GN?'今天的目標完成了，明天會先出今天錯的。':(examDays()>0?'距考試 '+examDays()+' 天，照下面「倒數衝刺」的量刷。':st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘')}));
   V.appendChild(el('div',{cls:'pills'},[el('span',{cls:'pill'+(st?'':' mute')},[ic('flame',''),st?'連續 '+st+' 天':'還沒開始連續']),examPill()]));
   // 1. 今天：一個清楚的下一步（進度環＋單一主按鈕）
   var main=dn===0?['開始今天',startToday]:dn<GN?['繼續今天（還差 '+(GN-dn)+' 項）',startToday]:G.mcq?['目標完成，再練 5 題選擇',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}]:['目標完成，再寫一題申論',function(){go('essay')}];
@@ -812,7 +816,7 @@ R.home=function(){
       G.mcq?el('div',{cls:r.mcq>=5?'done':''},['選擇',el('b',{text:Math.min(r.mcq,5)+'/5'})]):null,
       G.essay?el('div',{cls:r.essay>=1?'done':''},['申論',el('b',{text:Math.min(r.essay,1)+'/1'})]):null])]),
     el('button',{cls:'btn big',text:main[0],onclick:main[1]}),
-    el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完（今日題數各科合計）'})]);
+    el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完'+(r.sj?'（只算'+SUBJ[S.subj]+'）':'（今日題數各科合計）')})]);
   var L=el('div'),Rt=el('div');L.appendChild(hero);hero.style.order=1;
   // 2026-10-30 整夜優化批次5：倒數連動每日量（只算目前科目的選擇題：沒做過的＋到期該複習的）
   var pm=D.mcq.filter(inSubj);
@@ -852,7 +856,7 @@ R.home=function(){
 };
 function clip(s,n){s=String(s||'').replace(/\s+/g,' ');return s.length>n?s.slice(0,n)+'…':s}
 function startToday(){
-  var r=dayRec(),steps=[],G=goalT();
+  var r=dayView(),steps=[],G=goalT();
   if(G.card&&r.card<3)steps.push(function(next){cardRun(3-r.card,next)});
   if(G.mcq&&r.mcq<5)steps.push(function(next){mcqRun(pickDue(D.mcq.filter(inSubj),5-r.mcq),next)});
   if(G.essay&&r.essay<1)steps.push(function(next){var e=dailyEssay();if(e)essayFlow(e,next);else next()});

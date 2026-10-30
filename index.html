@@ -123,6 +123,7 @@ details summary{font-weight:600;cursor:pointer;padding:6px 0;min-height:44px;dis
 .exf .k{font-size:15px;font-weight:600;color:var(--acc);margin:12px 0 2px}
 .exf .k:first-child{margin-top:4px}
 .exf .na{font-size:15px;color:var(--mut)}
+.btn.nextfix{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:4;box-shadow:0 4px 14px rgba(0,0,0,.18)} /* 2026-10-30 整夜優化：下一題固定在拇指區 */
 .exf ul{margin:2px 0;padding-left:20px}
 .rvs{font-size:15px;color:var(--mut);margin:2px 0 0}
 .mdl-bg{position:fixed;inset:0;z-index:50;background:rgba(31,32,29,.45);display:flex;align-items:center;justify-content:center;padding:20px}
@@ -300,6 +301,7 @@ body.lm-on{overflow:hidden}
 .lm-tg{font:inherit;font-size:13px;border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:4px 10px;margin:4px 4px 2px 0;min-height:34px;color:#1d2430}
 .lm-tg.lm-on{background:#1d2430;color:#fff;border-color:#1d2430}
 .lm-top .lm-tool{padding:6px 10px;white-space:nowrap}
+@media (pointer:coarse){.lm-top button,.lm-top select{min-height:44px}.lm-legend .lm-x{min-width:44px;min-height:44px}} /* 2026-10-30 整夜優化：手指點的地圖頂列 ≥44px */
 .lm-top .lm-tool[data-k="route"].lm-on{background:#0b6e65;border-color:#0b6e65}
 .lm-top input.lm-q{flex-basis:72px}
 .lm-top .lm-rsel{border-color:#0b6e65;color:#0b6e65;font-weight:600;padding:6px 10px}
@@ -362,7 +364,7 @@ nav button.on svg{color:var(--acc)}
 .empty .btn{max-width:320px;margin:16px auto 0}
 /* 頁首：日期＋連續天數＋考試倒數 */
 .pills{display:flex;flex-wrap:wrap;gap:8px;margin:4px 4px 16px}
-.pill{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:6px 14px;font-size:16px;min-height:40px;background:var(--gold2);color:var(--gold);font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:6px 14px;font-size:16px;min-height:44px;background:var(--gold2);color:var(--gold);font-weight:600}
 .pill svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pill.set{background:var(--panel);color:var(--acc);border:1.5px dashed var(--control);font-weight:600}
 .pill.mute{background:var(--soft);color:var(--mut)}
@@ -422,7 +424,7 @@ nav button.on svg{color:var(--acc)}
 .minibar i{display:block;height:100%;background:var(--acc);border-radius:999px}
 /* 做題：進度條＋即時回饋 */
 .qbar{position:sticky;top:calc(env(safe-area-inset-top) + 65px);z-index:4;display:flex;align-items:center;gap:10px;margin:-4px -4px 12px;padding:8px 4px;background:var(--bg)}
-.qbar .qx{border:0;background:var(--soft);color:var(--ink);border-radius:999px;width:40px;height:40px;font-size:20px;line-height:1;flex:none}
+.qbar .qx{border:0;background:var(--soft);color:var(--ink);border-radius:999px;width:44px;height:44px;font-size:20px;line-height:1;flex:none}
 .qtrack{flex:1;height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
 .qtrack i{display:block;height:100%;background:var(--acc);border-radius:999px;transition:width .4s ease}
 .qbar .qn{font-size:16px;font-weight:600;min-width:52px;text-align:right}
@@ -450,8 +452,8 @@ nav button.on svg{color:var(--acc)}
 .st b{display:block;font-size:26px;line-height:1.25;font-weight:600}
 .st small{font-size:14px;color:var(--mut)}
 .st.gold b{color:var(--gold)}
-.st button{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;padding:0;min-height:30px}
-.st>button{display:block;font-size:18px;min-height:34px;text-align:left}
+.st button{border:0;background:none;color:var(--acc);font-weight:600;font-size:16px;padding:0 10px;min-height:44px;min-width:44px}
+.st>button{display:block;font-size:18px;min-height:44px;text-align:left;padding:0}
 .wk{display:flex;align-items:flex-end;gap:8px;height:110px;margin:8px 0 0}
 .wk div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:13px;color:var(--mut);gap:4px}
 .wk i{display:block;width:100%;max-width:34px;background:var(--acc);border-radius:6px 6px 2px 2px;min-height:3px}
@@ -507,7 +509,7 @@ details.chc[open]>summary::after{transform:rotate(-135deg);bottom:14px}
 details.chc>div{background:var(--panel);border-radius:10px;margin:0 8px 8px;padding:6px 10px}
 @media (prefers-color-scheme:dark){details.chc{background:hsl(var(--h) 22% 17%);border-left-color:hsl(var(--h) 45% 58%)}
  .chleg span::before{background:hsl(var(--h) 22% 22%);border-left-color:hsl(var(--h) 45% 58%)}}
-.mapbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--control);background:var(--panel);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:600;min-height:40px;white-space:nowrap}
+.mapbtn{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--control);background:var(--panel);color:var(--acc);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:600;min-height:44px;white-space:nowrap}
 .mapbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* 平板以上：兩欄；電腦：左側導覽、內容放寬，不再兩側空白 */
 @media (min-width:768px){
@@ -568,7 +570,9 @@ function save(k,v){try{localStorage.setItem(K+k,JSON.stringify(v))}catch(e){}}
 var S=load('state',{items:{},days:{},subj:'all'});
 function persist(){save('state',S)}
 function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
-function dayRec(){var t=today();if(!S.days[t])S.days[t]={card:0,mcq:0,essay:0,ms:0};return S.days[t]}
+function dayRec(){var t=today();if(!S.days[t]){S.days[t]={card:0,mcq:0,essay:0,ms:0};Object.keys(S.days).forEach(function(k){if(k!==t)delete S.days[k].ids})}return S.days[t]}
+// 2026-10-30 整夜優化：同一題同一天只算一次今日進度（錯題本重做同一題不再把今日目標灌滿）
+function dayCnt(id,k){var r=dayRec();r.ids=r.ids||{};var key=k+':'+id;if(r.ids[key])return;r.ids[key]=1;r[k]++}
 function it(id){return S.items[id]||(S.items[id]={box:0,due:0,seen:0,wrong:0,right:0})}
 function grade(id,ok){            // 答錯隔天再出；答對 3／7／14 天
   var x=it(id),gaps=[3,7,14,30];x.seen++;
@@ -592,8 +596,11 @@ function rvMark(id,ok){            // ok=false：從頭排（隔 1 天）；ok=t
   r.st++;if(r.st>=RV_GAPS.length){r.done=now;r.due=0}else r.due=sod(now)+RV_GAPS[r.st]*DAY;persist()}
 function rvDue(list){var now=Date.now();return list.filter(function(x){var r=S.rv[x.id];return r&&!r.done&&r.due<=now}).sort(function(a,b){return S.rv[a.id].due-S.rv[b.id].due})}
 function rvNext(id){var r=S.rv[id];if(!r||r.done)return '';var d=Math.round((r.due-sod(Date.now()))/DAY);return d<=0?'今天複習':d+' 天後複習（第 '+(r.st+1)+'/4 輪）'}
-var t0=Date.now();
-setInterval(function(){var r=dayRec();r.ms+=Math.min(Date.now()-t0,60000);t0=Date.now();persist()},30000);
+var t0=Date.now(),lastAct=Date.now();
+['pointerdown','keydown','touchstart','scroll'].forEach(function(ev){addEventListener(ev,function(){lastAct=Date.now()},{passive:true,capture:true})});
+setInterval(function(){var n=Date.now();if(!document.hidden&&n-lastAct<90000){var r=dayRec();r.ms+=Math.min(n-t0,30000);persist()}t0=n},30000);
+// 2026-10-30 整夜優化：請瀏覽器把本機進度設為「持久保存」，降低被系統清掉的機會
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
 
 // ---------- 科目 ----------
 // 其他科目加入（2026-10-28）：「民＋刑」(all) 維持原意；另加各科與「全部科目」(every)。只列題庫裡有題的科目。
@@ -688,12 +695,14 @@ function exParts(q){
     if(ls.length&&ls.indexOf(L)<0)elim.push(s);else why.push(s)});
   var t=TP[q.topic],k=t&&t.cards.length?D.cards.find(function(c){return c.id===t.cards[0]}):null;
   return {pt:t?t.ch+'＞'+t.t:'',why:why.join(''),elim:elim,mem:k?k.front+' → '+k.back+'（主題口訣，'+k.book+' '+k.page+'）':''}}
-function exBox(q){
-  var p=exParts(q),na=function(){return el('div',{cls:'na',text:'（原解析沒寫，留空）'})};
-  return el('div',{cls:'exf'},[el('div',{cls:'k',text:'考點'}),p.pt?el('div',{text:p.pt}):na(),
-    el('div',{cls:'k',text:'正解理由'}),p.why?txt(p.why):na(),
-    el('div',{cls:'k',text:'逐項排除'}),p.elim.length?el('ul',{},p.elim.map(function(s){return el('li',{text:s})})):na(),
-    el('div',{cls:'k',text:'一句話記憶點'}),p.mem?el('div',{text:p.mem}):na()])}
+function exBox(q){                 // 2026-10-30 整夜優化：沒內容的格子整格不顯示（原本顯示「原解析沒寫，留空」）
+  var p=exParts(q),kids=[];
+  if(p.pt)kids.push(el('div',{cls:'k',text:'考點'}),el('div',{text:p.pt}));
+  if(p.why)kids.push(el('div',{cls:'k',text:'正解理由'}),txt(p.why));
+  if(p.elim.length)kids.push(el('div',{cls:'k',text:'逐項排除'}),el('ul',{},p.elim.map(function(s){return el('li',{text:s})})));
+  if(p.mem)kids.push(el('div',{cls:'k',text:'一句話記憶點'}),el('div',{text:p.mem}));
+  if(!kids.length)kids.push(el('div',{cls:'na',text:'這題沒有附詳解文字，答案以考選部公告為準。'}));
+  return el('div',{cls:'exf'},kids)}
 function modal(msg,btns){
   var bg=el('div',{cls:'mdl-bg'}),row=el('div',{cls:'btns'});
   btns.forEach(function(b){row.appendChild(el('button',{cls:'btn'+(b.sec?' sec':''),text:b.t,onclick:function(){bg.remove();if(b.f)b.f()}}))});
@@ -713,6 +722,7 @@ function streak(){var n=0,d=new Date();for(;;){var k=d.getFullYear()+'-'+('0'+(d
 function dailyEssay(){
   var L=D.essays.filter(inSubj);if(!L.length)return null;
   var t=today(),key='daily_'+S.subj;var m=load(key,null);if(m&&m.d===t){var f=L.find(function(e){return e.id===m.id});if(f)return f}
+  var rd=rvDue(L)[0];if(rd){save(key,{d:t,id:rd.id});return rd}
   var cand=L.filter(function(e){var s=S.items[e.id];return !s||!s.seen||s.self==='不會'||s.self==='半會'});
   if(!cand.length)cand=L;
   var seed=t.replace(/-/g,'')|0;
@@ -777,20 +787,22 @@ function mapCard(){return el('div',{cls:'card mapc'},[el('div',{cls:'h2'},[ic('m
   el('button',{cls:'linkb',text:'打開整張地圖 →',onclick:function(){go('lmap')}})])}
 function emptyBox(k,title,msg,btn){var e=el('div',{cls:'empty'},[ic(k),el('b',{text:title}),el('div',{text:msg})]);if(btn)e.appendChild(el('button',{cls:'btn',text:btn[0],onclick:btn[1]}));return e}
 
+// 2026-10-30 整夜優化：今日目標只算目前科目有的題型（沒有口訣卡／選擇題的科目，分母跟著變）
+function goalT(){return {card:D.cards.some(inSubj)?3:0,mcq:D.mcq.some(inSubj)?5:0,essay:D.essays.some(inSubj)?1:0}}
 R.home=function(){
-  var r=dayRec(),st=streak(),nd=new Date(),g=[Math.min(r.card,3),Math.min(r.mcq,5),Math.min(r.essay,1)],dn=g[0]+g[1]+g[2];
+  var r=dayRec(),st=streak(),nd=new Date(),G=goalT(),GN=G.card+G.mcq+G.essay,dn=Math.min(r.card,G.card)+Math.min(r.mcq,G.mcq)+Math.min(r.essay,G.essay);
   V.appendChild(el('h1',{cls:'greet streak',text:(nd.getMonth()+1)+' 月 '+nd.getDate()+' 日 週'+'日一二三四五六'[nd.getDay()]}));
-  V.appendChild(el('div',{cls:'greet-sub',text:dn>=9?'今天的目標完成了，明天會先出今天錯的。':st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘'}));
+  V.appendChild(el('div',{cls:'greet-sub',text:dn>=GN?'今天的目標完成了，明天會先出今天錯的。':st?'已連續 '+st+' 天，今天約 8 分鐘':'今天開始第 1 天，約 8 分鐘'}));
   V.appendChild(el('div',{cls:'pills'},[el('span',{cls:'pill'+(st?'':' mute')},[ic('flame',''),st?'連續 '+st+' 天':'還沒開始連續']),examPill()]));
   // 1. 今天：一個清楚的下一步（進度環＋單一主按鈕）
-  var main=dn===0?['開始今天',startToday]:dn<9?['繼續今天（還差 '+(9-dn)+' 項）',startToday]:['目標完成，再練 5 題選擇',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}];
-  var hero=el('div',{cls:'card hero'},[el('div',{cls:'hero-top'},[ring(dn/9,104,dn+'/9',dn>=9?'完成':'今日目標',dn>=9),
+  var main=dn===0?['開始今天',startToday]:dn<GN?['繼續今天（還差 '+(GN-dn)+' 項）',startToday]:G.mcq?['目標完成，再練 5 題選擇',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}]:['目標完成，再寫一題申論',function(){go('essay')}];
+  var hero=el('div',{cls:'card hero'},[el('div',{cls:'hero-top'},[ring(dn/GN,104,dn+'/'+GN,dn>=GN?'完成':'今日目標',dn>=GN),
     el('div',{cls:'prog'},[
-      el('div',{cls:r.card>=3?'done':''},['閃卡',el('b',{text:Math.min(r.card,3)+'/3'})]),
-      el('div',{cls:r.mcq>=5?'done':''},['選擇',el('b',{text:Math.min(r.mcq,5)+'/5'})]),
-      el('div',{cls:r.essay>=1?'done':''},['申論',el('b',{text:Math.min(r.essay,1)+'/1'})])])]),
+      G.card?el('div',{cls:r.card>=3?'done':''},['閃卡',el('b',{text:Math.min(r.card,3)+'/3'})]):null,
+      G.mcq?el('div',{cls:r.mcq>=5?'done':''},['選擇',el('b',{text:Math.min(r.mcq,5)+'/5'})]):null,
+      G.essay?el('div',{cls:r.essay>=1?'done':''},['申論',el('b',{text:Math.min(r.essay,1)+'/1'})]):null])]),
     el('button',{cls:'btn big',text:main[0],onclick:main[1]}),
-    el('div',{cls:'sub',text:'閃卡 3 張 → 選擇 5 題 → 申論 1 題，照順序帶你做完'})]);
+    el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完（今日題數各科合計）'})]);
   var L=el('div'),Rt=el('div');L.appendChild(hero);hero.style.order=1;
   // 2. 今日複習（到期才有按鈕）
   var dm=rvDue(D.mcq.filter(inSubj)),de=rvDue(D.essays.filter(inSubj));
@@ -816,10 +828,10 @@ R.home=function(){
 };
 function clip(s,n){s=String(s||'').replace(/\s+/g,' ');return s.length>n?s.slice(0,n)+'…':s}
 function startToday(){
-  var r=dayRec(),steps=[];
-  if(r.card<3)steps.push(function(next){cardRun(3-r.card,next)});
-  if(r.mcq<5)steps.push(function(next){mcqRun(pickDue(D.mcq.filter(inSubj),5-r.mcq),next)});
-  if(r.essay<1)steps.push(function(next){var e=dailyEssay();if(e)essayFlow(e,next);else next()});
+  var r=dayRec(),steps=[],G=goalT();
+  if(G.card&&r.card<3)steps.push(function(next){cardRun(3-r.card,next)});
+  if(G.mcq&&r.mcq<5)steps.push(function(next){mcqRun(pickDue(D.mcq.filter(inSubj),5-r.mcq),next)});
+  if(G.essay&&r.essay<1)steps.push(function(next){var e=dailyEssay();if(e)essayFlow(e,next);else next()});
   (function run(i){if(i>=steps.length){doneToday();return}steps[i](function(){run(i+1)})})(0);
 }
 // 今天一題（改版第一批）：今日複習優先，再挑練得最少的；同分用日期當種子固定順序
@@ -827,16 +839,14 @@ function leastSeen(L,n,skip){var seed=today().replace(/-/g,'')|0;
   return L.filter(function(x){return !skip[x.id]}).sort(function(a,b){var sa=(S.items[a.id]||{}).seen||0,sb=(S.items[b.id]||{}).seen||0;return sa-sb||h(a.id+seed)-h(b.id+seed)}).slice(0,n)}
 function onePackMcq(){var due=rvDue(D.mcq.filter(inSubj)).slice(0,10),skip={};due.forEach(function(x){skip[x.id]=1});
   return due.concat(leastSeen(D.mcq.filter(inSubj),10-due.length,skip))}
-function onePackEssay(){var L=D.essays.filter(inSubj);if(!L.length)return null;
-  var t=today(),key='onepack_'+S.subj,m=load(key,null);if(m&&m.d===t){var f=L.find(function(e){return e.id===m.id});if(f)return f}
-  var pick=rvDue(L)[0]||leastSeen(L,1,{})[0];save(key,{d:t,id:pick.id});return pick}
+function onePackEssay(){return dailyEssay()}  // 2026-10-30 整夜優化：與「今日一題申論」同一題（原本各挑各的）
 function onePack(){var e=onePackEssay();mcqRun(onePackMcq(),function(){if(e)essayFlow(e,doneToday);else doneToday()})}
 function doneToday(){clear();V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'今天完成'}),el('div',{cls:'mut',text:'明天會先出今天答錯、還不熟的。'}),el('button',{cls:'btn',text:'回首頁',onclick:function(){go('home')}})]))}
 
 // ---------- 閃卡 ----------
 function cardRun(n,next,list){
   var L=list||pickDue(D.cards.filter(inSubj),n),i=0;
-  if(!L.length){alert('目前科目沒有口訣卡');return next&&next()}
+  if(!L.length){alert('這一科還沒有口訣卡');return next&&next()}
   function show(){
     clear();if(i>=L.length){return next?next():go('practice')}
     var c=L[i],flipped=false;
@@ -847,7 +857,7 @@ function cardRun(n,next,list){
     box.onclick=flip;
     var sx=null;box.addEventListener('touchstart',function(e){sx=e.touches[0].clientX},{passive:true});
     box.addEventListener('touchend',function(e){if(sx==null||!flipped)return;var dx=e.changedTouches[0].clientX-sx;sx=null;if(dx>70)ans(true);else if(dx<-70)ans(false)});
-    function ans(ok){grade(c.id,ok);dayRec().card++;persist();i++;show()}
+    function ans(ok){grade(c.id,ok);dayCnt(c.id,'card');persist();i++;show()}
     var acts=el('div',{cls:'btns'},[el('button',{cls:'btn sec',text:'← 還不熟',onclick:function(){ans(false)}}),el('button',{cls:'btn',text:'會了 →',onclick:function(){ans(true)}})]);
     acts.style.visibility='hidden';
     V.appendChild(qbar(i,L.length,null,function(){go(cur)}));V.appendChild(box);V.appendChild(acts);
@@ -862,7 +872,7 @@ function qbar(i,n,okN,quit){var t=el('div',{cls:'qtrack',role:'progressbar','ari
   var bar=el('div',{cls:'qbar'},[el('button',{cls:'qx','aria-label':'結束這一輪',text:'×',onclick:quit}),t,okN==null?null:el('span',{cls:'qs',text:'✓ '+okN}),el('span',{cls:'qn',text:Math.min(i+1,n)+'/'+n})]);
   bar.set=function(k,ok){t.firstChild.style.width=(k/n*100)+'%';t.setAttribute('aria-valuenow',String(k));if(ok!=null&&bar.querySelector('.qs'))bar.querySelector('.qs').textContent='✓ '+ok};return bar}
 function mcqRun(L,next){
-  var i=0,okN=0,wrongL=[],solo=!next&&L.length>=3;if(!L.length){alert('目前沒有到期的選擇題');return next&&next()}
+  var i=0,okN=0,wrongL=[],solo=!next&&L.length>=3;if(!L.length){alert(D.mcq.some(inSubj)?'目前沒有要做的選擇題':'這一科沒有選擇題（只有申論）');return next&&next()}
   function quit(){if(solo&&i>0)return mcqResult(L.slice(0,i),okN,wrongL);go(cur)}
   function show(){
     clear();if(i>=L.length)return solo?mcqResult(L,okN,wrongL):next?next():go('practice');
@@ -874,13 +884,13 @@ function mcqRun(L,next){
       b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
         opts[q.a].insertBefore(el('span',{cls:'ok-ic',text:'✓'}),opts[q.a].firstChild);if(!ok)b.insertBefore(el('span',{cls:'ok-ic',text:'✕'}),b.firstChild);
         if(ok)okN++;else wrongL.push(q);bar.set(i+1,okN);
-        grade(q.id,ok);rvMark(q.id,ok);dayRec().mcq++;persist();
-        exp.appendChild(el('div',{cls:'fb '+(ok?'ok':'no'),role:'status'},[el('span',{cls:'fi',text:ok?'✓':'✕'}),ok?'答對了':'答錯了，正解是 '+String.fromCharCode(65+q.a),
+        grade(q.id,ok);rvMark(q.id,ok);dayCnt(q.id,'mcq');persist();
+        exp.appendChild(el('div',{cls:'fb '+(ok?'ok':'no'),role:'status'},[el('span',{cls:'fi',text:ok?'✓':'✕'}),ok?'答對了（'+String.fromCharCode(65+q.a)+'）':'答錯了：你選 '+String.fromCharCode(65+k)+'，正解是 '+String.fromCharCode(65+q.a),
           L.length>1?el('small',{text:'本輪 '+okN+'/'+(i+1)}):null]));
         exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'詳解'}),exBox(q),q.disp?el('div',{cls:'src-note',text:'答案有爭議：'+q.disp}):null,
           rvNext(q.id)?el('div',{cls:'rvs',text:'複習：'+rvNext(q.id)}):null,el('div',{cls:'qid',text:q.id})]));
-        exp.appendChild(el('button',{cls:'btn',text:i+1<L.length?'下一題':solo?'看結果':'完成',onclick:function(){i++;show()}}));
-        exp.scrollIntoView({behavior:'smooth',block:'start'})};
+        exp.appendChild(el('button',{cls:'btn nextfix',text:i+1<L.length?'下一題':solo?'看結果':'完成',onclick:function(){i++;show();scrollTo(0,0)}}));
+        exp.firstChild.style.scrollMarginBottom='170px';exp.firstChild.scrollIntoView({behavior:'smooth',block:'nearest'})};
       opts.push(b);c.appendChild(b)});
     V.appendChild(bar);V.appendChild(c);V.appendChild(exp);
   }
@@ -905,7 +915,7 @@ function mcqResult(L,okN,wrongL){
 R.practice=function(){
   var cards=D.cards.filter(inSubj),mcq=D.mcq.filter(inSubj),now=Date.now(),es=D.essays.filter(inSubj);
   function dueN(L){return L.filter(function(x){var s=S.items[x.id];return s&&s.seen&&s.due<=now}).length}
-  var Mm=mast(mcq),Mc=mast(cards),wq=mcq.filter(function(x){var s=S.items[x.id];return s&&s.wrong>0});
+  var Mm=mast(mcq),Mc=mast(cards),wq=wrongMcq();
   function bar(p){var b=el('div',{cls:'minibar'},[el('i')]);b.firstChild.style.width=Math.round(p*100)+'%';return b}
   V.appendChild(el('h1',{cls:'greet',text:'練習'}));
   V.appendChild(el('div',{cls:'greet-sub',text:'目前科目：'+SUBJ[S.subj]+'（右上角切換）。做完一輪會給你答對率和錯題。'}));
@@ -918,13 +928,13 @@ R.practice=function(){
     el('button',{cls:'btn sec',text:'練 10 題',onclick:function(){mcqRun(pickDue(mcq,10))}})]));
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['口訣閃卡']),
     el('div',{cls:'kv'},[el('span',{},['共 ',el('b',{text:String(cards.length)}),' 張']),el('span',{},['到期 ',el('b',{text:String(dueN(cards))})]),el('span',{},['熟練 ',el('b',{text:Math.round(Mc.p*100)+'%'})])]),bar(Mc.p),
-    cards.length?el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}}):el('div',{cls:'sj-none',text:'這一科還沒有口訣卡（口訣卡目前只有民法、刑法）。'})]));
+    cards.length?el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}}):el('div',{cls:'sj-none',text:'這一科還沒有口訣卡。'})]));
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('map'),'依主題練']),
     el('div',{cls:'mut',text:'從地圖或主題整理挑一個主題，練那個主題考過的題目。'}),
     el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:'從地圖挑',onclick:function(){go('lmap')}}),el('button',{cls:'btn ghost',text:'主題整理',onclick:function(){go('map')}})])]));
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('book'),'錯題與申論']),
-    el('div',{cls:'mut',text:'錯過的選擇 '+wq.length+' 題；申論 '+es.length+' 題可練。'}),
-    el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:wq.length?'重練錯題':'錯題本',onclick:function(){wq.length?mcqRun(wq.slice(0,5)):go('wrong')}}),el('button',{cls:'btn ghost',text:'寫申論',onclick:function(){go('essay')}})])]));
+    el('div',{cls:'mut',text:'還沒克服的選擇 '+wq.length+' 題；申論 '+es.length+' 題可練。'}),
+    el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:wq.length?'重練錯題':'錯題本',onclick:function(){wq.length?mcqRun(wrongPick(5)):go('wrong')}}),el('button',{cls:'btn ghost',text:'寫申論',onclick:function(){go('essay')}})])]));
   V.appendChild(g);
 };
 
@@ -989,7 +999,7 @@ function essayFlow(e,next){
     V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'自評：這題你會了嗎？'}),
       el('div',{cls:'btns'},['會','半會','不會'].map(function(lb){return el('button',{cls:'btn'+(lb==='會'?'':' sec'),text:lb,onclick:function(){
         var x=it(e.id);x.self=lb;x.issues_hit=checks.filter(function(c){return c.checked}).length;x.issues_n=n;x.concl=verdict;x.at=Date.now();
-        grade(e.id,lb==='會');rvMark(e.id,lb==='會');dayRec().essay++;persist();next?next():go('essay')}})}))]));
+        grade(e.id,lb==='會');rvMark(e.id,lb==='會');dayCnt(e.id,'essay');persist();next?next():go('essay')}})}))]));
   }
   // 第 2 屏（另一種）：模擬二試電腦作答
   function cbt(mins){cbtRun(e,mins,dk,function(t){compare('',t)})}
@@ -1188,27 +1198,38 @@ R.essay=function(){
 };
 
 // ---------- 錯題 ----------
+// 2026-10-30 整夜優化：錯題分「還沒克服」（錯過且還沒連對 2 次）與「已克服」；重練順序＝到期複習 → 最早該再做的
+function wrongMcq(){return D.mcq.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0&&s.box<2})}
+function wrongPick(n){var L=wrongMcq(),dm=rvDue(L),sk={};dm.forEach(function(x){sk[x.id]=1});
+  return dm.concat(L.filter(function(x){return !sk[x.id]}).sort(function(a,b){return S.items[a.id].due-S.items[b.id].due||S.items[b.id].wrong-S.items[a.id].wrong})).slice(0,n)}
 R.wrong=function(){
-  var mq=D.mcq.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0}).sort(function(a,b){return S.items[b.id].wrong-S.items[a.id].wrong});
+  var back=function(){go('wrong')};
+  var mq=wrongMcq().sort(function(a,b){return S.items[b.id].wrong-S.items[a.id].wrong});
+  var mqOk=D.mcq.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0&&s.box>=2});
   var es=D.essays.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&(s.self==='不會'||s.self==='半會')});
   var cs=D.cards.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0&&s.box===0});
   V.appendChild(el('h1',{cls:'greet',text:'錯題本'}));
   V.appendChild(el('div',{cls:'greet-sub',text:'目前科目：'+SUBJ[S.subj]+'。錯的會隔 1、3、7、14 天自己回來。'}));
-  if(!mq.length&&!es.length&&!cs.length){V.appendChild(el('div',{cls:'card'},[emptyBox('book','還沒有錯題','做選擇題答錯、申論自評「不會／半會」、閃卡按「還不熟」的，都會收在這裡。',['去練 5 題',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}])]));return}
-  V.appendChild(el('div',{cls:'stats4'},[el('div',{cls:'st'},[el('b',{text:String(mq.length)}),el('small',{text:'選擇錯過'})]),el('div',{cls:'st'},[el('b',{text:String(es.length)}),el('small',{text:'申論不會／半會'})]),
+  if(!mq.length&&!es.length&&!cs.length&&!mqOk.length){V.appendChild(el('div',{cls:'card'},[emptyBox('book','還沒有錯題','做選擇題答錯、申論自評「不會／半會」、閃卡按「還不熟」的，都會收在這裡。',['去練 5 題',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}])]));return}
+  V.appendChild(el('div',{cls:'stats4'},[el('div',{cls:'st'},[el('b',{text:String(mq.length)}),el('small',{text:'選擇還沒克服'})]),el('div',{cls:'st'},[el('b',{text:String(es.length)}),el('small',{text:'申論不會／半會'})]),
     el('div',{cls:'st'},[el('b',{text:String(cs.length)}),el('small',{text:'口訣不熟'})]),el('div',{cls:'st gold'},[el('b',{text:String(rvDue([].concat(D.mcq,D.essays).filter(inSubj)).length)}),el('small',{text:'今天到期複習'})])]));
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'重練'}),el('div',{cls:'mut',text:'選擇 '+mq.length+' 題、申論 '+es.length+' 題、口訣 '+cs.length+' 張'}),
-    el('button',{cls:'btn',text:'重練錯題 5 題',disabled:mq.length?null:'',onclick:function(){mcqRun(mq.slice(0,5))}}),
-    cs.length?el('button',{cls:'btn sec',text:'重練不熟口訣',onclick:function(){cardRun(cs.length,null,cs)}}):null]));
+    el('button',{cls:'btn',text:'重練錯題 '+Math.min(mq.length,5)+' 題',disabled:mq.length?null:'',onclick:function(){mcqRun(wrongPick(5))}}),
+    mq.length>5?el('button',{cls:'btn sec',text:'全部重做（'+Math.min(mq.length,50)+' 題）',onclick:function(){mcqRun(wrongPick(50))}}):null,
+    cs.length?el('button',{cls:'btn sec',text:'重練不熟口訣',onclick:function(){cardRun(cs.length,back,cs)}}):null,
+    el('div',{cls:'mut',style:'font-size:14px;margin-top:6px',text:'錯過的題連續答對 2 次就移到「已克服」。重練先出今天到期的，再出最久沒做的。'})]));
   var rvL=[].concat(D.mcq,D.essays).filter(function(x){var r=S.rv[x.id];return inSubj(x)&&r&&!r.done}).sort(function(a,b){return S.rv[a.id].due-S.rv[b.id].due});
   if(rvL.length){var cr=el('div',{cls:'card'},[el('div',{cls:'h2',text:'間隔複習排程（'+rvL.length+'）'}),el('div',{cls:'mut',text:'做錯的隔 1、3、7、14 天回來；14 天那輪也答對就畢業。'})]);
     var dueM=rvDue(D.mcq.filter(inSubj));if(dueM.length)cr.appendChild(el('button',{cls:'btn',text:'今日複習：選擇 '+Math.min(dueM.length,10)+' 題',onclick:function(){mcqRun(dueM.slice(0,10))}}));
-    rvL.slice(0,30).forEach(function(x){var isE=!!x.prompt;cr.appendChild(el('button',{cls:'li',onclick:function(){isE?essayFlow(x):mcqRun([x])}},[el('span',{cls:'tag'+(S.rv[x.id].due<=Date.now()?' r':''),text:rvNext(x.id)}),(isE?'申論 '+x.year+' 年 '+x.cat:'選擇 ')+'　'+clip(isE?x.prompt:x.q,isE?14:22)]))});
+    rvL.slice(0,30).forEach(function(x){var isE=!!x.prompt;cr.appendChild(el('button',{cls:'li',onclick:function(){isE?essayFlow(x,back):mcqRun([x],back)}},[el('span',{cls:'tag'+(S.rv[x.id].due<=Date.now()?' r':''),text:rvNext(x.id)}),(isE?'申論 '+x.year+' 年 '+x.cat:'選擇 ')+'　'+clip(isE?x.prompt:x.q,isE?14:22)]))});
     V.appendChild(cr)}
   if(es.length){var c=el('div',{cls:'card'},[el('div',{cls:'h2',text:'申論：不會／半會'})]);
-    es.forEach(function(x){var s=S.items[x.id];c.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x)}},[el('span',{cls:'tag '+(s.self==='不會'?'r':'a'),text:s.self}),x.year+' 年 '+x.cat+'　爭點 '+(s.issues_hit||0)+'/'+(s.issues_n||0)]))});V.appendChild(c)}
-  if(mq.length){var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'選擇：依錯的次數'})]);
-    mq.slice(0,40).forEach(function(x){c2.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x])}},[el('span',{cls:'tag r',text:'錯 '+S.items[x.id].wrong}),clip(x.q,34)]))});V.appendChild(c2)}
+    es.forEach(function(x){var s=S.items[x.id];c.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x,back)}},[el('span',{cls:'tag '+(s.self==='不會'?'r':'a'),text:s.self}),x.year+' 年 '+x.cat+'　爭點 '+(s.issues_hit||0)+'/'+(s.issues_n||0)]))});V.appendChild(c)}
+  if(mq.length){var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'選擇：還沒克服（依錯的次數）'})]);
+    mq.slice(0,40).forEach(function(x){c2.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x],back)}},[el('span',{cls:'tag r',text:'錯 '+S.items[x.id].wrong}),clip(x.q,34)]))});V.appendChild(c2)}
+  if(mqOk.length){var dt=el('details',{},[el('summary',{cls:'h2',style:'cursor:pointer;min-height:44px',text:'已克服（'+mqOk.length+'）▾ 點開看'})]);
+    mqOk.slice(0,40).forEach(function(x){dt.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x],back)}},[el('span',{cls:'tag',text:'錯 '+S.items[x.id].wrong+'・已連對'}),clip(x.q,30)]))});
+    V.appendChild(el('div',{cls:'card'},[dt]))}
 };
 
 // ---------- 進度 ----------
@@ -1265,7 +1286,21 @@ R.stats=function(){
     el('ul',{cls:'srcl'},['選擇題：考選部律師、司法官考試第一試試題，答案以考選部公告答案（含更正答案）為準；公告答案有爭議的題目照公告答案收錄並標「答案有爭議」。','申論題：考選部律師、司法官考試第二試試題（考選部只公布試題，沒有公告擬答的題目標「未能確認」）。','科目與考試範圍：考選部應試科目與命題大綱。',
       '法條：法務部全國法規資料庫。','判決：司法院裁判書（摘句取自判決原文）。'].map(function(s){return el('li',{text:s})})),
     el('ul',{cls:'srcl'},['進度只存在這支手機，不用帳號。','安裝後可離線使用。'].map(function(s){return el('li',{text:s})}))]));
+  V.insertBefore(bakCard(),V.lastChild);
 };
+// 2026-10-30 整夜優化：進度備份／還原。備份檔＝本機 pq1_ 開頭的全部紀錄（JSON），換手機或清快取前先存一份
+function bakAll(){var o={};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf(K)===0)o[k]=localStorage.getItem(k)}return o}
+function bakCard(){var last=S.bakAt?Math.floor((Date.now()-S.bakAt)/DAY):null,fi=el('input',{type:'file',accept:'.json,application/json'});fi.style.display='none';
+  fi.onchange=function(){var f=fi.files&&fi.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var o;try{o=JSON.parse(rd.result)}catch(e){o=null}
+    var st=null;try{st=o&&JSON.parse(o[K+'state'])}catch(e){}
+    if(!st||typeof st.items!=='object'||typeof st.days!=='object'){alert('這不是高大法律地圖的備份檔，沒有還原。');return}
+    modal('要用備份檔取代這支手機目前的進度嗎？（目前的進度會先另存一份，備份檔有 '+Object.keys(st.items).length+' 題紀錄）',[{t:'取消',sec:1},{t:'還原',f:function(){
+      try{localStorage.setItem('pq1x_還原前',JSON.stringify(bakAll()))}catch(e){}
+      Object.keys(bakAll()).forEach(function(k){localStorage.removeItem(k)});Object.keys(o).forEach(function(k){if(k.indexOf(K)===0)localStorage.setItem(k,o[k])});location.reload()}}])};rd.readAsText(f)};
+  return el('div',{cls:'card'},[el('div',{cls:'h2',text:'備份進度'}),
+    el('div',{cls:'mut',text:'進度只存在這支手機。換手機、清瀏覽器資料前，先下載一份備份檔；之後在新手機按「從備份檔還原」。'+(last==null?'（還沒備份過）':'（上次備份：'+(last?last+' 天前':'今天')+'）')}),
+    el('div',{cls:'btns'},[el('button',{cls:'btn',text:'下載備份檔',onclick:function(){S.bakAt=Date.now();persist();var b=new Blob([JSON.stringify(bakAll())],{type:'application/json'}),a=el('a',{href:URL.createObjectURL(b),download:'高大法律地圖_進度備份_'+today()+'.json'});document.body.appendChild(a);a.click();a.remove();setTimeout(function(){go('stats')},300)}}),
+      el('button',{cls:'btn sec',text:'從備份檔還原',onclick:function(){fi.click()}})]),fi])}
 // ---------- 主題整理（科目 → 章節 → 主題；2026-10-28 22:10 由「地圖」改名） ----------
 var TP={};(D.topics||[]).forEach(function(t){TP[t.id]=t});
 var LVN={'必考':4,'常考':3,'略讀':2,'冷門':1};

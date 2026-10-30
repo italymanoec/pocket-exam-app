@@ -123,6 +123,11 @@ details summary{font-weight:600;cursor:pointer;padding:6px 0;min-height:44px;dis
 .exf .k{font-size:15px;font-weight:600;color:var(--acc);margin:12px 0 2px}
 .exf .k:first-child{margin-top:4px}
 .exf .na{font-size:15px;color:var(--mut)}
+/* 2026-10-30 整夜優化批次5：作答標記鈕、衝刺卡 */
+.qflags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.qflags .flag{min-height:44px;border:1.5px solid var(--control);background:var(--panel);border-radius:999px;padding:6px 16px;font-size:16px;color:var(--ink)}
+.qflags .flag.on{background:var(--gold2);color:var(--gold);border-color:var(--gold);font-weight:600}
+.plan-n{font-size:28px;font-weight:700;color:var(--acc);line-height:1.2}
 .btn.nextfix{position:sticky;bottom:calc(78px + env(safe-area-inset-bottom));z-index:4;box-shadow:0 4px 14px rgba(0,0,0,.18)} /* 2026-10-30 整夜優化：下一題固定在拇指區 */
 .exf ul{margin:2px 0;padding-left:20px}
 .rvs{font-size:15px;color:var(--mut);margin:2px 0 0}
@@ -804,6 +809,20 @@ R.home=function(){
     el('button',{cls:'btn big',text:main[0],onclick:main[1]}),
     el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完（今日題數各科合計）'})]);
   var L=el('div'),Rt=el('div');L.appendChild(hero);hero.style.order=1;
+  // 2026-10-30 整夜優化批次5：倒數連動每日量（只算目前科目的選擇題：沒做過的＋到期該複習的）
+  var pm=D.mcq.filter(inSubj);
+  if(pm.length){var ed=examDays(),nowT=Date.now(),un=pm.filter(function(x){var s=S.items[x.id];return !s||!s.seen}).length,du=pm.filter(function(x){var s=S.items[x.id];return s&&s.seen&&s.due<=nowT}).length;
+    if(ed!=null&&ed>0){var per=Math.max(5,Math.min(80,Math.ceil(un/ed)+Math.min(du,20)));
+      L.appendChild(el('div',{cls:'card tile',style:'order:1'},[el('div',{cls:'h2'},[ic('cal'),'倒數衝刺']),
+        el('div',{cls:'plan-n',text:'今天 '+Math.min(r.mcq,per)+' / '+per+' 題'}),
+        el('div',{cls:'mut',text:'距考試 '+ed+' 天。'+SUBJ[S.subj]+'還有 '+un+' 題沒做過、'+du+' 題該複習。每天 '+per+' 題，'+(un?'考前可以全部做過一輪。':'沒做過的已經做完，現在以複習為主。')}),
+        el('button',{cls:'btn',text:'刷 '+Math.max(5,per-r.mcq)+' 題（先到期、再沒做過的）',onclick:function(){mcqRun(pickDue(pm,Math.max(5,per-r.mcq)))}})]))}
+    else if(ed==null)L.appendChild(el('div',{cls:'card tile',style:'order:1'},[el('div',{cls:'h2'},[ic('cal'),'倒數衝刺']),
+      el('div',{cls:'mut',text:'設定考試日期後，這裡會依剩下幾天、還有幾題沒做，算出每天該刷幾題。'}),examPill()]))}
+  var wkBox=el('div',{style:'order:1'});L.appendChild(wkBox);
+  setTimeout(function(){lmLoad(function(LD){if(!LD||!wkBox.isConnected)return;var w3=weakChs(chList(LD),3);if(!w3.length)return;
+    wkBox.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('chart'),'弱點章節']),el('div',{cls:'mut',text:'答對率最低的 '+w3.length+' 章（作答 3 次以上才算）。點一章練 5 題。'})].concat(w3.map(function(c){
+      return el('button',{cls:'li',onclick:function(){mcqRun(pickDue(c.L,5))}},[el('span',{cls:'tag r',text:Math.round(c.M.acc*100)+'%'}),c.sj+'・'+c.ch])}))))})},0);
   // 2. 今日複習（到期才有按鈕）
   var dm=rvDue(D.mcq.filter(inSubj)),de=rvDue(D.essays.filter(inSubj));
   var rc=el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('check'),'今日複習']),
@@ -876,7 +895,7 @@ function mcqRun(L,next){
   function quit(){if(solo&&i>0)return mcqResult(L.slice(0,i),okN,wrongL);go(cur)}
   function show(){
     clear();if(i>=L.length)return solo?mcqResult(L,okN,wrongL):next?next():go('practice');
-    var q=L[i],answered=false,bar=qbar(i,L.length,L.length>1?okN:null,quit);
+    var q=L[i],answered=false,guess=false,bar=qbar(i,L.length,L.length>1?okN:null,quit);
     var c=el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(q),el('span',{cls:'mut',text:(q.year||'')+' 年 第 '+(q.n||'?')+' 題　'+(i+1)+'/'+L.length})]),
       el('div',{},hfTags(q,['q','o','ex'])),txt(q.q,'h2'),srcNote(),dispTag(q)]);
     var opts=[],exp=el('div',{style:'scroll-margin-top:140px'});
@@ -884,14 +903,17 @@ function mcqRun(L,next){
       b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
         opts[q.a].insertBefore(el('span',{cls:'ok-ic',text:'✓'}),opts[q.a].firstChild);if(!ok)b.insertBefore(el('span',{cls:'ok-ic',text:'✕'}),b.firstChild);
         if(ok)okN++;else wrongL.push(q);bar.set(i+1,okN);
-        grade(q.id,ok);rvMark(q.id,ok);dayCnt(q.id,'mcq');persist();
-        exp.appendChild(el('div',{cls:'fb '+(ok?'ok':'no'),role:'status'},[el('span',{cls:'fi',text:ok?'✓':'✕'}),ok?'答對了（'+String.fromCharCode(65+q.a)+'）':'答錯了：你選 '+String.fromCharCode(65+k)+'，正解是 '+String.fromCharCode(65+q.a),
+        grade(q.id,ok&&!guess);rvMark(q.id,ok&&!guess);dayCnt(q.id,'mcq');persist();gb.disabled=true;
+        exp.appendChild(el('div',{cls:'fb '+(ok?'ok':'no'),role:'status'},[el('span',{cls:'fi',text:ok?'✓':'✕'}),ok?'答對了（'+String.fromCharCode(65+q.a)+'）'+(guess?'・猜的，明天再出一次':''):'答錯了：你選 '+String.fromCharCode(65+k)+'，正解是 '+String.fromCharCode(65+q.a),
           L.length>1?el('small',{text:'本輪 '+okN+'/'+(i+1)}):null]));
         exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'詳解'}),exBox(q),q.disp?el('div',{cls:'src-note',text:'答案有爭議：'+q.disp}):null,
           rvNext(q.id)?el('div',{cls:'rvs',text:'複習：'+rvNext(q.id)}):null,el('div',{cls:'qid',text:q.id})]));
         exp.appendChild(el('button',{cls:'btn nextfix',text:i+1<L.length?'下一題':solo?'看結果':'完成',onclick:function(){i++;show();scrollTo(0,0)}}));
         exp.firstChild.style.scrollMarginBottom='170px';exp.firstChild.scrollIntoView({behavior:'smooth',block:'nearest'})};
       opts.push(b);c.appendChild(b)});
+    var st0=!!(S.items[q.id]&&S.items[q.id].star),gb=el('button',{cls:'flag','aria-pressed':'false',text:'猜的',onclick:function(){if(answered)return;guess=!guess;gb.classList.toggle('on',guess);gb.setAttribute('aria-pressed',String(guess))}}),
+      sb=el('button',{cls:'flag'+(st0?' on':''),'aria-pressed':String(st0),text:st0?'★ 已標記':'☆ 標記',onclick:function(){var x=it(q.id);x.star=!x.star;if(!x.star)delete x.star;persist();sb.classList.toggle('on',!!x.star);sb.textContent=x.star?'★ 已標記':'☆ 標記';sb.setAttribute('aria-pressed',String(!!x.star))}});
+    c.appendChild(el('div',{cls:'qflags'},[gb,sb]));
     V.appendChild(bar);V.appendChild(c);V.appendChild(exp);
   }
   show();
@@ -929,6 +951,13 @@ R.practice=function(){
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['口訣閃卡']),
     el('div',{cls:'kv'},[el('span',{},['共 ',el('b',{text:String(cards.length)}),' 張']),el('span',{},['到期 ',el('b',{text:String(dueN(cards))})]),el('span',{},['熟練 ',el('b',{text:Math.round(Mc.p*100)+'%'})])]),bar(Mc.p),
     cards.length?el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}}):el('div',{cls:'sj-none',text:'這一科還沒有口訣卡。'})]));
+  // 2026-10-30 整夜優化批次5：衝刺篩選（只讀既有重要度標記與年度，不改題目）
+  if(mcq.length){var fc=el('div',{cls:'card tile'},[el('div',{cls:'h1'},['衝刺篩選']),el('div',{cls:'mut',text:'載入重要度…'})]);g.appendChild(fc);
+    setTimeout(function(){lmLoad(function(LD){if(!fc.isConnected)return;fc.lastChild.remove();
+      var rec=mcq.filter(function(x){return (x.year||0)>=113}),IM=LD?impQ(LD):{},imp=mcq.filter(function(x){return IM[x.id]}),both=imp.filter(function(x){return (x.year||0)>=113});
+      fc.appendChild(el('div',{cls:'mut',text:'必考＋常考：依法律地圖的重要度標記（民刑為原標示，其他科依歷年出題頻率推算）。近 3 年＝113–115 年。'}));
+      [['必考＋常考',imp],['近 3 年（113–115）',rec],['必考常考＋近 3 年',both]].forEach(function(a){
+        fc.appendChild(el('button',{cls:'btn sec',text:a[0]+' 練 10 題（共 '+a[1].length+' 題）',disabled:a[1].length?null:'',onclick:function(){mcqRun(pickDue(a[1],10))}}))})})},0)}
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h2'},[ic('map'),'依主題練']),
     el('div',{cls:'mut',text:'從地圖或主題整理挑一個主題，練那個主題考過的題目。'}),
     el('div',{cls:'btns'},[el('button',{cls:'btn ghost',text:'從地圖挑',onclick:function(){go('lmap')}}),el('button',{cls:'btn ghost',text:'主題整理',onclick:function(){go('map')}})])]));
@@ -1210,7 +1239,7 @@ R.wrong=function(){
   var cs=D.cards.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.wrong>0&&s.box===0});
   V.appendChild(el('h1',{cls:'greet',text:'錯題本'}));
   V.appendChild(el('div',{cls:'greet-sub',text:'目前科目：'+SUBJ[S.subj]+'。錯的會隔 1、3、7、14 天自己回來。'}));
-  if(!mq.length&&!es.length&&!cs.length&&!mqOk.length){V.appendChild(el('div',{cls:'card'},[emptyBox('book','還沒有錯題','做選擇題答錯、申論自評「不會／半會」、閃卡按「還不熟」的，都會收在這裡。',['去練 5 題',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}])]));return}
+  if(!mq.length&&!es.length&&!cs.length&&!mqOk.length&&!D.mcq.some(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.star})){V.appendChild(el('div',{cls:'card'},[emptyBox('book','還沒有錯題','做選擇題答錯、申論自評「不會／半會」、閃卡按「還不熟」的，都會收在這裡。',['去練 5 題',function(){mcqRun(pickDue(D.mcq.filter(inSubj),5))}])]));return}
   V.appendChild(el('div',{cls:'stats4'},[el('div',{cls:'st'},[el('b',{text:String(mq.length)}),el('small',{text:'選擇還沒克服'})]),el('div',{cls:'st'},[el('b',{text:String(es.length)}),el('small',{text:'申論不會／半會'})]),
     el('div',{cls:'st'},[el('b',{text:String(cs.length)}),el('small',{text:'口訣不熟'})]),el('div',{cls:'st gold'},[el('b',{text:String(rvDue([].concat(D.mcq,D.essays).filter(inSubj)).length)}),el('small',{text:'今天到期複習'})])]));
   V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h1',text:'重練'}),el('div',{cls:'mut',text:'選擇 '+mq.length+' 題、申論 '+es.length+' 題、口訣 '+cs.length+' 張'}),
@@ -1227,6 +1256,9 @@ R.wrong=function(){
     es.forEach(function(x){var s=S.items[x.id];c.appendChild(el('button',{cls:'li',onclick:function(){essayFlow(x,back)}},[el('span',{cls:'tag '+(s.self==='不會'?'r':'a'),text:s.self}),x.year+' 年 '+x.cat+'　爭點 '+(s.issues_hit||0)+'/'+(s.issues_n||0)]))});V.appendChild(c)}
   if(mq.length){var c2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'選擇：還沒克服（依錯的次數）'})]);
     mq.slice(0,40).forEach(function(x){c2.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x],back)}},[el('span',{cls:'tag r',text:'錯 '+S.items[x.id].wrong}),clip(x.q,34)]))});V.appendChild(c2)}
+  var mqS=D.mcq.filter(function(x){var s=S.items[x.id];return inSubj(x)&&s&&s.star});
+  if(mqS.length){var cs2=el('div',{cls:'card'},[el('div',{cls:'h2',text:'我標記的（'+mqS.length+'）'}),el('button',{cls:'btn sec',text:'重做標記題 '+Math.min(mqS.length,20)+' 題',onclick:function(){mcqRun(mqS.slice(0,20))}})]);
+    mqS.slice(0,40).forEach(function(x){cs2.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x],back)}},[el('span',{cls:'tag a',text:'★'}),clip(x.q,34)]))});V.appendChild(cs2)}
   if(mqOk.length){var dt=el('details',{},[el('summary',{cls:'h2',style:'cursor:pointer;min-height:44px',text:'已克服（'+mqOk.length+'）▾ 點開看'})]);
     mqOk.slice(0,40).forEach(function(x){dt.appendChild(el('button',{cls:'li',onclick:function(){mcqRun([x],back)}},[el('span',{cls:'tag',text:'錯 '+S.items[x.id].wrong+'・已連對'}),clip(x.q,30)]))});
     V.appendChild(el('div',{cls:'card'},[dt]))}
@@ -1237,6 +1269,18 @@ R.wrong=function(){
 var MQ=null;function mqById(id){if(!MQ){MQ={};D.mcq.forEach(function(q){MQ[q.id]=q})}return MQ[id]}
 function lmLoad(cb){if(LMD)return cb(LMD);fetch('law_map.json').then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(d){LMD=d;cb(d)}).catch(function(){cb(null)})}
 function dkey(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+// 2026-10-30 整夜優化批次5：各章答對率（進度頁與首頁弱點共用）
+function chList(LD){var sjs=S.subj==='every'?SJ_LIST:S.subj==='all'?['民法','刑法']:[S.subj],chs=[];
+  sjs.forEach(function(sj){var by={},ord=[];Object.keys(LD.topics).forEach(function(id){var t=LD.topics[id];if(t.subj!==sj||t.pseudo)return;if(!by[t.ch]){by[t.ch]=[];ord.push(t.ch)}by[t.ch]=by[t.ch].concat(t.mcq)});
+    ord.forEach(function(ch){var L=by[ch].map(mqById).filter(Boolean),M=mast(L);chs.push({sj:sj,ch:ch,L:L,M:M})})});return chs}
+function weakChs(chs,n){return chs.filter(function(c){return c.M.att>=3&&c.M.acc<1}).sort(function(a,b){return a.M.acc-b.M.acc||a.M.p-b.M.p}).slice(0,n)}
+// 題目重要度：民刑用原本標示，其他科用法律地圖同一套「依題庫頻率推算」（同科前 20%＝必考、20–50%＝常考）
+var IMPQ=null;
+function impQ(LD){if(IMPQ)return IMPQ;var T=LD.topics,IMP={},HEAT={},yw=function(y){return (y||0)>=113?1.5:1},by={};
+  Object.keys(T).forEach(function(id){var t=T[id];if(t.pseudo)return;if(t.subj==='民法'||t.subj==='刑法'){IMP[id]=t.imp||'';return}
+    HEAT[id]=t.mcq.reduce(function(a,q){return a+yw((LD.mcq[q]||{}).y)},0)+t.essay.reduce(function(a,e){return a+yw((LD.essays[e]||{}).y)},0)+.2*(t.jud||[]).length;(by[t.subj]=by[t.subj]||[]).push(t)});
+  Object.keys(by).forEach(function(sj){var L=by[sj].sort(function(a,b){return HEAT[b.id]-HEAT[a.id]});L.forEach(function(t,i){var r=i/L.length;IMP[t.id]=!t.n?'':r<.2?'必考':r<.5?'常考':''})});
+  IMPQ={};Object.keys(IMP).forEach(function(id){var v=IMP[id];if(v!=='必考'&&v!=='常考')return;T[id].mcq.forEach(function(q){if(IMPQ[q]!=='必考')IMPQ[q]=v})});return IMPQ}
 R.stats=function(){
   var wk=0,d=new Date(),days=[];for(var i=0;i<7;i++){var k=dkey(d),r=S.days[k];if(r)wk+=r.ms;days.unshift({k:k,d:d.getDay(),n:r?r.card+r.mcq+r.essay:0});d.setDate(d.getDate()-1)}
   var allM=mast([].concat(D.cards,D.mcq,D.essays)),ex=examDays();
@@ -1268,7 +1312,7 @@ R.stats=function(){
     var sjs=S.subj==='every'?SJ_LIST:S.subj==='all'?['民法','刑法']:[S.subj],chs=[];
     sjs.forEach(function(sj){var by={},ord=[];Object.keys(LD.topics).forEach(function(id){var t=LD.topics[id];if(t.subj!==sj||t.pseudo)return;if(!by[t.ch]){by[t.ch]=[];ord.push(t.ch)}by[t.ch]=by[t.ch].concat(t.mcq)});
       ord.forEach(function(ch){var L=by[ch].map(mqById).filter(Boolean),M=mast(L);chs.push({sj:sj,ch:ch,L:L,M:M})})});
-    var cand=chs.filter(function(c){return c.M.att>=3}).sort(function(a,b){return a.M.acc-b.M.acc||a.M.p-b.M.p}),weak=cand[0]&&cand[0].M.acc<1?cand[0]:null;
+    var wk3=weakChs(chs,3),weak=wk3[0]||null;
     hc.appendChild(el('div',{cls:'hleg'},[el('span',{style:'--c:#f7d9d5',text:'答對 <50%'}),el('span',{style:'--c:#f8e6c4',text:'50–69%'}),el('span',{style:'--c:#d8ece4',text:'70–84%'}),el('span',{style:'--c:#b4dccf',text:'≥85%'}),el('span',{style:'--c:transparent;outline:1.5px dashed var(--control)',text:'還沒練'})]));
     sjs.forEach(function(sj){var C=chs.filter(function(c){return c.sj===sj});if(!C.length)return;
       hc.appendChild(el('div',{cls:'sec-t',text:sj+'（'+C.length+' 章）'}));var hg=el('div',{cls:'heat'});
@@ -1277,9 +1321,9 @@ R.stats=function(){
           [el('b',{text:c.ch}),el('small',{text:lv?'答對 '+Math.round(a*100)+'%・練 '+c.M.seen+'/'+c.L.length:'還沒練・'+c.L.length+' 題'})]))});
       hc.appendChild(hg)});
     hc.appendChild(el('div',{cls:'mut',style:'font-size:14px;margin-top:6px',text:'點任一章練那一章 5 題（先出到期、再出沒做過的）。章與題目的對應同法律地圖。'}));
-    if(weak)wc.appendChild(el('div',{cls:'card weakc'},[el('div',{cls:'h2',text:'最弱的一章：'+weak.ch}),
-      el('div',{cls:'mut',text:weak.sj+'・答對 '+Math.round(weak.M.acc*100)+'%（作答 '+weak.M.att+' 次）。只比較作答 3 次以上的章。'}),
-      el('button',{cls:'btn',text:'練最弱章 5 題',onclick:function(){mcqRun(pickDue(weak.L,5))}})]));
+    if(weak)wc.appendChild(el('div',{cls:'card weakc'},[el('div',{cls:'h2',text:'弱點前 '+wk3.length+' 章'}),
+      el('div',{cls:'mut',text:'答對率最低的章（只比較作答 3 次以上的章）。點一章練 5 題。'})].concat(wk3.map(function(c){
+        return el('button',{cls:'li',onclick:function(){mcqRun(pickDue(c.L,5))}},[el('span',{cls:'tag r',text:Math.round(c.M.acc*100)+'%'}),c.sj+'・'+c.ch+'（作答 '+c.M.att+' 次）'])}))));
     else wc.appendChild(el('div',{cls:'card'},[emptyBox('chart','還看不出最弱的章','某一章作答滿 3 次後，這裡會標出答對率最低的一章，並可一鍵練習。')]))});
   // 2026-10-29 13:50：只列實際用到的官方來源，不放內部說明（自製、查證工具、版本號）
   V.appendChild(el('div',{cls:'card mut'},[el('div',{cls:'h2',text:'資料說明'}),

@@ -434,6 +434,11 @@ nav button.on svg{color:var(--acc)}
 .qtrack i{display:block;height:100%;background:var(--acc);border-radius:999px;transition:width .4s ease}
 .qbar .qn{font-size:16px;font-weight:600;min-width:52px;text-align:right}
 .qbar .qs{font-size:15px;color:var(--ok);font-weight:600;white-space:nowrap}
+/* 2026-10-30 整夜優化批次7：快刷倒數、整卷模擬 */
+.qbar .qt{font-size:16px;font-weight:700;color:var(--gold);min-width:3.2em;text-align:right;font-variant-numeric:tabular-nums}
+.qbar .qt.low{color:var(--red)}
+.opt.pick{border:2px solid var(--acc);background:var(--soft)}
+.mock-sel{width:100%;font:inherit;font-size:17px;min-height:48px;padding:8px 12px;border:1.5px solid var(--control);border-radius:12px;background:var(--panel);color:var(--ink);margin:10px 0 0}
 .opt .ok-ic{float:right;font-weight:700;margin-left:8px}
 .opt.right{animation:pq-pop .34s ease}
 .opt.wrong{animation:pq-shake .38s ease}
@@ -890,17 +895,26 @@ function cardRun(n,next,list){
 function qbar(i,n,okN,quit){var t=el('div',{cls:'qtrack',role:'progressbar','aria-valuemin':'0','aria-valuemax':String(n),'aria-valuenow':String(i)},[el('i')]);t.firstChild.style.width=(i/n*100)+'%';
   var bar=el('div',{cls:'qbar'},[el('button',{cls:'qx','aria-label':'結束這一輪',text:'×',onclick:quit}),t,okN==null?null:el('span',{cls:'qs',text:'✓ '+okN}),el('span',{cls:'qn',text:Math.min(i+1,n)+'/'+n})]);
   bar.set=function(k,ok){t.firstChild.style.width=(k/n*100)+'%';t.setAttribute('aria-valuenow',String(k));if(ok!=null&&bar.querySelector('.qs'))bar.querySelector('.qs').textContent='✓ '+ok};return bar}
-function mcqRun(L,next){
-  var i=0,okN=0,wrongL=[],solo=!next&&L.length>=3;if(!L.length){alert(D.mcq.some(inSubj)?'目前沒有要做的選擇題':'這一科沒有選擇題（只有申論）');return next&&next()}
-  function quit(){if(solo&&i>0)return mcqResult(L.slice(0,i),okN,wrongL);go(cur)}
+function mcqRun(L,next,opt){
+  opt=opt||{};
+  var i=0,okN=0,wrongL=[],solo=!next&&L.length>=3,tmr=null,dl=opt.total?Date.now()+opt.total*1000:0;if(!L.length){alert(D.mcq.some(inSubj)?'目前沒有要做的選擇題':'這一科沒有選擇題（只有申論）');return next&&next()}
+  function fin(){clearInterval(tmr);if(opt.mock){mockSave(opt.tag,L.length,okN);return mcqResult(L,okN,wrongL,'整卷模擬：'+opt.tag.year+' 年 '+opt.tag.subj+'（未作答的算錯）')}return mcqResult(L.slice(0,i),okN,wrongL)}
+  function quit(){clearInterval(tmr);if(opt.mock&&i>0)return fin();if(solo&&i>0)return mcqResult(L.slice(0,i),okN,wrongL);go(cur)}
   function show(){
-    clear();if(i>=L.length)return solo?mcqResult(L,okN,wrongL):next?next():go('practice');
-    var q=L[i],answered=false,guess=false,bar=qbar(i,L.length,L.length>1?okN:null,quit);
+    clearInterval(tmr);clear();if(i>=L.length){if(opt.mock)return fin();return solo?mcqResult(L,okN,wrongL):next?next():go('practice')}
+    var q=L[i],answered=false,guess=false,bar=qbar(i,L.length,L.length>1&&!opt.mock?okN:null,quit);
+    // 2026-10-30 整夜優化批次7：倒數（快刷＝每題；整卷＝全卷）
+    if(opt.per||dl){var qt=el('span',{cls:'qt'});bar.appendChild(qt);var left=opt.per||0;
+      var tick=function(){if(!qt.isConnected){clearInterval(tmr);return}var sec=dl?Math.ceil((dl-Date.now())/1000):left;
+        qt.textContent=dl?Math.floor(Math.max(0,sec)/60)+':'+('0'+Math.max(0,sec)%60).slice(-2):Math.max(0,sec)+'s';qt.classList.toggle('low',sec<=(dl?60:10));
+        if(sec<=0){clearInterval(tmr);if(dl)return fin();if(!answered)timeUp()}left--};tick();tmr=setInterval(tick,1000)}
     var c=el('div',{cls:'card'},[el('div',{cls:'row'},[subjTag(q),el('span',{cls:'mut',text:(q.year||'')+' 年 第 '+(q.n||'?')+' 題　'+(i+1)+'/'+L.length})]),
       el('div',{},hfTags(q,['q','o','ex'])),txt(q.q,'h2'),srcNote(),dispTag(q)]);
     var opts=[],exp=el('div',{style:'scroll-margin-top:140px'});
     q.o.forEach(function(o,k){var b=el('button',{cls:'opt'},[String.fromCharCode(65+k)+'. ',o]);
-      b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
+      b.onclick=function(){if(answered)return;answered=true;var ok=k===q.a;
+        if(opt.mock){if(ok)okN++;else wrongL.push(q);bar.set(i+1,null);grade(q.id,ok);rvMark(q.id,ok);dayCnt(q.id,'mcq');persist();b.classList.add('pick');i++;setTimeout(function(){show();scrollTo(0,0)},250);return}
+        clearInterval(tmr);b.classList.add(ok?'right':'wrong');opts[q.a].classList.add('right');
         opts[q.a].insertBefore(el('span',{cls:'ok-ic',text:'✓'}),opts[q.a].firstChild);if(!ok)b.insertBefore(el('span',{cls:'ok-ic',text:'✕'}),b.firstChild);
         if(ok)okN++;else wrongL.push(q);bar.set(i+1,okN);
         grade(q.id,ok&&!guess);rvMark(q.id,ok&&!guess);dayCnt(q.id,'mcq');persist();gb.disabled=true;
@@ -909,18 +923,25 @@ function mcqRun(L,next){
         exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'詳解'}),exBox(q),q.disp?el('div',{cls:'src-note',text:'答案有爭議：'+q.disp}):null,
           rvNext(q.id)?el('div',{cls:'rvs',text:'複習：'+rvNext(q.id)}):null,el('div',{cls:'qid',text:q.id})]));
         exp.appendChild(el('button',{cls:'btn nextfix',text:i+1<L.length?'下一題':solo?'看結果':'完成',onclick:function(){i++;show();scrollTo(0,0)}}));
-        exp.firstChild.style.scrollMarginBottom='170px';exp.firstChild.scrollIntoView({behavior:'smooth',block:'nearest'})};
+        exp.firstChild.style.scrollMarginBottom='170px';exp.firstChild.scrollIntoView({behavior:'smooth',block:'nearest'});
+        if(opt.quick&&ok&&!guess)setTimeout(function(){if(exp.isConnected){i++;show();scrollTo(0,0)}},900)};
       opts.push(b);c.appendChild(b)});
     var st0=!!(S.items[q.id]&&S.items[q.id].star),gb=el('button',{cls:'flag','aria-pressed':'false',text:'猜的',onclick:function(){if(answered)return;guess=!guess;gb.classList.toggle('on',guess);gb.setAttribute('aria-pressed',String(guess))}}),
       sb=el('button',{cls:'flag'+(st0?' on':''),'aria-pressed':String(st0),text:st0?'★ 已標記':'☆ 標記',onclick:function(){var x=it(q.id);x.star=!x.star;if(!x.star)delete x.star;persist();sb.classList.toggle('on',!!x.star);sb.textContent=x.star?'★ 已標記':'☆ 標記';sb.setAttribute('aria-pressed',String(!!x.star))}});
-    c.appendChild(el('div',{cls:'qflags'},[gb,sb]));
+    if(!opt.mock)c.appendChild(el('div',{cls:'qflags'},[gb,sb]));
+    function timeUp(){answered=true;wrongL.push(q);bar.set(i+1,okN);grade(q.id,false);rvMark(q.id,false);dayCnt(q.id,'mcq');persist();opts[q.a].classList.add('right');
+      exp.appendChild(el('div',{cls:'fb no',role:'status'},[el('span',{cls:'fi',text:'✕'}),'時間到，正解是 '+String.fromCharCode(65+q.a)]));
+      exp.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'詳解'}),exBox(q)]));
+      exp.appendChild(el('button',{cls:'btn nextfix',text:i+1<L.length?'下一題':'看結果',onclick:function(){i++;show();scrollTo(0,0)}}))}
     V.appendChild(bar);V.appendChild(c);V.appendChild(exp);
   }
   show();
 }
+// 2026-10-30 整夜優化批次7：整卷模擬紀錄（只存在這支手機，最多 50 筆）
+function mockSave(tag,n,ok){var M=load('mock',[]);M.push({at:Date.now(),subj:tag.subj,year:tag.year,n:n,ok:ok});save('mock',M.slice(-50))}
 // 結算頁（整體 UI 改版）：答對率、與上一輪比較（只比自己存在本機的上一輪）、錯題直達
-function mcqResult(L,okN,wrongL){
-  clear();var n=L.length,p=n?okN/n:0,last=load('last_mcq',null);save('last_mcq',{n:n,ok:okN,at:Date.now()});
+function mcqResult(L,okN,wrongL,title){
+  clear();if(title)V.appendChild(el('div',{cls:'greet-sub',style:'margin-bottom:8px',text:title}));var n=L.length,p=n?okN/n:0,last=load('last_mcq',null);save('last_mcq',{n:n,ok:okN,at:Date.now()});
   var cmp=null;if(last&&last.n){var lp=Math.round(last.ok/last.n*100),d=Math.round(p*100)-lp;cmp=el('div',{cls:'cmp'+(d>0?' up':d<0?' down':''),text:'上一輪 '+lp+'%（'+last.ok+'/'+last.n+'）・'+(d>0?'進步 '+d+' 分':d<0?'退步 '+(-d)+' 分':'持平')})}
   var c=el('div',{cls:'card res'},[ring(p,132,Math.round(p*100)+'%','答對率',p>=.8),el('div',{cls:'h1',text:'這一輪答對 '+okN+' / '+n}),
     cmp||el('div',{cls:'cmp',text:'這是第一輪，下次會跟這次比'}),
@@ -948,6 +969,21 @@ R.practice=function(){
     el('div',{cls:'mut',style:'margin-top:6px;font-size:14px',text:'答案已對考選部公告（含更正）。'}),
     el('button',{cls:'btn',text:'練 5 題',onclick:function(){mcqRun(pickDue(mcq,5))}}),
     el('button',{cls:'btn sec',text:'練 10 題',onclick:function(){mcqRun(pickDue(mcq,10))}})]));
+  // 2026-10-30 整夜優化批次7：快刷模式、歷屆整卷模擬
+  if(mcq.length){
+    g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['快刷模式']),
+      el('div',{cls:'mut',text:'答對自動跳下一題，答錯才停下看詳解；不限題數，按左上 × 隨時結束看成績。先出到期的、再出沒做過的。'}),
+      el('button',{cls:'btn',text:'快刷：每題 60 秒',onclick:function(){mcqRun(pickDue(mcq,Math.min(mcq.length,300)),null,{quick:1,per:60})}}),
+      el('button',{cls:'btn sec',text:'快刷：不限時',onclick:function(){mcqRun(pickDue(mcq,Math.min(mcq.length,300)),null,{quick:1})}})]));
+    var papers={};mcq.forEach(function(x){if(!x.year)return;var k=x.year+'|'+x.subj;(papers[k]=papers[k]||[]).push(x)});
+    var pk=Object.keys(papers).sort(function(a,b){return b.localeCompare(a)}),sel=el('select',{cls:'mock-sel','aria-label':'選年度與科目'});
+    pk.forEach(function(k){var a=k.split('|');sel.appendChild(el('option',{value:k,text:a[0]+' 年 '+a[1]+'（'+papers[k].length+' 題）'}))});
+    var MK=load('mock',[]).filter(function(m){return pk.indexOf(m.year+'|'+m.subj)>=0}).slice(-5).reverse();
+    g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['歷屆整卷模擬']),
+      el('div',{cls:'mut',text:'選一年一科，依原卷題號整卷作答、全卷計時（每題 90 秒）；作答中不顯示對錯，交卷才看分數與錯題。題數＝本 App 收錄的題目（下架題不含）。'}),sel,
+      el('button',{cls:'btn',text:'開始整卷',onclick:function(){var a=sel.value.split('|'),L=papers[sel.value].slice().sort(function(x,y){return (x.n||0)-(y.n||0)});
+        mcqRun(L,null,{mock:1,total:L.length*90,tag:{year:a[0],subj:a[1]}})}}),
+      MK.length?el('div',{cls:'mut',style:'margin-top:10px;font-size:14px'},['最近成績：'].concat(MK.map(function(m){return m.year+' '+m.subj+' '+Math.round(m.ok/m.n*100)+'（'+m.ok+'/'+m.n+'）'}).join('、'))):null]))}
   g.appendChild(el('div',{cls:'card tile'},[el('div',{cls:'h1'},['口訣閃卡']),
     el('div',{cls:'kv'},[el('span',{},['共 ',el('b',{text:String(cards.length)}),' 張']),el('span',{},['到期 ',el('b',{text:String(dueN(cards))})]),el('span',{},['熟練 ',el('b',{text:Math.round(Mc.p*100)+'%'})])]),bar(Mc.p),
     cards.length?el('button',{cls:'btn',text:'練 5 張',onclick:function(){cardRun(5)}}):el('div',{cls:'sj-none',text:'這一科還沒有口訣卡。'})]));

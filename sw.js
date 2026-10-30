@@ -1,5 +1,5 @@
 // 離線快取＋自動更新：有網路一律先拿最新版（網路優先），沒網路才用快取；新版裝好立刻接管
-var C='pqn-98b620cfdd',F=['./','index.html','manifest.webmanifest','icon-512.png','icon-192.png','icon-maskable-512.png','apple-touch-icon.png','law_map.json'];
+var C='pqn-afe40ebe77',F=['./','index.html','manifest.webmanifest','icon-512.png','icon-192.png','icon-maskable-512.png','apple-touch-icon.png','law_map.json'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(F.map(function(u){return new Request(u,{cache:'reload'})}))}));self.skipWaiting()});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(ks){
   // 舊版（快取優先）的頁面不會自己重整：從舊快取升上來時，替開著的頁面重整一次

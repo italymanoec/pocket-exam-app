@@ -1378,7 +1378,8 @@ R.stats=function(){
     el('ul',{cls:'srcl'},['選擇題：考選部律師、司法官考試第一試試題，答案以考選部公告答案（含更正答案）為準；公告答案有爭議的題目照公告答案收錄並標「答案有爭議」。','申論題：考選部律師、司法官考試第二試試題（考選部只公布試題，沒有公告擬答的題目標「未能確認」）。','科目與考試範圍：考選部應試科目與命題大綱。',
       '法條：法務部全國法規資料庫。','判決：司法院裁判書（摘句取自判決原文）。'].map(function(s){return el('li',{text:s})})),
     el('ul',{cls:'srcl'},['進度只存在這支手機，不用帳號。','安裝後可離線使用。'].map(function(s){return el('li',{text:s})})),
-    el('a',{href:'/law-podcast/',style:'color:inherit;font-size:14px',text:'法律 Podcast：開車用聽的考點（雙人對談）'})]));  // 2026-10-31 Jeffrey 00:28：podcast 入口（只加這一行連結）
+    el('a',{href:'/law-podcast/',style:'color:inherit;font-size:14px',text:'法律 Podcast：開車用聽的考點（雙人對談）'}),  // 2026-10-31 Jeffrey 00:28：podcast 入口（只加這一行連結）
+    el('a',{href:'/law-shorts/',style:'color:inherit;font-size:14px;display:block;margin-top:8px',text:'法律短影音：無聊刷題（三秒挑戰）'})]));  // 2026-10-31 Jeffrey 11:32：短影音入口（只加這一行連結）
   V.insertBefore(bakCard(),V.lastChild);
 };
 // 2026-10-30 整夜優化：進度備份／還原。備份檔＝本機 pq1_ 開頭的全部紀錄（JSON），換手機或清快取前先存一份

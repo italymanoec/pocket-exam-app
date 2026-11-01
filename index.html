@@ -313,6 +313,13 @@ body.lm-on{overflow:hidden}
 .lm-bd.lm-dense{background:#fef6ee;border-color:#f9dbaf;color:#93370d}
 .lm-rt{margin:4px 0 6px;line-height:1.55}
 .lm-msg{position:absolute;left:0;right:0;top:40%;text-align:center;color:#667085;font-size:16px;padding:0 20px}
+/* 2026-11-01 地圖排版修正＋城市地圖風（只動 lm- 樣式）：海藍底、圓形雷達小地圖、深色麵包屑、側欄標題讓出 × 的位置 */
+.lm{background:#5a8db5}
+.lm-mini{border-radius:50%;border:3px solid #1d2733;box-shadow:0 0 0 2px rgba(255,255,255,.85),0 4px 14px rgba(0,0,0,.3);background:#5a8db5}
+.lm-where{background:rgba(29,39,51,.88);color:#fff;border-color:rgba(255,255,255,.5)}
+.lm-panel>.lm-crumb,.lm-panel>h2{padding-right:48px}
+.lm-panel>.lm-x{position:sticky;top:-14px;margin:-6px -8px 0 0;background:rgba(255,255,255,.96);border-radius:999px;z-index:1}
+@media (min-width:701px){.lm-top select.lm-jump{max-width:none}}
 @media (max-width:700px){
  .lm-panel{top:auto!important;height:62%;width:100%;border-left:0;border-top:1px solid #d0d5dd;border-radius:14px 14px 0 0;transform:translateY(105%);box-shadow:0 -8px 24px rgba(0,0,0,.12)}
  .lm-panel.lm-open{transform:none}
@@ -1587,7 +1594,7 @@ function lmDraw(root,D,signal,arg){
     '總則：法院與訴訟主體':'gen',強制處分:'proc',證據:'proc',偵查與起訴:'proc','上訴、抗告與救濟':'rem',特別程序:'proc',
     基本原則與基本權總論:'gen',平等與人身自由:'sub',自由權:'sub',經濟與社會權:'sub',國家組織:'org',憲法訴訟:'rem',
     '總論：原則與組織':'gen',行政作用:'sub',行政罰與行政執行:'eff',行政救濟:'rem',國家責任:'rem',公司法:'sub',保險法:'sub',票據法:'sub',證券交易法:'sub'};
-  const TONE=[[0,76,50],[14,64,46],[-12,86,56],[8,70,30]];   // 同類相鄰章的三階：[色相偏移, 亮度%, 飽和%]
+  const TONE=[[0,82,34],[14,75,30],[-12,88,40],[8,69,26]];   // 2026-11-01 城市地圖風：街區色塊降飽和（類別色相不變）   // 同類相鄰章的三階：[色相偏移, 亮度%, 飽和%]
   const clsOf=ch=>CH_CLS[ch]||(/總則|總論/.test(ch)?'gen':'sub');
   // 全景用的最短名稱（放不下全名時用；再放不下就用念書路線編號，圖例有對照）
   const CH_SHORT={民法總則:'總則','未遂、不能、中止':'未遂',正犯與共犯:'共犯',刑與沒收:'沒收',數罪併罰與競合:'競合',保安處分:'保安','分則：國家法益':'國家法益','分則：社會法益':'社會法益','分則：個人法益':'個人法益',
@@ -1643,22 +1650,20 @@ function lmDraw(root,D,signal,arg){
   // 出題次數 → 深淺
   const STEPS=[[0,96,'未考過'],[1,88,'1–2 題'],[3,80,'3–5 題'],[6,71,'6–9 題'],[10,62,'10–14 題'],[15,52,'15–24 題'],[25,42,'25 題以上']];
   const lum=n=>{let L=STEPS[0][1];for(const s of STEPS)if(n>=s[0])L=s[1];return L};
-  const fillOf=c=>`hsl(${c.ch.hue},${c.t.n?58:22}%,${lum(c.t.n)}%)`;
+  const fillOf=c=>`hsl(${c.ch.hue},${c.t.n?42:14}%,${lum(c.t.n)}%)`;
   const darkTxt=c=>lum(c.t.n)>=60;
   // ---------- 自然邊界：同一個位移場套在所有頂點上，相鄰區塊的共用邊界一定吻合 ----------
   const nz=(x,y,s)=>Math.sin(x*.0021*s+1.3)*Math.cos(y*.0017*s+.7)+Math.sin((x+y)*.0013*s+2.1)*.6+Math.sin((x-y*1.3)*.0031*s+.4)*.4;
-  function warp(cb,x,y){
-    let dx=nz(x,y,4)*30+nz(y,x,11)*7,dy=nz(y+500,x,4)*30+nz(x+300,y,11)*7;          // 內部國界、州界彎曲
-    const cx=cb.x+cb.w/2,cy=cb.y+cb.h/2,rx=x-cx,ry=y-cy,rl=Math.hypot(rx,ry)||1;
-    const e=Math.min(x-cb.x,cb.x+cb.w-x,y-cb.y,cb.y+cb.h-y),f=Math.max(0,1-e/240);
-    const a=f*(nz(x,y,2.2)*72+nz(x,y,6.5)*22);                                       // 海岸線：半島與海灣
-    const R=Math.min(cb.w,cb.h)*(cb.grey?.6:.48),ex=Math.min(x-cb.x,cb.x+cb.w-x),ey=Math.min(y-cb.y,cb.y+cb.h-y),c=Math.max(0,1-(ex+ey)/R);
-    const pull=c*c*R*.4;                                                              // 圓角
-    return [x+dx+(a-pull)*rx/rl,y+dy+(a-pull)*ry/rl]}
-  const STEP=14;
-  function poly(cb,x,y,w,h){const P=[],seg=(x0,y0,x1,y1)=>{const hz=y0===y1,a=hz?x0:y0,b=hz?x1:y1,d=b>a?1:-1;P.push(warp(cb,x0,y0));
-      let v=d>0?Math.floor(a/STEP+1)*STEP:Math.ceil(a/STEP-1)*STEP;for(;d>0?v<b-.5:v>b+.5;v+=d*STEP)P.push(hz?warp(cb,v,y0):warp(cb,x0,v))};
-    seg(x,y,x+w,y);seg(x+w,y,x+w,y+h);seg(x+w,y+h,x,y+h);seg(x,y+h,x,y);
+  // 2026-11-01 城市地圖風：科目＝城區（島）、章＝街區、主題＝小街廓；內部界線一律直線（街道），文字框＝區塊框，不再被彎曲的界線切到
+  const warp=(cb,x,y)=>[x,y];
+  function poly(cb,x,y,w,h){const p=new Path2D();p.rect(x,y,w,h);return p}
+  // 海岸：圓角矩形往外長出小半島（只往外、不吃進街區；最多外擴 50，相鄰城區之間的海峽 130 不會黏在一起）
+  function coast(cb){const M=20,R=Math.min(110,Math.min(cb.w,cb.h)*.25),x0=cb.x-M,y0=cb.y-M,x1=cb.x+cb.w+M,y1=cb.y+cb.h+M,P=[];
+    const add=(x,y,nx,ny)=>{const o=clamp(12+nz(x,y,2.2)*8+nz(x,y,6.5)*4,0,30);P.push([x+nx*o,y+ny*o])};
+    const corner=(cx,cy,a0)=>{for(let i=0;i<=6;i++){const a=a0+i/6*Math.PI/2;add(cx+Math.cos(a)*R,cy+Math.sin(a)*R,Math.cos(a),Math.sin(a))}};
+    const side=(ax,ay,bx,by,nx,ny)=>{const n=Math.max(1,Math.round(Math.hypot(bx-ax,by-ay)/36));for(let i=1;i<n;i++){const u=i/n;add(ax+(bx-ax)*u,ay+(by-ay)*u,nx,ny)}};
+    corner(x0+R,y0+R,Math.PI);side(x0+R,y0,x1-R,y0,0,-1);corner(x1-R,y0+R,-Math.PI/2);side(x1,y0+R,x1,y1-R,1,0);
+    corner(x1-R,y1-R,0);side(x1-R,y1,x0+R,y1,0,1);corner(x0+R,y1-R,Math.PI/2);side(x0,y1-R,x0,y0+R,-1,0);
     const p=new Path2D();P.forEach((q,i)=>i?p.lineTo(q[0],q[1]):p.moveTo(q[0],q[1]));p.closePath();return p}
   function layout(){
     const inG=s=>GRP==='new'?!SEVEN.includes(s):SEVEN.includes(s);
@@ -1683,7 +1688,7 @@ function lmDraw(root,D,signal,arg){
       const H=Math.sqrt(Ac.reduce((a,b)=>a+b,0)/ar);let x=0;
       cols.forEach((c,i)=>{if(!Ac[i])return;const w=Ac[i]/H;rowsIn(c,x,0,w,[GR]);x+=w+G_})}
     SUBJ.concat(Object.keys(OC)).forEach(s=>{if(!contOf[s]&&A(s)>0){const b=conts.reduce((m,c)=>Math.max(m,c.y+c.h),0);place(s,0,b+G_,1200,A(s)/1200)}});
-    conts.forEach(c=>{c.path=poly(c,c.x,c.y,c.w,c.h);c.r=[c.x,c.y,c.w,c.h]});
+    conts.forEach(c=>{c.path=coast(c);c.r=[c.x,c.y,c.w,c.h]});
     conts.forEach(cb=>{if(cb.grey)return;const out=[];   // 12:25 再修：每章保底 CH_MIN 的面積，最小的章也放得下名字（圖例有寫）
       bin(chList[cb.subj].map((c,i)=>({w:chW(c),c,i})),cb.x,cb.y,cb.w,cb.h,out);
       out.forEach(([it,x,y,w,h])=>{const cl=clsOf(it.c.ch),ch={subj:cb.subj,ch:it.c.ch,page:it.c.page,r:[x,y,w,h],cb,cls:cl,hue:CLS[cl][1],no:it.i+1,short:CH_SHORT[it.c.ch]||it.c.ch};ch.path=poly(cb,x,y,w,h);
@@ -1704,7 +1709,8 @@ function lmDraw(root,D,signal,arg){
   const pseudo=Object.values(T).filter(t=>t.pseudo&&(!contOf[t.subj]||!contOf[t.subj].grey));   // 兩張圖切換時，不在目前這張的科目在 draw 裡略過
   // ---------- 畫布、視角 ----------
   const cv=$('.lm-cv'),ctx=cv.getContext('2d'),hit=document.createElement('canvas').getContext('2d');
-  let V={k:.1,x:0,y:0},DPR=1,raf=0,sel=null,hits=new Set(),showCo=false,showCx=false;
+  let V={k:.1,x:0,y:0},DPR=1,raf=0,sel=null,hits=new Set(),showCo=false,showCx=false,linesDrawn=0,chTopicNow=[];
+  const SEA='#5a8db5',LAND='#e9ebe7',INK='#101820',HALO='rgba(16,24,32,.88)';   // 11-01 城市地圖風：海藍、灰白陸地；地名白字深描邊
   const Wd=()=>cv.clientWidth,Hd=()=>cv.clientHeight,wide=()=>Wd()>700;
   const P=$('.lm-panel'),panelOpen=()=>P.classList.contains('lm-open');
   function area(){const W=Wd(),H=Hd(),t=TOP()+(W<=700?34:40);let r=W-58,b=H-(W<=700?8:16);   // 右側 58px 是＋－鍵
@@ -1712,7 +1718,7 @@ function lmDraw(root,D,signal,arg){
   function fitV(x,y,w,h,pad=.08){const [l,t,r,b]=area(),k=Math.min((r-l)/(w*(1+pad*2)),(b-t)/(h*(1+pad*2)));
     return {k,x:(l+r)/2-(x+w/2)*k,y:(t+b)/2-(y+h/2)*k}}
   function resize(){DPR=Math.min(2.5,window.devicePixelRatio||1);cv.width=Math.round(Wd()*DPR);cv.height=Math.round(Hd()*DPR);
-    const mi=$('.lm-mini'),mw=Math.round(Math.min((wide()?190:110)/WB[2],(wide()?130:170)/WB[3])*WB[2]);mi.style.width=mw+'px';mi.style.height=Math.round(mw*WB[3]/WB[2])+'px';mi.width=mw*DPR;$('.lm-zm').style.bottom=`calc(${Math.round(mw*WB[3]/WB[2])+22}px + env(safe-area-inset-bottom))`;mi.height=Math.round(mw*WB[3]/WB[2])*DPR;miniBase=null;req()}
+    const mi=$('.lm-mini'),mw=wide()?132:92;mi.style.width=mw+'px';mi.style.height=mw+'px';mi.width=mw*DPR;mi.height=mw*DPR;$('.lm-zm').style.bottom=`calc(${mw+22}px + env(safe-area-inset-bottom))`;miniBase=null;req()}
   const req=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw()})};
   const KMIN=()=>fitV(...WB,0).k*.6,KMAX=4;
   let anim=0;
@@ -1737,42 +1743,50 @@ function lmDraw(root,D,signal,arg){
   // ---------- 主繪製 ----------
   let issueHit=[],badgeHit=[],routeHit=[],tagHit=[],tagLog=[],starLog=[],unnamed=[],pillLog=[],shownT=new Set(),shownCh=new Set(),lvName='全景',ROUTE_ON=false,ROUTE_SJ='all';
   const IMPC={'必考':'#d92d20','常考':'#f79009'};
-  function sBadge(txt,x,y,fs){const w=tw(txt,fs,700)+10,h=fs+7;rrect(x-w/2,y-h/2,w,h,h/2);ctx.fillStyle='#d92d20';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke();
+  // ★N 圖釘：紅底白字膠囊＋下方小尖角（像地圖上的標記）
+  function sBadge(txt,x,y,fs){const w=tw(txt,fs,700)+10,h=fs+7;ctx.beginPath();ctx.moveTo(x-4,y+h/2-1);ctx.lineTo(x,y+h/2+4);ctx.lineTo(x+4,y+h/2-1);ctx.closePath();ctx.fillStyle='#b42318';ctx.fill();
+    rrect(x-w/2,y-h/2,w,h,h/2);ctx.fillStyle='#d92d20';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke();
     label(txt,x,y+.5,fs,{w:700,c:'#fff',halo:'rgba(0,0,0,0)'})}
   function star(x,y,r,c){ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,q=i%2?r*.45:r;ctx.lineTo(x+Math.cos(a)*q,y+Math.sin(a)*q)}ctx.closePath();
     ctx.fillStyle=c;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke()}
   function draw(){
     const W=Wd(),H=Hd(),k=V.k;issueHit=[];badgeHit=[];routeHit=[];tagHit=[];minFs=99;shownT=new Set();shownCh=new Set();
-    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle='#d6e6f2';ctx.fillRect(0,0,W,H);
+    ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle=SEA;ctx.fillRect(0,0,W,H);
     ctx.setTransform(DPR*k,0,0,DPR*k,DPR*V.x,DPR*V.y);
+    const rw=clamp(k*16,3,9),sw0=clamp(k*5,1,3);   // 街道寬（螢幕 px）：章界＝大馬路、主題界＝小街
     // 每章「主題格線」淡入程度：畫面內最小的主題短邊 26→38px、平均大小 48→70px 之間由無到有；過半（tA≥.5）就換成主題層，每塊都要有名字或編號
     const tA=new Map(),chA=new Map(),PANO=k<fitV(...WB,0).k*1.3;   // 全景一律停在章層（保底面積讓小章變大，不能因此提早切到主題）
     chaps.forEach(ch=>{const s=sr(ch.r),avg=Math.sqrt(s[2]*s[3]/ch.cells.length);let m=1e9;
       ch.cells.forEach(c=>{const p=[c.ctr[0]*k+V.x,c.ctr[1]*k+V.y];if(p[0]>=0&&p[0]<=W&&p[1]>=0&&p[1]<=H){const q=sr(c.r);m=Math.min(m,q[2],q[3])}});
       const a=PANO?0:Math.min(sstep(m,22,32),sstep(avg,50,80));tA.set(ch,a);chA.set(ch,a>=.5?1:0)});
+    chTopicNow=chaps.filter(ch=>chA.get(ch)).map(ch=>ch.subj+'|'+ch.ch);
     // 淺海帶＋陸地底色
-    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineJoin='round';ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=110;ctx.stroke(c.path);
-      ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=44;ctx.stroke(c.path);ctx.fillStyle=c.grey?'#e6e4df':'#f6f3ec';ctx.fill(c.path)});
+    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineJoin='round';ctx.strokeStyle='rgba(128,172,204,.55)';ctx.lineWidth=96;ctx.stroke(c.path);
+      ctx.strokeStyle='rgba(168,202,226,.75)';ctx.lineWidth=34;ctx.stroke(c.path);ctx.fillStyle=c.grey?'#d3d6d6':LAND;ctx.fill(c.path)});
     conts.forEach(c=>{if(!c.grey||!inView(c.r))return;ctx.save();ctx.clip(c.path);ctx.strokeStyle='rgba(120,120,120,.18)';ctx.lineWidth=2/k;ctx.beginPath();
       const s=26/k;for(let d=c.x-c.h;d<c.x+c.w;d+=Math.max(s,12)){ctx.moveTo(d,c.y+c.h);ctx.lineTo(d+c.h,c.y)}ctx.stroke();ctx.restore()});
     // 章（國）底色：顏色＝概念類別（固定），深淺＝章內主題平均考題數
     chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.fillStyle=ch.fill;ctx.fill(ch.path)});
     // 主題（州）：放大才淡入；爭點密集的主題加琥珀斜紋
     cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!inView(c.r))return;ctx.globalAlpha=a;ctx.fillStyle=fillOf(c);ctx.fill(c.path)});
-    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!dense(c.t)||!inView(c.r))return;ctx.save();ctx.clip(c.path);ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=a*.55;
-      const s=sr(c.r);ctx.strokeStyle='#b54708';ctx.lineWidth=2.5;ctx.beginPath();for(let d=Math.floor((s[0]-s[3])/10)*10;d<s[0]+s[2];d+=10){ctx.moveTo(d,s[1]+s[3]);ctx.lineTo(d+s[3],s[1])}ctx.stroke();ctx.restore()});
+    // 爭點密集：淡斜紋（11-01 改淡，字不再被斜線干擾；字另有底色）
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!dense(c.t)||!inView(c.r))return;ctx.save();ctx.clip(c.path);ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=a*.2;
+      const s=sr(c.r);ctx.strokeStyle='#b54708';ctx.lineWidth=1.5;ctx.beginPath();for(let d=Math.floor((s[0]-s[3])/14)*14;d<s[0]+s[2];d+=14){ctx.moveTo(d,s[1]+s[3]);ctx.lineTo(d+s[3],s[1])}ctx.stroke();ctx.restore()});
     ctx.globalAlpha=1;
-    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!inView(c.r))return;const z=!c.t.n;ctx.globalAlpha=a;ctx.lineWidth=(z?1.3:1)/k;ctx.strokeStyle=z?'rgba(110,110,110,.7)':'rgba(255,255,255,.9)';
-      ctx.setLineDash(z?[5/k,4/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);ctx.globalAlpha=1;
-    // 章（國）界、海岸線
-    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.lineWidth=3.2/k;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.stroke(ch.path);ctx.lineWidth=1.1/k;ctx.strokeStyle='rgba(70,60,50,.45)';ctx.stroke(ch.path)});
-    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineWidth=(c.grey?2:2.4)/k;ctx.strokeStyle=c.grey?'#9a9a94':'#4f6f8f';
+    // 小街（主題界）：白色細街；未考過的街廓加灰色虛線框
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||!inView(c.r))return;ctx.globalAlpha=a;ctx.lineWidth=sw0/k;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.stroke(c.path)});
+    cells.forEach(c=>{const a=tA.get(c.ch);if(a<.02||c.t.n||!inView(c.r))return;ctx.globalAlpha=a*.8;const i=(sw0+2)/k,[x,y,w,h]=c.r;ctx.lineWidth=1.2/k;ctx.strokeStyle='rgba(100,108,116,.7)';
+      ctx.setLineDash([5/k,4/k]);ctx.strokeRect(x+i,y+i,w-2*i,h-2*i)});ctx.setLineDash([]);ctx.globalAlpha=1;
+    // 大馬路（章界）：灰邊白路面；先畫全部路邊再畫路面，路口才接得乾淨
+    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.lineWidth=(rw+2.4)/k;ctx.strokeStyle='#b9c1c8';ctx.stroke(ch.path)});
+    chaps.forEach(ch=>{if(!inView(ch.r))return;ctx.lineWidth=rw/k;ctx.strokeStyle='#fbfbf8';ctx.stroke(ch.path)});
+    conts.forEach(c=>{if(!inView(c.r))return;ctx.lineWidth=(c.grey?1.6:1.8)/k;ctx.strokeStyle=c.grey?'#8f9597':'#557189';
       ctx.setLineDash(c.grey?[9/k,6/k]:[]);ctx.stroke(c.path)});ctx.setLineDash([]);
-    // 航線：預設不畫；點了主題才畫它的線（圖例裡可整批打開）
+    // 航線：只有圖例裡的開關打開才畫（11-01：開關關＝一條都不畫，點主題也不畫；關聯主題列在側欄）；開了且有選主題時，只強調該主題的線
     const curve=(a,b,bend)=>{const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,dx=b[0]-a[0],dy=b[1]-a[1];return [mx-dy*bend,my+dx*bend]};
-    const lbl=[];
+    const lbl=[];linesDrawn=0;
     D.links.forEach(l=>{const A=cellOf[l.a],B=cellOf[l.b];if(!A||!B)return;const co=l.kind==='同題合考',hl=sel&&(l.a===sel||l.b===sel);
-      if(!hl&&!(co?showCo:showCx))return;
+      if(!(co?showCo:showCx))return;if(sel&&!hl)return;linesDrawn++;
       const nv=!co&&l.status!=='已驗證',[qx,qy]=curve(A.ctr,B.ctr,co?.14:-.22);
       ctx.beginPath();ctx.moveTo(A.ctr[0],A.ctr[1]);ctx.quadraticCurveTo(qx,qy,B.ctr[0],B.ctr[1]);
       if(co){ctx.strokeStyle=hl?'rgba(220,104,3,.85)':'rgba(60,80,110,.22)';ctx.lineWidth=(hl?2.4:1.2)/k;ctx.setLineDash([])}
@@ -1786,6 +1800,12 @@ function lmDraw(root,D,signal,arg){
     const placed=[],free=(x,y,w,h)=>!placed.some(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]),take=(x,y,w,h)=>placed.push([x,y,w,h]);
     const off=s=>s[0]>W||s[1]>H||s[0]+s[2]<0||s[1]+s[3]<0,toS=p=>[p[0]*V.k+V.x,p[1]*V.k+V.y];
     const crowd=[],late=[],named=new Set(),tagQ=[],tags=[],vis=p=>p[0]>=0&&p[0]<=W&&p[1]>=TOP()&&p[1]<=H;
+    // 11-01：頂列下方留一條給「目前位置」麵包屑（T0 以上不放地名）；＋－鍵、雷達小地圖先占位，地名一律避開
+    // 側欄開著時，看得到的地圖右緣（電腦）／下緣（手機）到側欄為止
+    const RX=panelOpen()&&wide()?W-Math.min(460,W):W,BY=panelOpen()&&!wide()?H-P.offsetHeight:H;
+    const T0=TOP()+(PANO?4:34),vr=(s,p)=>{const x0=Math.max(s[0],0)+p,y0=Math.max(s[1],T0)+p,x1=Math.min(s[0]+s[2],RX)-p,y1=Math.min(s[1]+s[3],BY)-p;return [x0,y0,x1-x0,y1-y0]};
+    const rb=root.getBoundingClientRect(),UI=['.lm-zm','.lm-mini'].map(q=>{const e=$(q),b=e.getBoundingClientRect();return e.style.visibility==='hidden'||!b.width?null:[b.left-rb.left-6,b.top-rb.top-6,b.width+12,b.height+12]}).filter(Boolean);
+    UI.forEach(r=>take(...r));
     // 編號小牌（白底）：名稱放不下時用；編號＝念書路線順序，圖例有對照
     pillLog=[];const pill=(txt,x,y,o)=>{o=o||{};pillLog.push([txt,Math.round(x),Math.round(y)]);const w=Math.max(20,tw(txt,12,700)+10),h=20;rrect(x-w/2,y-h/2,w,h,10);ctx.fillStyle=o.bg||'rgba(255,255,255,.96)';ctx.fill();ctx.lineWidth=1.4;ctx.strokeStyle=o.bd||'#344054';ctx.stroke();
       label(txt,x,y+.5,12,{w:700,c:o.c||'#101828',halo:'rgba(0,0,0,0)'});return [x-w/2,y-h/2,w,h]};
@@ -1800,9 +1820,9 @@ function lmDraw(root,D,signal,arg){
     const cLbl=[],bLbl=[];
     conts.forEach(c=>{if(c.grey)return;const s=sr(c.r);if(off(s))return;
       const nm=c.subj,fs=clamp(Math.min(s[2]*.075,(s[2]+40)/nm.length),18,40),a=1-sstep(s[2]/W,1.25,2);if(a<.03)return;
-      const tw0=tw(nm,fs,800),y=s[1]-fs*.55-6,x=clamp(s[0]+s[2]/2,tw0/2+6,W-tw0/2-6);if(y<TOP()+fs*.7)return;
-      const ms=chaps.reduce((t,ch)=>t+(ch.subj===nm?ch.must:0),0),sb=ms?'★'+ms:'',sw=sb?tw(sb,13,700)+12:0;
-      cLbl.push([nm,x-(sw?sw/2+3:0),y,fs,a,sb,x+tw0/2]);take(x-tw0/2-4-sw/2,y-fs*.6,tw0+8+sw+6,fs*1.2)});
+      const tw0=tw(nm,fs,800),y=s[1]-fs*.55-10,x=clamp(s[0]+s[2]/2,tw0/2+6,W-tw0/2-6);if(y-fs*.6<T0)return;
+      const ms=chaps.reduce((t,ch)=>t+(ch.subj===nm?ch.must:0),0),sb=ms?'★'+ms:'',sw=sb?tw(sb,13,700)+12:0,xx=clamp(x-(sw?sw/2+3:0),tw0/2+6,W-tw0/2-sw-12);   // 連★N 一起留在畫面內
+      cLbl.push([nm,xx,y,fs,a,sb,xx+tw0/2+(sw?sw/2+3:0)]);take(xx-tw0/2-4,y-fs*.6,tw0+8+sw+6,fs*1.2)});
     // 小章的中心先保留給編號牌，未歸類小標不要壓在上面
     const resv=chaps.filter(ch=>{const q=sr(ch.r);return !off(q)&&(q[2]<70||q[3]<45)}).map(ch=>{const p=toS(ch.ctr);return [p[0]-16,p[1]-12,32,24]});
     // 未歸類小標（先占位；大陸左下角優先，擠到就換右下、中下，最後放海岸外）
@@ -1810,7 +1830,7 @@ function lmDraw(root,D,signal,arg){
     pseudo.forEach(t=>{const c=contOf[t.subj];if(!c||c.grey)return;const s=sr(c.r);if(s[2]<110||s[2]>W*2.2||off(s)||(pano&&W<=500&&s[2]<W*.8))return;
       const txt=`未歸類 ${t.n} 題 ⓘ`,w=tw(txt,12,600)+16,h=24,C=[];
       for(const yy of [s[1]+s[3]*.95-h,s[1]+s[3]*.86-h,s[1]+s[3]*.76-h,s[1]+s[3]+2])for(const xx of [s[0]+s[2]*.05,s[0]+s[2]*.95-w,s[0]+(s[2]-w)/2])C.push([xx,yy]);
-      const ok=C.filter(([x,y])=>y>=TOP()+4&&y+h<=H);if(!ok.length)return;const fr=(x,y)=>free(x-2,y-2,w+4,h+4)&&!resv.some(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]);const nO=(x,y)=>resv.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length*10+placed.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length;
+      const ok=C.filter(([x,y])=>y>=T0+4&&y+h<=H);if(!ok.length)return;const fr=(x,y)=>free(x-2,y-2,w+4,h+4)&&!resv.some(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]);const nO=(x,y)=>resv.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length*10+placed.filter(r=>x<r[0]+r[2]&&x+w>r[0]&&y<r[1]+r[3]&&y+h>r[1]).length;
       const [x,y]=ok.find(([x,y])=>fr(x,y))||ok.slice().sort((p,q)=>nO(...p)-nO(...q))[0];
       bLbl.push([t,txt,x,y,w,h]);take(x-2,y-2,w+4,h+4)});
     // 念書路線（可開關，預設關）：每科一條，章層畫「章編號」，放大到主題層的章改畫「章-主題」編號；先占位，名稱標籤會避開
@@ -1823,108 +1843,143 @@ function lmDraw(root,D,signal,arg){
       pts.forEach(p=>{if(p.ch||p.x<-20||p.x>W+20||p.y<TOP()-10||p.y>H+20)return;const w=Math.max(20,tw(p.txt,12,700)+10);take(p.x-w/2,p.y-10,w,20);rDots.push(p)})});
     const dotCh=new Set(rDots.map(p=>p.c)),nameDraw=[],RPAD=24;
     cells.forEach(c=>{const a=chA.get(c.ch),s=sr(c.r);if(off(s)&&!vis(toS(c.ctr)))return;
-      const t=c.t,ip=IMP[c.id],imp=IMPC[ip],dk=darkTxt(c),cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;
+      const t=c.t,ip=IMP[c.id],imp=IMPC[ip];
       if(a<.05){if(ip==='必考'&&tA.get(c.ch)>.3&&s[2]>16&&s[3]>16)star(c.ctr[0]*V.k+V.x,c.ctr[1]*V.k+V.y,clamp(s[2]*.12,4,7),'#d92d20');return}
-      const deep=s[2]>=230&&s[3]>=150;
-      if(!deep){const maxW=s[2]-10;let fs=clamp(Math.min(maxW/Math.max(2,t.t.length)*1.05,s[3]*.22),12,22),L=null;
-        for(;fs>=12;fs-=1){L=wrap2(t.t,fs,maxW-(imp?fs:0));if(L&&L.length*fs*1.25+16<=s[3])break;L=null}
-        const bw=L?Math.max(...L.map(x=>tw(x,fs)))+(imp?fs:0):0,bh=L?L.length*fs*1.25+16:0;
-        if(!L||!free(cx-bw/2,cy-bh/2,bw,bh)){tagQ.push(c);return}   // 名稱放不下：之後用旁標（名字＋細引線），不用編號
+      // 11-01：文字只排在「看得到的那一段街廓」裡（街廓跨出畫面或被頂列蓋住時，名字跟著移進來，不再被畫面邊切掉）
+      const q=vr(s,sw0/2+3),deep=q[2]>=230&&q[3]>=150;
+      if(!deep){if(q[2]<24||q[3]<14){tagQ.push(c);return}
+        const cx=q[0]+q[2]/2,cy=q[1]+q[3]/2,maxW=q[2]-4;let fs=clamp(Math.min(maxW/Math.max(2,t.t.length)*1.05,q[3]*.24),12,20),L=null,subOn=true;
+        for(;fs>=12;fs-=1){L=wrap2(t.t,fs,maxW-(imp?fs:0));if(L&&L.length*fs*1.25+16<=q[3])break;L=null}
+        if(!L){fs=12;subOn=false;L=wrap2(t.t,fs,maxW-(imp?fs:0));if(L&&L.length*fs*1.25+2>q[3])L=null}   // 放不下「N 題」就只放名字
+        if(!L){tagQ.push(c);return}   // 名稱放不下：之後用旁標（名字＋短引線），不用編號
+        const bw=Math.max(...L.map(x=>tw(x,fs)))+(imp?fs:0)+4,bh=L.length*fs*1.25+(subOn?16:0);
+        if(!free(cx-bw/2,cy-bh/2,bw,bh)){tagQ.push(c);return}
         take(cx-bw/2,cy-bh/2,bw,bh);shownT.add(c.id);named.add(c);
-        const sub=t.n?`${t.n} 題`:'未考過',h=L.length*fs*1.25,y=cy-(h+14)/2+fs*.62;
-        L.forEach((ln,i)=>{const yy=y+i*fs*1.25,w=tw(ln,fs);label(ln,cx+(imp&&i===0?fs*.55:0),yy,fs,{a,c:dk?(t.n?'#1d2430':'#667085'):'#fff',halo:dk?'rgba(255,255,255,.9)':'rgba(16,24,40,.55)'});
-          if(imp&&i===0)ip==='必考'?star(cx+fs*.55-w/2-fs*.65,yy,fs*.42,imp):(ctx.beginPath(),ctx.arc(cx+fs*.55-w/2-fs*.65,yy,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill())});
-        label(sub,cx,y+h-fs*.62+13,12,{a,w:500,c:dk?'#475467':'#eef2f6',halo:dk?'rgba(255,255,255,.9)':'rgba(16,24,40,.5)'});return}
-      // 最深層：主題名＋統計＋爭點（城市點）＋條文
-      shownT.add(c.id);named.add(c);ctx.save();ctx.beginPath();ctx.rect(s[0]+4,s[1]+4,s[2]-8,s[3]-8);ctx.clip();
-      const pad=clamp(s[2]*.05,10,22),x=s[0]+pad,mw=s[2]-pad*2,fs=clamp(s[2]/16,16,24);let y=s[1]+pad+fs*.6+(ROUTE_ON?18:0);
-      const tc=dk?'#101828':'#fff',sc=dk?'#344054':'#f2f4f7',halo=dk?'rgba(255,255,255,.92)':'rgba(16,24,40,.6)';
-      let tx=x;if(imp){ip==='必考'?star(x+fs*.42,y,fs*.42,imp):(ctx.beginPath(),ctx.arc(x+fs*.42,y,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill());tx=x+fs*1.05}
-      label(clip1(t.t,fs,mw-(tx-x),700),tx,y,fs,{al:'left',w:700,a,c:tc,halo});y+=fs*.6+12;
+        const y=cy-bh/2+fs*.625;
+        L.forEach((ln,i)=>{const yy=y+i*fs*1.25,w=tw(ln,fs);label(ln,cx+(imp&&i===0?fs*.55:0),yy,fs,{a,c:'#fff',halo:HALO});
+          if(imp&&i===0)ip==='必考'?star(cx+fs*.55-w/2-fs*.65,yy,fs*.42,imp):(ctx.beginPath(),ctx.arc(cx+fs*.55-w/2-fs*.65,yy,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill(),ctx.lineWidth=1.5,ctx.strokeStyle='#fff',ctx.stroke())});
+        if(subOn)label(t.n?`${t.n} 題`:'未考過',cx,cy+bh/2-7,12,{a,w:600,c:t.n?'#fff':'#e4e7ec',halo:HALO});return}
+      // 最深層：主題名＋統計＋爭點（城市點）＋條文；放在白色資訊卡上（不受街廓底色、斜紋干擾）
+      shownT.add(c.id);named.add(c);
+      const pad=clamp(q[2]*.04,10,18),x=q[0]+pad,mw=q[2]-pad*2,fs=clamp(q[2]/16,16,24),bot=q[1]+q[3]-pad,ops=[],NH='rgba(0,0,0,0)',tc=INK,sc='#344054';
+      const L2=(txt,xx,yy,f,o)=>ops.push(()=>label(txt,xx,yy,f,Object.assign({al:'left',a,halo:NH},o)));
+      let y=q[1]+pad+fs*.6+(ROUTE_ON?18:0),yEnd=y+fs*.6;
+      let tx=x;if(imp){const yy=y;ops.push(()=>ip==='必考'?star(x+fs*.42,yy,fs*.42,imp):(ctx.beginPath(),ctx.arc(x+fs*.42,yy,fs*.28,0,7),ctx.fillStyle=imp,ctx.fill()));tx=x+fs*1.05}
+      L2(clip1(t.t,fs,mw-(tx-x),700),tx,y,fs,{w:700,c:tc});y+=fs*.6+12;
       const fs2=clamp(fs*.62,12,15);
-      label(clip1((ip?(ip==='未能確認'?'必考／常考未能確認':ip)+'｜':'')+(dense(t)?'爭點密集｜':'')+(t.n?`考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）｜${t.ys.join(' ')}`:'未考過'),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10;
-      if(t.core&&t.core.length){label(clip1('條文 '+t.core.map(n=>String(n).includes('|')?artLbl(t.subj,n):'§'+n).join(' '),fs2,mw,500),x,y,fs2,{al:'left',w:500,a,c:sc,halo});y+=fs2+10}
+      const stat=(ip?(ip==='未能確認'?'必考／常考未能確認':ip)+'｜':'')+(dense(t)?'爭點密集｜':'')+(t.n?`考過 ${t.n} 題（選 ${t.mcq.length}・申 ${t.essay.length}）`:'未考過');
+      if(y+fs2/2<=bot){L2(clip1(stat,fs2,mw,500),x,y,fs2,{w:500,c:sc});yEnd=y+fs2/2;y+=fs2+10}
+      const roomy=q[3]>=300;   // 矮的資訊卡先留位置給爭點（考過年度、條文側欄都有）
+      if(roomy&&t.ys.length&&y+fs2/2<=bot){L2(clip1('考過年度 '+t.ys.join('、'),fs2,mw,500),x,y,fs2,{w:500,c:sc});yEnd=y+fs2/2;y+=fs2+10}
+      if(roomy&&t.core&&t.core.length&&y+fs2/2<=bot){L2(clip1('條文 '+t.core.map(n=>String(n).includes('|')?artLbl(t.subj,n):'§'+n).join(' '),fs2,mw,500),x,y,fs2,{w:500,c:'#1849a9'});yEnd=y+fs2/2;y+=fs2+10}
       const iss=(t.iss||[]).map(i=>D.issues[i]).filter(Boolean),fs3=clamp(fs*.6,12,14),lh=fs3+11;
-      if(iss.length){label(`爭點 ${iss.length}`,x,y,fs3,{al:'left',w:700,a,c:tc,halo});y+=lh}
-      let shown=0;for(const I of iss){if(y+lh>s[1]+s[3]-pad-(iss.length-shown>1?lh:0))break;
-        ctx.beginPath();ctx.arc(x+6,y,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#1849a9';ctx.stroke();
-        label(clip1(`${I.year}｜${I.t}`,fs3,mw-18,500),x+16,y,fs3,{al:'left',w:500,a,c:tc,halo});
-        issueHit.push([x-4,y-lh/2,mw+8,lh,c.id,I.id]);y+=lh;shown++}
-      if(iss.length>shown)label(`…還有 ${iss.length-shown} 個爭點，點主題看全部`,x,y,fs3,{al:'left',w:500,a,c:sc,halo});
-      else if(!iss.length&&t.mcq.length){const ms=t.mcq.slice(0,12).map(q=>D.mcq[q]?`${D.mcq[q].y}-${String(D.mcq[q].n).padStart(2,'0')}`:q).join('、');label(clip1('選擇題 '+ms,fs3,mw,500),x,y,fs3,{al:'left',w:500,a,c:sc,halo})}
-      ctx.restore()});
-    // 章（國）名（12:25 再修）：全名 → 短名 → 旁標（短名放在附近空位，細線指回該章）；不再用數字角標。章裡有必考主題就掛紅色「★N」
+      if(iss.length&&y+lh/2<=bot){L2(`爭點 ${iss.length}`,x,y,fs3,{w:700,c:tc});yEnd=y+fs3/2;y+=lh}
+      let shown=0;for(const I of iss){if(y+lh/2>bot-(iss.length-shown>1?lh:0))break;const yy=y;
+        ops.push(()=>{ctx.beginPath();ctx.arc(x+6,yy,5,0,7);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#1849a9';ctx.stroke()});
+        L2(clip1(`${I.year}｜${I.t}`,fs3,mw-18,500),x+16,y,fs3,{w:500,c:tc});
+        issueHit.push([x-4,y-lh/2,mw+8,lh,c.id,I.id]);yEnd=y+fs3/2;y+=lh;shown++}
+      if(iss.length>shown&&y+fs3/2<=bot){L2(clip1(`…還有 ${iss.length-shown} 個爭點，點主題看全部`,fs3,mw,500),x,y,fs3,{w:500,c:sc});yEnd=y+fs3/2}
+      else if(!iss.length&&t.mcq.length&&y+fs3/2<=bot){const ms=t.mcq.slice(0,12).map(q=>D.mcq[q]?`${D.mcq[q].y}-${String(D.mcq[q].n).padStart(2,'0')}`:q).join('、');L2(clip1('選擇題 '+ms,fs3,mw,500),x,y,fs3,{w:500,c:sc});yEnd=y+fs3/2}
+      take(q[0],q[1],q[2],Math.min(q[3],yEnd+pad-q[1]));
+      ctx.save();ctx.beginPath();ctx.rect(q[0],q[1],q[2],q[3]);ctx.clip();
+      rrect(q[0]+pad*.4,q[1]+pad*.4,q[2]-pad*.8,Math.min(q[3]-pad*.8,yEnd+pad*.6-q[1]-pad*.4),10);ctx.globalAlpha=a*.92;ctx.fillStyle='#fff';ctx.fill();ctx.globalAlpha=a;ctx.lineWidth=1.5;ctx.strokeStyle=c.ch.ink;ctx.stroke();ctx.globalAlpha=1;
+      ops.forEach(f=>f());ctx.restore()});
+    // 章（街區）名（11-01 改）：只排在看得到的那一段街區裡，連同★N 圖釘整組都要放得進街區（不再壓在街界上）；全名 → 短名 → 兩字名 → 旁標
     chaps.map(ch=>[ch,sr(ch.r)]).sort((p,q)=>q[1][2]*q[1][3]-p[1][2]*p[1][3]).forEach(([ch,s])=>{const a=1-chA.get(ch);if(a<.03||off(s))return;
-      const [cx,cy0]=toS(ch.ctr),maxW=s[2]*.86-6,hasDot=false,sb=ch.must&&!(ROUTE_ON&&W<=500)?'★'+ch.must:'',sw=sb?tw(sb,12,700)+10:0,rp=RT.has(ch)?RPAD:0;
-      for(const nm of [...new Set([ch.ch,ch.short,CH_TINY[ch.ch]||ch.short])]){
-        const FM=W<=380?15:W<=500?17:26;let fs=clamp(Math.min(maxW/(nm.length+.3),s[3]*.24),12.5,FM),L=[nm];
-        if(tw(nm,fs,700)>maxW&&nm!==ch.ch&&nm.length<=4&&tw(nm,12.5,700)<=s[2]+14&&s[3]>=18)fs=12.5;
-        else if(tw(nm,fs,700)>maxW){if(nm.length<4)continue;fs=clamp(Math.min(maxW/(Math.ceil(nm.length/2)+.3),s[3]*.16),12.5,Math.min(FM,22));L=wrap2(nm,fs,maxW)||[]}
-        if(!L.length||L.length*fs*1.2+4>s[3])continue;
-        const sub=`${ch.n} 題`,two=nm===ch.ch&&s[3]>=80&&s[2]>=90&&tw(sub,12,500)+sw+4<maxW&&(L.length*fs*1.2+18)<s[3],inl=sb&&!two;
-        const lw=tw(L[L.length-1],fs,700);if(inl&&lw+sw+4>s[2]+8&&L.length*fs*1.2+22>s[3])continue;
-        const sbBelow=inl&&lw+sw+4>s[2]+8,bw=Math.max(two?tw(sub,12,500)+sw+4:0,...L.map(x=>tw(x,fs,700)+(inl&&!sbBelow?sw+4:0)))+6+rp,bh=L.length*fs*1.2+(two||sbBelow?18:0);
-        for(const dy of hasDot?[bh/2+14,-bh/2-14,0]:[0,bh/2+10,-bh/2-10]){const cy=cy0+dy,y0=cy-(L.length-1)*fs*.6-(two||sbBelow?8:0);
-          if(!free(cx-bw/2,y0-fs*.6,bw,bh))continue;take(cx-bw/2,y0-fs*.6,bw,bh);shownCh.add(ch);named.add(ch);
-          const dx=(inl&&!sbBelow?-(sw+4)/2:0)+rp/2,ys=y0+(L.length-1)*fs*1.2+fs*.6+10;
+      const q=vr(s,rw/2+3);if(q[2]<10||q[3]<10){if(s[2]>=3&&s[3]>=3)tagQ.unshift(ch);return}
+      const cx=q[0]+q[2]/2,cy0=q[1]+q[3]/2,maxW=q[2]-2,sb=ch.must&&!(ROUTE_ON&&W<=500)?'★'+ch.must:'',sw=sb?tw(sb,12,700)+10:0,rp=RT.has(ch)?RPAD:0;
+      const NM=[...new Set([ch.ch,ch.short,CH_TINY[ch.ch]||ch.short])];
+      for(const nm of NM){
+        const FM=W<=380?15:W<=500?17:26;let fs=clamp(Math.min((maxW-rp)/(nm.length+.3),q[3]*.3),12.5,FM),L=[nm];
+        if(tw(nm,fs,700)+rp>maxW){if(nm.length<4){fs=12.5;if(tw(nm,fs,700)+rp>maxW)continue}
+          else{fs=clamp(Math.min((maxW-rp)/(Math.ceil(nm.length/2)+.3),q[3]*.2),12.5,Math.min(FM,22));L=wrap2(nm,fs,maxW-rp)||[]}}
+        if(!L.length)continue;
+        const lh=fs*1.2,nH=L.length*lh,lw=Math.max(...L.map(x=>tw(x,fs,700))),lwl=tw(L[L.length-1],fs,700),sub=`${ch.n} 題`,subW=tw(sub,12,600);
+        const two=nm===ch.ch&&q[2]>=90&&nH+20<=q[3]&&subW+(sb?sw+4:0)+rp<=maxW;
+        let mode='';if(sb){if(two)mode='sub';else if(lwl+sw+4+rp<=maxW&&nH+2<=q[3])mode='inl';else if(nH+20<=q[3]&&sw<=maxW)mode='below';else mode='drop'}
+        if(mode==='drop'&&nm!==NM[NM.length-1])continue;   // ★N 放不進去：先換短名再試，最後一個名字才放棄圖釘（★N 仍在科目名旁、側欄）
+        const bh=nH+(two||mode==='below'?18:0),bw=Math.min(maxW,Math.max(lw+(mode==='inl'?sw+4:0),two?subW+(sb?sw+4:0):0,mode==='below'?sw:0)+rp+4);
+        if(bh>q[3]+1)continue;
+        for(const dy of [0,bh/2+10,-bh/2-10]){const cy=clamp(cy0+dy,q[1]+bh/2,q[1]+q[3]-bh/2),by=cy-bh/2;
+          if(!free(cx-bw/2,by,bw,bh))continue;take(cx-bw/2,by,bw,bh);shownCh.add(ch);named.add(ch);
+          const y0=by+lh/2,dx=(mode==='inl'?-(sw+4)/2:0)+rp/2,ys=by+nH+9;
           if(rp)ch._rp=[cx-bw/2+11,y0];
-          nameDraw.push(()=>{L.forEach((ln,i)=>label(ln,cx+dx,y0+i*fs*1.2,fs,{w:700,a,c:'#101828'}));
-            if(inl&&!sbBelow)sBadge(sb,cx+dx+lw/2+4+sw/2,y0+(L.length-1)*fs*1.2,12);
-            if(two){const w0=tw(sub,12,500),x0=cx+rp/2-(w0+(sw?sw+4:0))/2;label(sub,x0+w0/2,ys,12,{w:500,a,c:'#344054'});if(sb)sBadge(sb,x0+w0+4+sw/2,ys,12)}
-            else if(sbBelow)sBadge(sb,cx+rp/2,ys,12)});
+          nameDraw.push(()=>{L.forEach((ln,i)=>label(ln,cx+dx,y0+i*lh,fs,{w:700,a,c:'#fff',halo:HALO}));
+            if(mode==='inl')sBadge(sb,cx+dx+lwl/2+4+sw/2,y0+(L.length-1)*lh,12);
+            if(two){const x0=cx+rp/2-(subW+(sb?sw+4:0))/2;label(sub,x0+subW/2,ys,12,{w:600,a,c:'#fff',halo:HALO});if(sb)sBadge(sb,x0+subW+4+sw/2,ys,12)}
+            else if(mode==='below')sBadge(sb,cx+rp/2,ys,12)});
           return}}
+      // 細長的街區：名字改直排（一字一行），不必拉旁標
+      if(!rp)for(const nm of NM){const n=nm.length,fs=clamp(Math.min(q[2]-4,(q[3]-4)/(n*1.12)),12.5,W<=500?17:22);
+        if(fs>q[2]-2||n*fs*1.12>q[3])continue;
+        const bh0=n*fs*1.12,bo=sb&&bh0+20<=q[3]&&sw<=q[2]-2,bh=bh0+(bo?18:0),bw=fs+4;
+        if(sb&&!bo&&nm!==NM[NM.length-1])continue;
+        for(const dy of [0,bh/2+10,-bh/2-10]){const cy=clamp(cy0+dy,q[1]+bh/2,q[1]+q[3]-bh/2),by=cy-bh/2;if(!free(cx-bw/2,by,bw,bh))continue;
+          take(cx-bw/2,by,bw,bh);shownCh.add(ch);named.add(ch);
+          nameDraw.push(()=>{[...nm].forEach((z,i)=>label(z,cx,by+fs*.56+i*fs*1.12,fs,{w:700,a,c:'#fff',halo:HALO}));if(bo)sBadge(sb,cx,by+bh0+9,12)});return}}
       if(s[2]>=3&&s[3]>=3)tagQ.unshift(ch)});
     // 旁標：章與放不下名字的主題，都用「名字（＋★）」小牌放到附近空位，細線指回中心；先往外（海面）找，找不到空位也照放，不用編號
-    const rb=root.getBoundingClientRect(),UI=['.lm-zm','.lm-mini'].map(q=>{const e=$(q),b=e.getBoundingClientRect();return e.style.visibility==='hidden'||!b.width?null:[b.left-rb.left-6,b.top-rb.top-6,b.width+12,b.height+12]}).filter(Boolean);
-    UI.forEach(r=>take(...r));
-    const tagSort=x=>x.cells?0:1;
+    const tagSort=x=>x.cells?0:1;let tagSkip=0;
+    // 引線不可穿過已放好的名字、也不可跟別條引線交叉
+    const segs=[],ccw=(a,b,c)=>(c[1]-a[1])*(b[0]-a[0])>(b[1]-a[1])*(c[0]-a[0]),xing=(a,b,c,d)=>ccw(a,c,d)!==ccw(b,c,d)&&ccw(a,b,c)!==ccw(a,b,d);
+    const lineOk=(a,b)=>{if(Math.hypot(b[0]-a[0],b[1]-a[1])<=12)return true;for(let i=1;i<10;i++){const x=a[0]+(b[0]-a[0])*i/10,y=a[1]+(b[1]-a[1])*i/10;if(placed.some(r=>x>r[0]&&x<r[0]+r[2]&&y>r[1]&&y<r[1]+r[3]))return false}
+      return !segs.some(g=>xing(a,b,g[0],g[1]))};
     tagQ.sort((p,q)=>tagSort(p)-tagSort(q)||(p.cells?SUBJ.indexOf(p.subj)-SUBJ.indexOf(q.subj)||p.no-q.no:0)).forEach(o=>{
-      const isCh=!!o.cells,p=toS(o.ctr);if(!vis(p))return;
+      const isCh=!!o.cells,p=toS(o.ctr);if(!vis(p)||p[0]>RX-4||p[1]>BY-4)return;   // 被側欄蓋住的區塊不拉旁標
       let TX,sb='',sc='#d92d20';
       if(isCh){TX=[o.short];if(CH_TINY[o.ch]&&CH_TINY[o.ch]!==o.short)TX.push(CH_TINY[o.ch]);if(o.must&&!(ROUTE_ON&&W<=500))sb='★'+o.must}
       else{const t=o.t,ip=IMP[o.id];TX=[t.t.length>8?t.t.slice(0,7)+'…':t.t];if(t.t.length>5)TX.push(t.t.slice(0,4)+'…');if(ip==='必考')sb='★';else if(ip==='常考'){sb='●';sc='#f79009'}}
       const sw=sb?tw(sb,12,700)+(sb.length>1?12:8):0,h=22,rp=isCh&&RT.has(o)?RPAD:0;
       const oc=isCh?toS([o.cb.x+o.cb.w/2,o.cb.y+o.cb.h/2]):toS(o.ch.ctr),out=Math.atan2(p[1]-oc[1],p[0]-oc[0]);
-      const C=[];for(const r of [0,14,26,38,52,68,86,104,124,148,172])for(let i=0;i<24;i++){const an=i/24*Math.PI*2;C.push([p[0]+Math.cos(an)*r,p[1]+Math.sin(an)*r,r-(r?10*Math.cos(an-out):0)])}
+      const C=[];for(const r of [0,14,26,38,52,68])for(let i=0;i<24;i++)   // 11-01：旁標只在 68px 內找位（引線短、不跨科）
+        {const an=i/24*Math.PI*2;C.push([p[0]+Math.cos(an)*r,p[1]+Math.sin(an)*r,r-(r?10*Math.cos(an-out):0)])}
       C.sort((u,v)=>u[2]-v[2]);
       // 旁標不跨到別的大陸上（只放在自己的大陸或海面）
-      const oth=conts.filter(c=>c!==o.cb&&!c.grey).map(c=>sr(c.r)).concat(UI),[l0,t0,r0]=[4,TOP()+4,W-4];
+      const oth=conts.filter(c=>c!==o.cb&&!c.grey).map(c=>sr(c.r)).concat(UI),[l0,t0,r0]=[4,T0+2,RX-4];
       let best=null,txt,w,fb=0;
       for(const tx of TX){txt=tx;w=tw(tx,12,700)+12+(sw?sw+4:0)+rp;
-        const okS=([x,y])=>x-w/2>=l0&&x+w/2<=r0&&y-h/2>=t0&&y+h/2<=H-4&&!oth.some(q=>x+w/2>q[0]+6&&x-w/2<q[0]+q[2]-6&&y+h/2>q[1]+6&&y-h/2<q[1]+q[3]-6);
-        best=C.find(q=>q[2]<=70&&okS(q)&&free(q[0]-w/2-2,q[1]-h/2-2,w+4,h+4));if(best)break}
-      const okO=([x,y])=>x-w/2>=l0&&x+w/2<=r0&&y-h/2>=t0&&y+h/2<=H-4&&!oth.some((q,i)=>{const d=i<oth.length-UI.length?22:0;return x+w/2>q[0]+d&&x-w/2<q[0]+q[2]-d&&y+h/2>q[1]+d&&y-h/2<q[1]+q[3]-d});
-      if(!best)for(const tx of TX.slice().reverse()){txt=tx;w=tw(tx,12,700)+12+(sw?sw+4:0)+rp;best=C.find(q=>okO(q)&&free(q[0]-w/2-2,q[1]-h/2-2,w+4,h+4));if(best)break}
-      if(!best){fb=1;const okS=q=>okO(q)&&q[2]<=40,ov=([x,y])=>placed.filter(r=>x-w/2<r[0]+r[2]&&x+w/2>r[0]&&y-h/2<r[1]+r[3]&&y+h/2>r[1]).length;
-        best=C.filter(okS).sort((u,v)=>ov(u)-ov(v)||u[2]-v[2])[0]||[clamp(p[0],l0+w/2,r0-w/2),clamp(p[1],t0+h/2,H-4-h/2)]}
-      take(best[0]-w/2-2,best[1]-h/2-2,w+4,h+4);if(rp){o._rp=[best[0]-w/2+11,best[1]];o._rl=[p[0],p[1]]}tags.push({txt,sb,sc,sw,fb,rp,x:best[0],y:best[1],w,h,ax:p[0],ay:p[1],ink:isCh?o.ink:o.ch.ink,o});named.add(o);if(isCh)shownCh.add(o)});
+        const okS=([x,y])=>x-w/2>=l0&&x+w/2<=r0&&y-h/2>=t0&&y+h/2<=BY-4&&!oth.some(q=>x+w/2>q[0]+6&&x-w/2<q[0]+q[2]-6&&y+h/2>q[1]+6&&y-h/2<q[1]+q[3]-6);
+        best=C.find(q=>q[2]<=70&&okS(q)&&free(q[0]-w/2-2,q[1]-h/2-2,w+4,h+4)&&lineOk(p,q));if(best)break}
+      const okO=([x,y])=>x-w/2>=l0&&x+w/2<=r0&&y-h/2>=t0&&y+h/2<=BY-4&&!oth.some((q,i)=>{const d=i<oth.length-UI.length?22:0;return x+w/2>q[0]+d&&x-w/2<q[0]+q[2]-d&&y+h/2>q[1]+d&&y-h/2<q[1]+q[3]-d});
+      if(!best)for(const tx of TX.slice().reverse()){txt=tx;w=tw(tx,12,700)+12+(sw?sw+4:0)+rp;best=C.find(q=>okO(q)&&free(q[0]-w/2-2,q[1]-h/2-2,w+4,h+4)&&lineOk(p,q));if(best)break}
+      if(!best){const C2=[];for(const r of [86,104,124])for(let i=0;i<24;i++){const an=i/24*Math.PI*2;C2.push([p[0]+Math.cos(an)*r,p[1]+Math.sin(an)*r,r])}
+        for(const tx of TX.slice().reverse()){txt=tx;w=tw(tx,12,700)+12+(sw?sw+4:0)+rp;best=C2.find(q=>okO(q)&&free(q[0]-w/2-2,q[1]-h/2-2,w+4,h+4)&&lineOk(p,q));if(best)break}}
+      // 11-01：附近找不到空位就不硬塞、不疊字：改在區塊內放截短的名字（…），再放不下才略過（放大一點就會出現）
+      if(!best){const q=vr(sr(o.r),2),nm=isCh?(CH_TINY[o.ch]||o.short):o.t.t,s1=q[2]>=20&&q[3]>=14?clip1(nm,12,q[2]-4,700):'',w1=s1?tw(s1,12,700):0,cx=q[0]+q[2]/2;
+        // 區塊內由中間往上下找一條空的橫列放截短名；再不行，高瘦的區塊改直排（最多放得下幾字放幾字）
+        if(s1)for(let d=0;d<=q[3]/2-8;d+=8)for(const sg of d?[1,-1]:[1]){const cy=q[1]+q[3]/2+d*sg;
+          if(free(cx-w1/2,cy-8,w1,16)){take(cx-w1/2,cy-8,w1,16);named.add(o);if(isCh)shownCh.add(o);nameDraw.push(()=>label(s1,cx,cy,12,{w:700,c:'#fff',halo:HALO}));return}}
+        const nv=Math.floor((q[3]-4)/(12*1.12));if(q[2]>=16&&nv>=2){const z=[...nm].length<=nv?[...nm]:[...nm].slice(0,nv-1).concat('…'),bh=z.length*12*1.12,by=q[1]+(q[3]-bh)/2;
+          if(free(cx-8,by,16,bh)){take(cx-8,by,16,bh);named.add(o);if(isCh)shownCh.add(o);nameDraw.push(()=>z.forEach((c,i)=>label(c,cx,by+12*.56+i*12*1.12,12,{w:700,c:'#fff',halo:HALO})));return}}
+        tagSkip++;return}
+      take(best[0]-w/2-2,best[1]-h/2-2,w+4,h+4);segs.push([p,[best[0],best[1]]]);if(rp){o._rp=[best[0]-w/2+11,best[1]];o._rl=[p[0],p[1]]}tags.push({txt,sb,sc,sw,fb,rp,x:best[0],y:best[1],w,h,ax:p[0],ay:p[1],ink:isCh?o.ink:o.ch.ink,o});named.add(o);if(isCh)shownCh.add(o)});
     // 路線線：章層的點移到章名左邊的編號位置；先畫線，再蓋上章名
     // 旁標的章：線走該章中心（旁標本身有細線指過去），編號畫在旁標左邊
     rLines.forEach(pts=>{pts.forEach(p=>{if(p.ch&&p.ch._rp){p.x=p.ch._rp[0];p.y=p.ch._rp[1]}const l=p.ch&&p.ch._rl||[p.x,p.y];p.lx=l[0];p.ly=l[1];if(p.ch&&p.x>=-20&&p.x<=W+20&&p.y>=TOP()-10&&p.y<=H+20)rDots.push(p)});
       ctx.lineJoin='round';ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.lx,p.ly):ctx.moveTo(p.lx,p.ly));ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=7;ctx.stroke();
-      ctx.strokeStyle='#0b6e65';ctx.lineWidth=3;ctx.setLineDash([9,6]);ctx.stroke();ctx.setLineDash([])});
+      ctx.strokeStyle='#8e44c9';ctx.lineWidth=3.5;ctx.setLineDash([9,6]);ctx.stroke();ctx.setLineDash([])});
     nameDraw.forEach(f=>f());
     // 大陸名：放在陸塊上方的海面
     conts.forEach(c=>{if(!c.grey)return;const s=sr(c.r);if(off(s))return;
       const nm=SH(c.subj);let fs=clamp(Math.min((s[2]-10)/(nm.length+.4),s[3]*.22),12,30);if(tw(nm,fs,700)>s[2]-8)return;
-      const cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;label(nm,cx,cy,fs,{w:700,c:'#475467'});if(s[3]>fs+30)label('未建地圖',cx,cy+fs*.6+8,12,{w:500,c:'#475467'})});
+      const cx=s[0]+s[2]/2,cy=s[1]+s[3]/2;label(nm,cx,cy,fs,{w:700,c:'#fff',halo:HALO});if(s[3]>fs+30)label('未建地圖',cx,cy+fs*.6+8,12,{w:600,c:'#fff',halo:HALO})});
     starLog=cLbl.map(q=>['科目',q[0],q[5]||'']).concat(chaps.filter(ch=>named.has(ch)&&!chA.get(ch)&&ch.must&&!(ROUTE_ON&&W<=500)).map(ch=>['章',ch.subj+'›'+ch.ch,'★'+ch.must]));
-    cLbl.forEach(([nm,x,y,fs,a,sb,bx])=>{label(nm,x,y,fs,{w:800,a,c:'#0f2a47',halo:'rgba(214,230,242,.95)'});if(sb)sBadge(sb,bx,y,13)});
+    cLbl.forEach(([nm,x,y,fs,a,sb,bx])=>{label(nm,x,y,fs,{w:800,a,c:'#fff',halo:HALO});if(sb)sBadge(sb,bx,y,13)});
     // 未歸類小標（大陸左下角）
     bLbl.forEach(([t,txt,x,y,w,h])=>{rrect(x,y,w,h,12);ctx.fillStyle='rgba(255,255,255,.95)';ctx.fill();ctx.setLineDash([4,3]);ctx.lineWidth=1.2;ctx.strokeStyle='#667085';ctx.stroke();ctx.setLineDash([]);
       label(txt,x+w/2,y+h/2+.5,12,{w:600,c:'#344054',halo:'rgba(255,255,255,0)'});badgeHit.push([x-4,y-6,w+8,h+12,t.id])});
     late.forEach(([txt,x,y,o])=>pill(txt,x,y,o));
     tagLog=tags.map(g=>({txt:g.txt,sb:g.sb,fb:g.fb,x:Math.round(g.x),y:Math.round(g.y),w:Math.round(g.w),ch:g.o.cells?g.o.subj+'›'+g.o.ch:'',t:g.o.cells?'':g.o.id}));
     tags.forEach(g=>{const far=Math.hypot(g.x-g.ax,g.y-g.ay)>12;
-      if(far){ctx.beginPath();ctx.moveTo(g.ax,g.ay);ctx.lineTo(g.x,g.y);ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle=g.ink;ctx.lineWidth=1.5;ctx.stroke();
-        ctx.beginPath();ctx.arc(g.ax,g.ay,3.5,0,7);ctx.fillStyle=g.ink;ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke()}
-      rrect(g.x-g.w/2,g.y-g.h/2,g.w,g.h,6);ctx.fillStyle='rgba(255,255,255,.97)';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle=g.ink;ctx.stroke();
-      const tx=g.x-g.w/2+6+g.rp+tw(g.txt,12,700)/2;label(g.txt,tx,g.y+.5,12,{w:700,c:'#101828',halo:'rgba(0,0,0,0)'});
+      if(far){ctx.beginPath();ctx.moveTo(g.ax,g.ay);ctx.lineTo(g.x,g.y);ctx.strokeStyle='rgba(255,255,255,.9)';ctx.lineWidth=4;ctx.stroke();ctx.strokeStyle='#1d2733';ctx.lineWidth=1.5;ctx.stroke();
+        ctx.beginPath();ctx.arc(g.ax,g.ay,3.5,0,7);ctx.fillStyle='#1d2733';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke()}
+      rrect(g.x-g.w/2,g.y-g.h/2,g.w,g.h,6);ctx.fillStyle='rgba(29,39,51,.94)';ctx.fill();ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke();
+      const tx=g.x-g.w/2+6+g.rp+tw(g.txt,12,700)/2;label(g.txt,tx,g.y+.5,12,{w:700,c:'#fff',halo:'rgba(0,0,0,0)'});
       if(g.sb){const bx=g.x+g.w/2-4-g.sw/2;g.sb.length>1?sBadge(g.sb,bx,g.y,12):label(g.sb,bx,g.y+.5,13,{w:700,c:g.sc,halo:'rgba(0,0,0,0)'})}
       tagHit.push([g.x-g.w/2-4,g.y-g.h/2-4,g.w+8,g.h+8,g.o])});
     // 念書路線的編號圓點（最上層；點了直接進該章／該主題）
-    rDots.forEach(p=>{const r=pill(p.txt,p.x,p.y,{bg:'#0b6e65',bd:'#fff',c:'#fff'});routeHit.push([r[0]-6,r[1]-8,r[2]+12,r[3]+16,p])});
-    linkLbl=lbl.map(q=>q[0]);lbl.forEach(([s,x,y,nv])=>{const p=[x*V.k+V.x,y*V.k+V.y];label(s,p[0],p[1],14,{w:700,c:nv?'#475467':'#b42318'})});
+    rDots.forEach(p=>{const r=pill(p.txt,p.x,p.y,{bg:'#7a33b5',bd:'#fff',c:'#fff'});routeHit.push([r[0]-6,r[1]-8,r[2]+12,r[3]+16,p])});
+    linkLbl=lbl.map(q=>q[0]);lbl.forEach(([s,x,y,nv])=>{const p=[x*V.k+V.x,y*V.k+V.y];label(s,p[0],p[1],14,{w:700,c:nv?'#e4e7ec':'#ffd6d1',halo:HALO})});
     hits.forEach(id=>{const c=cellOf[id];if(!c)return;const p=[c.ctr[0]*V.k+V.x,c.ctr[1]*V.k+V.y];ctx.beginPath();ctx.arc(p[0],p[1]-14,9,Math.PI*.15,Math.PI*.85,true);ctx.lineTo(p[0],p[1]);
       ctx.closePath();ctx.fillStyle='#f79009';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke()});
     // 每塊都要有名字：畫面上看得到的區塊（章層的章、主題層的主題）中心在畫面內卻沒有名字／編號的，記下來給檢查用
@@ -1940,15 +1995,16 @@ function lmDraw(root,D,signal,arg){
     cv.dataset.level=lvName;mi.style.visibility=V.k<fitV(...WB,0).k*1.15?'hidden':'';drawMini()}
   // ---------- 縮略導覽圖 ----------
   let miniBase=null;const mi=$('.lm-mini'),mctx=mi.getContext('2d');
-  const mk=()=>mi.width/WB[2];
-  function drawMini(){const K=mk();if(!miniBase){miniBase=document.createElement('canvas');miniBase.width=mi.width;miniBase.height=mi.height;const m=miniBase.getContext('2d');
-      m.fillStyle='#d6e6f2';m.fillRect(0,0,mi.width,mi.height);m.setTransform(K,0,0,K,-WB[0]*K,-WB[1]*K);
-      conts.forEach(c=>{m.fillStyle=c.grey?'#d5d3cd':'#f6f3ec';m.fill(c.path)});chaps.forEach(ch=>{m.fillStyle=ch.fill;m.fill(ch.path)});
-      conts.forEach(c=>{m.lineWidth=1.2/K;m.strokeStyle=c.grey?'#9a9a94':'#4f6f8f';m.stroke(c.path)})}
+  // 11-01 雷達小地圖：圓形；整張世界縮進圓裡（K＝縮放、MO＝置中位移）
+  const mk=()=>mi.width*.8/Math.hypot(WB[2],WB[3])*1.18,MO=()=>[(mi.width-WB[2]*mk())/2,(mi.height-WB[3]*mk())/2];
+  function drawMini(){const K=mk(),[ox,oy]=MO();if(!miniBase){miniBase=document.createElement('canvas');miniBase.width=mi.width;miniBase.height=mi.height;const m=miniBase.getContext('2d');
+      m.fillStyle=SEA;m.fillRect(0,0,mi.width,mi.height);m.setTransform(K,0,0,K,ox-WB[0]*K,oy-WB[1]*K);
+      conts.forEach(c=>{m.fillStyle=c.grey?'#d3d6d6':LAND;m.fill(c.path)});chaps.forEach(ch=>{m.fillStyle=ch.fill;m.fill(ch.path)});
+      chaps.forEach(ch=>{m.lineWidth=1.5/K;m.strokeStyle='#fbfbf8';m.stroke(ch.path)})}
     mctx.setTransform(1,0,0,1,0,0);mctx.drawImage(miniBase,0,0);
-    const x=(-V.x/V.k-WB[0])*K,y=(-V.y/V.k-WB[1])*K,w=Wd()/V.k*K,h=Hd()/V.k*K;
-    mctx.lineWidth=2*DPR;mctx.strokeStyle='#d92d20';mctx.strokeRect(clamp(x,1,mi.width-4),clamp(y,1,mi.height-4),Math.min(w,mi.width-2),Math.min(h,mi.height-2))}
-  const miniGo=e=>{const r=mi.getBoundingClientRect(),K=mk()/DPR,wx=(e.clientX-r.left)/K+WB[0],wy=(e.clientY-r.top)/K+WB[1];
+    const x=ox+(-V.x/V.k-WB[0])*K,y=oy+(-V.y/V.k-WB[1])*K,w=Wd()/V.k*K,h=Hd()/V.k*K;
+    mctx.lineWidth=2*DPR;mctx.strokeStyle='#fff';mctx.strokeRect(x,y,w,h);mctx.lineWidth=1*DPR;mctx.strokeStyle='#d92d20';mctx.strokeRect(x,y,w,h)}
+  const miniGo=e=>{const r=mi.getBoundingClientRect(),K=mk()/DPR,[ox,oy]=MO().map(v=>v/DPR),wx=(e.clientX-r.left-ox)/K+WB[0],wy=(e.clientY-r.top-oy)/K+WB[1];
     const [l,t,rr,b]=area();cancelAnimationFrame(anim);anim=0;V={k:V.k,x:(l+rr)/2-wx*V.k,y:(t+b)/2-wy*V.k};req()};
   let miniDown=false;on(mi,'pointerdown',e=>{e.stopPropagation();miniDown=true;miniGo(e)});on(window,'pointermove',e=>{if(miniDown)miniGo(e)});on(window,'pointerup',()=>{miniDown=false});
   // ---------- 縮放拖曳（滾輪、雙指、拖曳）＋點區塊飛過去 ----------
@@ -2094,7 +2150,7 @@ function lmDraw(root,D,signal,arg){
   擺位：實體法旁邊就是它的程序法（民法↔民訴、刑法↔刑訴），商事法靠民法，憲法與行政法同一區。<br>
   <b>顏色＝概念類別</b>（七科同一套，不再隨機）；同一類的章如果相鄰，用同色系的深淺四階分開（四階都是同一類，章層的深淺不代表題數，題數寫在章名下）：<br>${Object.values(CLS).map(c=>`${TONE.map(t=>`<span class="lm-sw" style="background:hsl(${c[1]+t[0]},${t[2]}%,${t[1]}%);margin-right:1px"></span>`).join('')} ${c[0]}`).join('<br>')}<br>
   <span class="lm-sw" style="background:${SWD},hsl(140,52%,84%)"></span>琥珀斜紋＝爭點密集（掛了 ${DENSE} 個以上申論爭點；放大到主題才看得到）<br>
-  <b>放大到主題層：深淺＝考幾次</b>（選擇題＋申論小題；以藍色為例）：<br>${STEPS.map(s=>`<span class="lm-sw" style="background:hsl(212,${s[0]?58:22}%,${s[1]}%);${s[0]?'':'border:1px dashed #888'}"></span>${s[2]}`).join('　')}　淡色虛線框＝未考過<br>
+  <b>放大到主題層：深淺＝考幾次</b>（選擇題＋申論小題；以藍色為例）：<br>${STEPS.map(s=>`<span class="lm-sw" style="background:hsl(212,${s[0]?42:14}%,${s[1]}%);${s[0]?'':'border:1px dashed #888'}"></span>${s[2]}`).join('　')}　淡色虛線框＝未考過<br>
   <b>面積</b>：${AREA==='eq'?'目前「均等」——每個主題一樣大，方便看名字；切回「題數」看哪裡考得多':'目前「題數」——主題越大考越多（2＋出題次數）；上方「面積」鍵可切成均等'}。每一章保底占全圖約 ${Math.round(CH_MIN*1000)/10}%，考得少的小章也放得下名字（所以小章看起來會比實際題數大一點）<br>
   <span style="background:#d92d20;color:#fff;border-radius:9px;padding:0 5px;font-weight:700">★N</span> 全景就看得到：科目名旁＝該科必考主題數，章名旁＝該章必考主題數（手機開念書路線時，章名旁的★N 先收起讓位給路線編號，科目名旁照留）。<br>
   <span style="color:#d92d20">★</span> 必考　<span style="color:#f79009">●</span> 常考：民刑沿用原本標示（作者標示／筆記標色，沒有的依題庫頻率推算）。五科沒有筆記，用民刑同一套「依題庫頻率推算」：熱度＝108–115 年每題 1 分（113 年起 1.5 分）＋主題判決數×0.2，同一科內排名前 20％＝必考、20–50％＝常考。五科★ ${cntI('必考')}・● ${cntI('常考')}・未能確認 ${cntI('未能確認')}（一題都沒歸到，無從排名）<br>
@@ -2112,9 +2168,16 @@ function lmDraw(root,D,signal,arg){
     if(b.dataset.k==='legx')return $('.lm-legend').classList.add('lm-hide');
     if(b.dataset.k==='co'){showCo=!showCo;b.textContent='同題合考線：'+(showCo?'開':'關');b.classList.toggle('lm-on',showCo);req()}
     if(b.dataset.k==='cx'){showCx=!showCx;b.textContent='科目交會線：'+(showCx?'開':'關');b.classList.toggle('lm-on',showCx);req()}});
+  // 11-01：Esc 一層一層關（題目視窗 → 搜尋結果 → 圖例 → 側欄 → 關地圖回上一頁）；重新整理仍由 #lmap 還原地圖
+  on(window,'keydown',e=>{if(e.key!=='Escape')return;
+    if(M.style.display==='flex'){M.style.display='none';return}
+    if(H.style.display==='block'){H.style.display='none';$('.lm-q').blur();return}
+    const lg=$('.lm-legend');if(!lg.classList.contains('lm-hide')){lg.classList.add('lm-hide');return}
+    if(panelOpen()){closePanel();return}
+    go(LM_FROM||'map')});
   resize();V=fitR(WB,0);draw();
   // 給無頭檢查用（唯讀狀態＋同一套操作入口）
-  root.__lm={get V(){return V},get level(){return lvName},get shownT(){return shownT.size},get shownCh(){return shownCh.size},get issues(){return issueHit.length},get minFs(){return minFs},get linkLbl(){return linkLbl},get where(){return $('.lm-where').textContent},hits:()=>[...hits],
+  root.__lm={get linesDrawn(){return linesDrawn},get chTopic(){return chTopicNow.slice()},redraw:()=>{if(raf){cancelAnimationFrame(raf);raf=0}draw()},get V(){return V},get level(){return lvName},get shownT(){return shownT.size},get shownCh(){return shownCh.size},get issues(){return issueHit.length},get minFs(){return minFs},get linkLbl(){return linkLbl},get where(){return $('.lm-where').textContent},hits:()=>[...hits],
     get badges(){return badgeHit.map(b=>({id:b[4],x:b[0]+b[2]/2,y:b[1]+b[3]/2}))},get co(){return showCo},get cx(){return showCx},
     get cells(){return cells.length},get chaps(){return chaps.length},get conts(){return conts.map(c=>c.subj+(c.grey?'(未建地圖)':''))},pseudo:pseudo.map(t=>t.id),select,fitR,animTo,jump,
     get unnamed(){return unnamed.slice()},get pills(){return pillLog.slice()},get route(){return ROUTE_ON},get routeSj(){return ROUTE_SJ},setRouteSj,get tags(){return tagLog.slice()},get stars(){return starLog.slice()},chFill:(n,s)=>{const c=chaps.find(c=>c.ch===n&&(!s||c.subj===s));return c&&{fill:c.fill,tone:c.tone,cls:c.cls}},

@@ -202,7 +202,7 @@ body.cbt-on main{max-width:none;padding:0 0 calc(24px + env(safe-area-inset-bott
 /* 申論補齊與排版 2026-10-28：只用在申論清單、題目頁、擬答 */
 .es-sj{font-size:22px;font-weight:600;margin:22px 4px 10px;display:flex;align-items:baseline;gap:8px}
 .es-sj small{font-size:15px;font-weight:400;color:var(--mut)}
-.sj-menu{position:fixed;z-index:40;right:12px;background:#fff;border:1px solid var(--rule);border-radius:16px;box-shadow:0 8px 24px rgba(31,32,29,.16);padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px;width:min(320px,calc(100vw - 24px))}
+.sj-menu{position:fixed;z-index:40;right:12px;background:#fff;border:1px solid var(--rule);border-radius:16px;box-shadow:0 8px 24px rgba(31,32,29,.16);padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:4px;width:min(320px,calc(100vw - 24px));max-height:calc(100dvh - 88px - env(safe-area-inset-bottom));overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .sj-menu button{border:0;background:none;border-radius:12px;padding:10px 12px;font-size:17px;min-height:44px;color:var(--ink);text-align:left}
 .sj-menu button.on{background:var(--soft);font-weight:600}
 .sj-menu button small{display:block;font-size:13px;color:var(--mut)}
@@ -321,6 +321,7 @@ body.lm-on{overflow:hidden}
  .lm-panel{height:56%}
  .lm-zm{bottom:calc(86px + env(safe-area-inset-bottom))}
  .lm-po .lm-mini,.lm-po .lm-zm{display:none}
+ .lm-top input.lm-q{flex:1 1 100%;min-width:0}
 }
 /* ===== 整體 UI 改版 2026-10-29「好用又好看」：一套設計規則（放最後、覆蓋上面的基本樣式；lm-／cbt- 不動） =====
    色：從圖示（白底＋青綠天秤＋定位點）延伸——紙白底、白卡片、深青綠＝主要動作與進度、黃銅金＝成就（連續天數、倒數）；紅橘灰重要度照舊。

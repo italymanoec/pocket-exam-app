@@ -635,7 +635,7 @@ function dayRec(){var t=today();if(!S.days[t]){S.days[t]={card:0,mcq:0,essay:0,m
 // 2026-10-30 整夜優化：同一題同一天只算一次今日進度（錯題本重做同一題不再把今日目標灌滿）
 var IDX=null;function byId(id){if(!IDX){IDX={};[].concat(D.cards,D.mcq,D.essays).forEach(function(x){IDX[x.id]=x})}return IDX[id]}
 // 2026-10-30 整夜優化批次8：今日題數只算目前科目（原本各科合計，切到國文還顯示民法做的題）
-function dayView(){var r=dayRec();if(!r.ids||S.subj==='every')return r;var o={card:0,mcq:0,essay:0,ms:r.ms,sj:1};
+function dayView(){var r=dayRec();if(!r.ids||S.subj==='every')return r;var o={card:0,mcq:0,essay:0,ms:r.ms};
   Object.keys(r.ids).forEach(function(key){var p=key.indexOf(':'),k=key.slice(0,p),x=byId(key.slice(p+1));if(x&&inSubj(x)&&k in o)o[k]++});return o}
 function dayCnt(id,k){var r=dayRec();r.ids=r.ids||{};var key=k+':'+id;if(r.ids[key])return;r.ids[key]=1;r[k]++}
 function it(id){return S.items[id]||(S.items[id]={box:0,due:0,seen:0,wrong:0,right:0})}
@@ -867,7 +867,7 @@ R.home=function(){
       G.mcq?el('div',{cls:r.mcq>=5?'done':''},['選擇',el('b',{text:Math.min(r.mcq,5)+'/5'})]):null,
       G.essay?el('div',{cls:r.essay>=1?'done':''},['申論',el('b',{text:Math.min(r.essay,1)+'/1'})]):null])]),
     el('button',{cls:'btn big',text:main[0],onclick:main[1]}),
-    el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完'+(r.sj?'（只算'+SUBJ[S.subj]+'）':'（今日題數各科合計）')})]);
+    el('div',{cls:'sub',text:[G.card?'閃卡 3 張':'',G.mcq?'選擇 5 題':'',G.essay?'申論 1 題':''].filter(Boolean).join(' → ')+'，照順序帶你做完'+(S.subj==='every'?'（今日題數各科合計）':'（只算'+SUBJ[S.subj]+'）')})]);
   var L=el('div'),Rt=el('div');L.appendChild(hero);hero.style.order=1;
   // 2026-10-30 整夜優化批次5：倒數連動每日量（只算目前科目的選擇題：沒做過的＋到期該複習的）
   var pm=D.mcq.filter(inSubj);

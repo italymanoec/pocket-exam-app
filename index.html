@@ -546,7 +546,7 @@ details.chc>div{background:var(--panel);border-radius:10px;margin:0 8px 8px;padd
  .qbar{top:65px}
 }
 @media (prefers-reduced-motion:reduce){.opt.right,.opt.wrong,.fb{animation:none}.ring .rg-fg,.qtrack i{transition:none}}
-</style>
+.draft-ban{background:#fff4d6;color:#4a3300;border:2px solid #d99a00;border-radius:12px;padding:10px 12px;margin:0 0 10px;font-size:16px;line-height:1.6;overflow-wrap:anywhere}.draft-ban b{margin-right:4px}.draft-card{overflow-wrap:anywhere}.draft-card ol,.draft-card ul{padding-left:1.4em;margin:6px 0}.draft-card li{margin:4px 0;line-height:1.7}.draft-law{border-left:3px solid var(--line);padding:2px 0 2px 10px;margin:10px 0;line-height:1.7}.draft-quote{color:var(--ink);margin-top:4px}.draft-src{font-size:13px;color:var(--mut);margin-top:2px}.draft-todo{color:var(--mut)}.draft-video{display:block;width:auto;max-width:100%;max-height:70vh;margin:8px auto 0;border-radius:12px;background:#000}</style>
 </head>
 <body>
 <header><span class="brand"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 61C25.5 51.5 9 41.5 9 26.5a23 23 0 0 1 46 0C55 41.5 38.5 51.5 32 61z" fill="currentColor"/><g fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M32 13v24M25 37h14M19 19h26M19 19l-4.5 10M19 19l4.5 10M45 19l-4.5 10M45 19l4.5 10"/></g><path d="M13.5 29a5.5 5.5 0 0 0 11 0zM39.5 29a5.5 5.5 0 0 0 11 0z" fill="#fff"/><circle cx="32" cy="12.5" r="2.4" fill="#fff"/></svg><b id="appName"></b></span><small id="appNote"></small><span class="sp"></span><button id="subjBtn" aria-label="切換科目"></button></header>
@@ -567,6 +567,57 @@ details.chc>div{background:var(--panel);border-radius:10px;margin:0 8px 8px;padd
 'use strict';
 var CFG=JSON.parse(document.getElementById('cfg').textContent);
 var D=JSON.parse(document.getElementById('data').textContent);
+// ---------- 四科申論 AI 擬答草稿（2026-11-01 接入；build_app.py 依閘門插入）----------
+// 執行時讀 essay_drafts.json（同源，離線時 sw 沒快取就自然不顯示），只在申論題多掛 e.draft，原本 concl／full 不覆蓋。
+// 只在 e.concl 以「未能確認」開頭時顯示，每一塊都標「AI擬答草稿・非考選部公布答案」。
+var DRAFT_LABEL='AI擬答草稿・非考選部公布答案',DRAFT_N=0;
+fetch('essay_drafts.json').then(function(r){return r.ok?r.json():null}).then(function(X){
+  if(!X||!X.essays)return;
+  D.essays.forEach(function(e){var d=X.essays[e.id];if(d&&d.draft){e.draft=d.draft;DRAFT_N++}});
+}).catch(function(){});
+function draftOn(e){return !!(e&&e.draft&&/^未能確認/.test(e.concl||''))}
+function draftBan(d){return el('div',{cls:'draft-ban'},[el('b',{text:DRAFT_LABEL}),el('span',{text:'　信心：'+(d['信心']||'待查')})])}
+function draftHint(e){
+  if(!draftOn(e))return null;
+  return el('div',{cls:'card draft-card'},[draftBan(e.draft),el('div',{cls:'mut',text:'本題考選部沒有公布擬答。寫完按「對照擬答」後，會在下方看到 AI 擬答草稿（爭點、架構、法條原文、待查）。'})]);
+}
+function draftCard(e){
+  var d=e.draft,k=[];
+  k.push(draftBan(d));
+  k.push(el('div',{cls:'h2',text:'AI 擬答草稿'}));
+  if(d['爭點']){k.push(el('div',{cls:'sec-t',text:'爭點'}));k.push(txt(d['爭點']))}
+  if((d['架構']||[]).length){k.push(el('div',{cls:'sec-t',text:'答題架構'}));k.push(el('ol',{cls:'draft-ol'},d['架構'].map(function(s){return el('li',{text:s})})))}
+  if((d['法條']||[]).length){
+    k.push(el('div',{cls:'sec-t',text:'關鍵法條'}));
+    d['法條'].forEach(function(a){
+      var no=String(a['條號']||'待查'),m=no.match(/^(\d+)-(\d+)$/);var head=(a['法規']||'')+(/^第/.test(no)?no:m?'第'+m[1]+'條之'+m[2]:'第'+no+'條');
+      k.push(el('div',{cls:'draft-law'},[el('b',{text:head}),a['要件']?el('div',{text:a['要件']}):null,
+        a['原文摘句']?el('div',{cls:'draft-quote',text:'「'+a['原文摘句']+'」'}):null,
+        el('div',{cls:'draft-src',text:'來源：'+(a['來源']||'待查')+(a['版本']?'｜版本：'+a['版本']:'')})]));
+    });
+  }
+  if((d['見解']||[]).length){
+    k.push(el('div',{cls:'sec-t',text:'可引用見解'}));
+    d['見解'].forEach(function(j){
+      k.push(el('div',{cls:'draft-law'},[el('b',{text:[j['類型'],j['字號'],j['日期']].filter(Boolean).join('　')}),j['要旨']?el('div',{text:j['要旨']}):null,
+        j['原文摘句']?el('div',{cls:'draft-quote',text:'「'+j['原文摘句']+'」'}):null,el('div',{cls:'draft-src',text:'來源：'+(j['來源']||'待查')})]));
+    });
+  }
+  if(d['有爭議']){
+    k.push(el('div',{cls:'sec-t',text:'各說'}));
+    (d['各說']||[]).forEach(function(s){k.push(txt(typeof s==='string'?s:[s['說']||'',s['依據']?'依據：'+s['依據']:''].filter(Boolean).join('\n')||'待查'))});
+    k.push(el('div',{cls:'sec-t',text:'結論'}));k.push(txt('有爭議，列出各說。'+(d['結論']?'\n'+d['結論']:'')));
+  }else if(d['結論']){k.push(el('div',{cls:'sec-t',text:'結論'}));k.push(txt(d['結論']))}
+  if((d['待查']||[]).length){k.push(el('div',{cls:'sec-t',text:'待查'}));k.push(el('ul',{cls:'draft-todo'},d['待查'].map(function(s){return el('li',{text:s})})))}
+  var v=d.video;
+  if(v&&v.src){
+    k.push(el('div',{cls:'sec-t',text:'短影音（同樣是 AI 擬答草稿）'}));
+    var vd=el('video',{src:v.src,poster:v.poster||null,controls:'',playsinline:'',preload:'none',cls:'draft-video'});
+    k.push(vd);
+  }
+  k.push(el('div',{cls:'mut',style:'margin-top:10px',text:DRAFT_LABEL+'。法條原文逐字核對自 tlr 法規資料或全國法規資料庫；見解只收查得到原文的，查不到的列在待查。'}));
+  return el('div',{cls:'card draft-card'},k);
+}
 var K='pq1_';                     // 進度存在本機；鍵名不含 APP 名，改名不會丟進度
 var DAY=86400000;
 var V=document.getElementById('view');
@@ -1028,6 +1079,7 @@ function essayFlow(e,next){
     el('div',{cls:'es-head'},[el('b',{text:e.year+' 年　'+esLabel(e)+'（'+(e.points||'?')+' 分）'}),(e.exam||(e.year<=107?'律師二試':'律師、司法官二試'))+'｜'+esPaper(e)]),
     el('div',{cls:'qid',text:e.id}),el('div',{},hfTags(e,['stem','prompt','concl','full'])),stem,
     el('div',{cls:'es-ask'},[el('div',{cls:'k',text:'問題'}),el('div',{cls:'q'},[txt(e.prompt)])]),noGP(e),srcNote()]));
+  if(draftOn(e))V.appendChild(draftHint(e));
   V.appendChild(el('button',{cls:'btn big',text:'開始作答',onclick:write}));
   // 二試電腦作答模擬（改版第一批）
   V.appendChild(el('div',{cls:'card cbt-mode'},[el('div',{cls:'h2',text:'計時模擬二試電腦作答'}),
@@ -1072,6 +1124,7 @@ function essayFlow(e,next){
     paint();
     V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'擬答對照'}),noGP(e),seg,ansBox,
       el('div',{cls:'mut',style:'margin-top:10px',text:'灰底〔未查證〕＝這個條號或判決字號還沒用 tlr 查證，先不顯示。'})]));
+    if(draftOn(e))V.appendChild(draftCard(e));
     V.appendChild(el('div',{cls:'card'},[el('details',{},[el('summary',{text:'看我剛寫的答案'}),txt(t||'（空白）')])]));
     V.appendChild(el('div',{cls:'card'},[el('div',{cls:'h2',text:'自評：這題你會了嗎？'}),
       el('div',{cls:'btns'},['會','半會','不會'].map(function(lb){return el('button',{cls:'btn'+(lb==='會'?'':' sec'),text:lb,onclick:function(){

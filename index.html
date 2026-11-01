@@ -582,7 +582,20 @@ var DRAFT_LABEL='AI擬答草稿・非考選部公布答案',DRAFT_N=0;
 fetch('essay_drafts.json').then(function(r){return r.ok?r.json():null}).then(function(X){
   if(!X||!X.essays)return;
   D.essays.forEach(function(e){var d=X.essays[e.id];if(d&&d.draft){e.draft=d.draft;DRAFT_N++}});
+  showDraftIfOpen();
 }).catch(function(){});
+// 深連結或使用者已打開題目時，草稿檔才回來：補上橫幅，不重畫整頁（避免清掉正在打的答案）
+var openEssay=null;
+function showDraftIfOpen(){
+  var e=openEssay;
+  if(!e||!draftOn(e)||document.querySelector('.draft-card'))return;
+  var q=document.querySelector('#view .qid');
+  if(q){if(q.textContent.trim()!==e.id)return;
+    var start=Array.prototype.find.call(document.querySelectorAll('#view .btn.big'),function(b){return b.textContent==='開始作答'});
+    if(start)start.parentNode.insertBefore(draftHint(e),start);return}
+  var hs=document.querySelectorAll('#view .h2');
+  for(var i=0;i<hs.length;i++){if(hs[i].textContent==='擬答對照'){hs[i].closest('.card').insertAdjacentElement('afterend',draftCard(e));return}}
+}
 function draftOn(e){return !!(e&&e.draft&&/^未能確認/.test(e.concl||''))}
 function draftBan(d){return el('div',{cls:'draft-ban'},[el('b',{text:DRAFT_LABEL}),el('span',{text:'　信心：'+(d['信心']||'待查')})])}
 function draftHint(e){
@@ -1079,6 +1092,7 @@ function bigrams(s){var o={},t=String(s||'').replace(/[^一-鿿]/g,'');for(var i
 var STOPB={'之效':1,'效力':1,'是否':1,'成立':1,'問題':1,'責任':1,'請求':1,'可否':1,'如何':1};
 function guessHit(title,ans){var b=bigrams(title).filter(function(x){return !STOPB[x]});if(!b.length)return false;var n=0;b.forEach(function(x){if(ans.indexOf(x)>=0)n++});return n>=Math.max(2,Math.ceil(b.length*0.5))}
 function essayFlow(e,next){
+  openEssay=e;
   var dk='draft_'+e.id,dr=load(dk,{c:'',t:''});
   // 第 1 屏：題目
   clear();
